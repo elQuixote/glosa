@@ -58,6 +58,7 @@ type
     a.length() is float
 
   Dimension = concept a
+    a.dimensions() is int
 
   Clear = concept a
 
