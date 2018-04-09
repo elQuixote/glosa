@@ -1,13 +1,14 @@
 import ./concepts
+import strformat
 
 type
   Vector1* = object
     x*: float
   Vector2* = object
     x*, y*: float
-  Vector3 = object
+  Vector3* = object
     x*, y*, z*: float
-  Vector4 = object
+  Vector4* = object
     x*, y*, z*, w*: float
 
 # Addition
@@ -115,3 +116,16 @@ template `-=`*(v1: var Vector1, v2: Vector1): var Vector1 = subtractSelf(v1, v2)
 template `-=`*(v1: var Vector2, v2: Vector2): var Vector2 = subtractSelf(v1, v2)
 template `-=`*(v1: var Vector3, v2: Vector3): var Vector3 = subtractSelf(v1, v2)
 template `-=`*(v1: var Vector4, v2: Vector4): var Vector4 = subtractSelf(v1, v2)
+
+# String
+proc `$`*(v: Vector1): string =
+  result = &"{v.x}"
+
+proc `$`*(v: Vector2): string =
+  result = &"{v.x},{v.y}"
+
+proc `$`*(v: Vector3): string =
+  result = &"{v.x},{v.y},{v.z}"
+
+proc `$`*(v: Vector4): string =
+  result = &"{v.x},{v.y},{v.z},{v.w}"
