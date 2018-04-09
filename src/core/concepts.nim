@@ -39,7 +39,8 @@ type
   Equals = concept a, b
     a == b is bool
 
-  Hash = concept
+  Hash = concept a
+    a.hash() is string
 
   Transform = concept
 
