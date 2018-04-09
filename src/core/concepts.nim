@@ -64,5 +64,6 @@ type
     a.clear() is Clear
 
   Copy = concept a
+    a.copy() is Copy
 
   String = concept a
