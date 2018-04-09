@@ -31,6 +31,9 @@ type
     a.toCartesian() is Vector
   
   Matrix* = concept a
+    a.transpose() is Matrix
+    a.determinant() is float
+    a.invert() is Matrix
 
   Compare* = concept a, b
     a > b is bool
