@@ -67,3 +67,4 @@ type
     a.copy() is Copy
 
   String = concept a
+    a.stringify() is string
