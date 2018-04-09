@@ -1,4 +1,5 @@
 import ./concepts
+
 import strformat
 
 type
@@ -119,13 +120,13 @@ template `-=`*(v1: var Vector4, v2: Vector4): var Vector4 = subtractSelf(v1, v2)
 
 # String
 proc `$`*(v: Vector1): string =
-  result = &"{v.x}"
+  result = &"[{v.x}]"
 
 proc `$`*(v: Vector2): string =
-  result = &"{v.x},{v.y}"
+  result = &"[{v.x}, {v.y}]"
 
 proc `$`*(v: Vector3): string =
-  result = &"{v.x},{v.y},{v.z}"
+  result = &"[{v.x}, {v.y}, {v.z}]"
 
 proc `$`*(v: Vector4): string =
-  result = &"{v.x},{v.y},{v.z},{v.w}"
+  result = &"[{v.x}, {v.y}, {v.z}, {v.w}]"
