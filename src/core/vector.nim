@@ -118,7 +118,7 @@ template `-=`*(v1: var Vector2, v2: Vector2): var Vector2 = subtractSelf(v1, v2)
 template `-=`*(v1: var Vector3, v2: Vector3): var Vector3 = subtractSelf(v1, v2)
 template `-=`*(v1: var Vector4, v2: Vector4): var Vector4 = subtractSelf(v1, v2)
 
-# Addition
+# Multiply
 proc multiplySelf*(v: var Vector1, f: float): var Vector1 {.noinit.} =
   v.x *= f
   result = v
@@ -170,6 +170,59 @@ template `*=`*(v: var Vector1, f: float): var Vector1 = multiplySelf(v, f)
 template `*=`*(v: var Vector2, f: float): var Vector2 = multiplySelf(v, f)
 template `*=`*(v: var Vector3, f: float): var Vector3 = multiplySelf(v, f)
 template `*=`*(v: var Vector4, f: float): var Vector4 = multiplySelf(v, f)
+
+# Divide
+proc divideSelf*(v: var Vector1, f: float): var Vector1 {.noinit.} =
+  v.x /= f
+  result = v
+
+proc divideNew*(v: Vector1, f: float): Vector1 =
+  result.x = v.x / f
+
+proc divideSelf*(v: var Vector2, f: float): var Vector2 {.noinit.}  =
+  v.x /= f
+  v.y /= f
+  result = v
+
+proc divideNew*(v: Vector2, f: float): Vector2 =
+  result.x = v.x / f
+  result.y = v.y / f
+
+proc divideSelf*(v: var Vector3, f: float): var Vector3 {.noinit.}  =
+  v.x /= f
+  v.y /= f
+  v.z /= f
+  result = v
+
+proc divideNew*(v: Vector3, f: float): Vector3 =
+  result.x = v.x / f
+  result.y = v.y / f
+  result.z = v.z / f
+
+proc divideSelf*(v: var Vector4, f: float): var Vector4 {.noinit.}  =
+  v.x /= f
+  v.y /= f
+  v.z /= f
+  v.w /= f
+  result = v
+
+proc divideNew*(v: Vector4, f: float): Vector4 =
+  result.x = v.x / f
+  result.y = v.y / f
+  result.z = v.z / f
+  result.w = v.w / f
+
+# NOTE: This is changed from design doc
+template `/`*(v: Vector1, f: float): Vector1 = divideNew(v, f)
+template `/`*(v: Vector2, f: float): Vector2 = divideNew(v, f)
+template `/`*(v: Vector3, f: float): Vector3 = divideNew(v, f)
+template `/`*(v: Vector4, f: float): Vector4 = divideNew(v, f)
+
+# NOTE: This is added from design doc
+template `/=`*(v: var Vector1, f: float): var Vector1 = divideSelf(v, f)
+template `/=`*(v: var Vector2, f: float): var Vector2 = divideSelf(v, f)
+template `/=`*(v: var Vector3, f: float): var Vector3 = divideSelf(v, f)
+template `/=`*(v: var Vector4, f: float): var Vector4 = divideSelf(v, f)
 
 # String
 proc `$`*(v: Vector1): string =

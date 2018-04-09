@@ -9,15 +9,11 @@ type
     a / float is Vector
     a / int is Vector
     a.divideSelf(float) is Vector
-    a.divideSelf(int) is Vector
     a.divideNew(float) is Vector
-    a.divideNew(int) is Vector
     a * float is Vector
     a * int is Vector
     a.multiplySelf(float) is Vector
-    a.multiplySelf(int) is Vector
     a.multiplyNew(float) is Vector
-    a.multiplySelf(int) is Vector
     a.dot(b) is float
     a.cross(b) is Vector
     a.inverse() is Vector
