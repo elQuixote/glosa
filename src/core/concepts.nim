@@ -29,6 +29,8 @@ type
     a.angleBetween(b) is Vector
     a.toPolar() is Vector
     a.toCartesian() is Vector
+  
+  Matrix = concept a
 
   Compare = concept a, b
     a > b is bool
@@ -42,14 +44,22 @@ type
   Hash = concept a
     a.hash() is string
 
-  Transform = concept
+  Transform = concept a
+    a.rotate(float) is Transform
+    a.rotate(int) is Transform
+    a.scale(float) is Transform
+    a.scale(int) is Transform
+    a.scale(float, float, float) is Transform
+    a.scale(int, int, int) is Transform
+    a.translate(Vector) is Transform
+    a.transform(Matrix) is Transform
 
-  Length = concept
+  Length = concept a
 
-  Dimension = concept
+  Dimension = concept a
 
-  Clear = concept
+  Clear = concept a
 
-  Copy = concept
+  Copy = concept a
 
-  String = concept
+  String = concept a
