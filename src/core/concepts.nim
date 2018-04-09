@@ -55,6 +55,7 @@ type
     a.transform(Matrix) is Transform
 
   Length = concept a
+    a.length() is float
 
   Dimension = concept a
 
