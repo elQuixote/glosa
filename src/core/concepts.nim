@@ -61,6 +61,7 @@ type
     a.dimensions() is int
 
   Clear = concept a
+    a.clear() is Clear
 
   Copy = concept a
 
