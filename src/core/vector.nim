@@ -49,7 +49,7 @@ proc addNew*(v1, v2: Vector4): Vector4 =
   result.w = v1.w + v2.w
 
 
-template `+`*(v1: var Vector1, v2: Vector1): var Vector1 = addSelf(v1, v2)
-template `+`*(v1: var Vector2, v2: Vector2): var Vector2 = addSelf(v1, v2)
-template `+`*(v1: var Vector3, v2: Vector3): var Vector3 = addSelf(v1, v2)
-template `+`*(v1: var Vector4, v2: Vector4): var Vector4 = addSelf(v1, v2)
+template `+`*(v1, v2: Vector1): Vector1 = addNew(v1, v2)
+template `+`*(v1, v2: Vector2): Vector2 = addNew(v1, v2)
+template `+`*(v1, v2: Vector3): Vector3 = addNew(v1, v2)
+template `+`*(v1, v2: Vector4): Vector4 = addNew(v1, v2)
