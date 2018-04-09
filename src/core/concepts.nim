@@ -1,5 +1,5 @@
 type
-  Vector = concept a, b
+  Vector* = concept a, b
     a + b is Vector
     a.addSelf(b) is Vector
     a.addNew(b) is Vector
@@ -30,21 +30,21 @@ type
     a.toPolar() is Vector
     a.toCartesian() is Vector
   
-  Matrix = concept a
+  Matrix* = concept a
 
-  Compare = concept a, b
+  Compare* = concept a, b
     a > b is bool
     a < b is bool
     a >= b is bool
     a <= b is bool
 
-  Equals = concept a, b
+  Equals* = concept a, b
     a == b is bool
 
-  Hash = concept a
+  Hash* = concept a
     a.hash() is string
 
-  Transform = concept a
+  Transform* = concept a
     a.rotate(float) is Transform
     a.rotate(int) is Transform
     a.scale(float) is Transform
@@ -54,17 +54,17 @@ type
     a.translate(Vector) is Transform
     a.transform(Matrix) is Transform
 
-  Length = concept a
+  Length* = concept a
     a.length() is float
 
-  Dimension = concept a
+  Dimension* = concept a
     a.dimensions() is int
 
-  Clear = concept a
+  Clear* = concept a
     a.clear() is Clear
 
-  Copy = concept a
+  Copy* = concept a
     a.copy() is Copy
 
-  String = concept a
+  String* = concept a
     a.stringify() is string
