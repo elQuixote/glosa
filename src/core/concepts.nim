@@ -36,7 +36,8 @@ type
     a >= b is bool
     a <= b is bool
 
-  Equals = concept
+  Equals = concept a, b
+    a == b is bool
 
   Hash = concept
 
