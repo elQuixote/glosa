@@ -224,6 +224,20 @@ template `/=`*(v: var Vector2, f: float): var Vector2 = divideSelf(v, f)
 template `/=`*(v: var Vector3, f: float): var Vector3 = divideSelf(v, f)
 template `/=`*(v: var Vector4, f: float): var Vector4 = divideSelf(v, f)
 
+# Dot
+
+proc dot*(v1, v2: Vector1): float =
+  result = v1.x * v2.x
+
+proc dot*(v1, v2: Vector2): float =
+  result = v1.x * v2.x + v1.y * v2.y
+
+proc dot*(v1, v2: Vector3): float =
+  result = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z
+
+proc dot*(v1, v2: Vector4): float =
+  result = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w
+
 # String
 proc `$`*(v: Vector1): string =
   result = &"[{v.x}]"
