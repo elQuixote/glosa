@@ -255,6 +255,54 @@ proc cross*(v1, v2: Vector3): Vector3 =
 
 # NOTE: No 4D cross product
 
+# Inverse
+
+# NOTE: Changed/Added from design doc
+proc inverseSelf*(v: var Vector1): var Vector1 {.noinit.} =
+  v.x = -v.x
+  result = v
+
+proc inverseNew*(v: Vector1): Vector1 =
+  result.x = -v.x
+
+proc inverseSelf*(v: var Vector2): var Vector2 {.noinit.} =
+  v.x = -v.x
+  v.y = -v.y
+  result = v
+
+proc inverseNew*(v: Vector2): Vector2 =
+  result.x = -v.x
+  result.y = -v.y
+
+proc inverseSelf*(v: var Vector3): var Vector3 {.noinit.} =
+  v.x = -v.x
+  v.y = -v.y
+  v.z = -v.z
+  result = v
+
+proc inverseNew*(v: Vector3): Vector3 =
+  result.x = -v.x
+  result.y = -v.y
+  result.z = -v.z
+
+proc inverseSelf*(v: var Vector4): var Vector4 {.noinit.} =
+  v.x = -v.x
+  v.y = -v.y
+  v.z = -v.z
+  v.w = -v.w
+  result = v
+
+proc inverseNew*(v: Vector4): Vector4 =
+  result.x = -v.x
+  result.y = -v.y
+  result.z = -v.z
+  result.w = -v.w
+
+template inverse*(v: Vector1): Vector1 = inverseNew(v)
+template inverse*(v: Vector2): Vector2 = inverseNew(v)
+template inverse*(v: Vector3): Vector3 = inverseNew(v)
+template inverse*(v: Vector4): Vector4 = inverseNew(v)
+
 # String
 proc `$`*(v: Vector1): string =
   result = &"[{v.x}]"
