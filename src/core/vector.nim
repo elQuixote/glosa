@@ -1,7 +1,7 @@
 import ./concepts
 
 from math import arctan2
-import strformat
+from strformat import `&`
 
 type
   Vector1* = object
