@@ -238,6 +238,23 @@ proc dot*(v1, v2: Vector3): float =
 proc dot*(v1, v2: Vector4): float =
   result = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w
 
+# Cross
+
+# NOTE: Discuss output (Vector1 or float)
+proc cross*(v1, v2: Vector1): float =
+  result = v1.x * v2.x
+
+# NOTE: Discuss output (Vector1 or float)
+proc cross*(v1, v2: Vector2): float =
+  result = v1.x * v2.x - v1.y * v2.y
+
+proc cross*(v1, v2: Vector3): Vector3 =
+  result.x = v1.y * v2.z - v1.z * v2.y
+  result.y = v1.z * v2.x - v1.x * v2.z
+  result.z = v1.x * v2.y - v1.y * v2.x
+
+# NOTE: No 4D cross product
+
 # String
 proc `$`*(v: Vector1): string =
   result = &"[{v.x}]"
