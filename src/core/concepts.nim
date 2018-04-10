@@ -15,7 +15,7 @@ type
     a.multiplySelf(float) is Vector
     a.multiplyNew(float) is Vector
     a.dot(b) is float
-    a.cross(b)
+    a.cross(b) # NOTE: No different return type
     a.inverse() is Vector
     a.heading() is float
     a.reflect(b) is Vector
