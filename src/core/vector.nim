@@ -1,5 +1,6 @@
 import ./concepts
 
+from math import arctan2
 import strformat
 
 type
@@ -225,7 +226,6 @@ template `/=`*(v: var Vector3, f: float): var Vector3 = divideSelf(v, f)
 template `/=`*(v: var Vector4, f: float): var Vector4 = divideSelf(v, f)
 
 # Dot
-
 proc dot*(v1, v2: Vector1): float =
   result = v1.x * v2.x
 
@@ -302,6 +302,42 @@ template inverse*(v: Vector1): Vector1 = inverseNew(v)
 template inverse*(v: Vector2): Vector2 = inverseNew(v)
 template inverse*(v: Vector3): Vector3 = inverseNew(v)
 template inverse*(v: Vector4): Vector4 = inverseNew(v)
+
+# Heading
+proc headingXY*(v: Vector2): float =
+  result = arctan2(v.y, v.x)
+
+proc headingXY*(v: Vector3): float =
+  result = arctan2(v.y, v.x)
+
+proc headingXZ*(v: Vector3): float =
+  result = arctan2(v.z, v.x)
+
+proc headingYZ*(v: Vector3): float =
+  result = arctan2(v.z, v.y)
+
+proc headingXY*(v: Vector4): float =
+  result = arctan2(v.y, v.x)
+
+proc headingXZ*(v: Vector4): float =
+  result = arctan2(v.z, v.x)
+  
+proc headingXW*(v: Vector4): float =
+  result = arctan2(v.w, v.x)
+
+proc headingYZ*(v: Vector4): float =
+  result = arctan2(v.z, v.y)
+
+proc headingYW*(v: Vector4): float =
+  result = arctan2(v.w, v.y)
+
+proc headingZW*(v: Vector4): float =
+  result = arctan2(v.w, v.z)
+
+template heading*(v: Vector1): float = 0.0
+template heading*(v: Vector2): float = headingXY(v)
+template heading*(v: Vector3): float = headingXY(v)
+template heading*(v: Vector4): float = headingXY(v)
 
 # String
 proc `$`*(v: Vector1): string =
