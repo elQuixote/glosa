@@ -1,4 +1,5 @@
 # NOTE: Added Set
+import hashes
 
 type
   Vector* = concept a, b

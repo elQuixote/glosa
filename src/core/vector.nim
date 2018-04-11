@@ -2,6 +2,7 @@ import ./concepts
 
 from math import arctan2, arccos, sqrt
 from strformat import `&`
+import hashes
 
 type
   Vector1* = object
@@ -689,7 +690,7 @@ proc angleBetween*(v1, v2: Vector3): float =
 proc angleBetween*(v1, v2: Vector4): float =
   result = arccos(dot(v1, v2) / (magnitude(v1) * magnitude(v2)))
 
-# Compare
+# Compare (compares magnitudes)
 proc `>`*(v1, v2: Vector1): bool =
   result = magnitude(v1) > magnitude(v2)
 
@@ -738,8 +739,7 @@ proc `>=`*(v1, v2: Vector4): bool =
 proc `<=`*(v1, v2: Vector4): bool =
   result = magnitude(v1) <= magnitude(v2)
 
-# Equals
-
+# Equals (compares coordinates)
 proc `==`*(v1, v2: Vector1): bool =
   result = v1.x == v2.x
 
@@ -751,6 +751,19 @@ proc `==`*(v1, v2: Vector3): bool =
 
 proc `==`*(v1, v2: Vector4): bool =
   result = v1.x == v2.x and v1.y == v2.y and v1.z == v2.z and v1.w == v2.w
+
+# Hash
+proc hash*(v: Vector1): hashes.Hash =
+  result = !$(result !& hash(v.x))
+
+proc hash*(v: Vector2): hashes.Hash =
+  result = !$(result !& hash(v.x) !& hash(v.y))
+
+proc hash*(v: Vector3): hashes.Hash =
+  result = !$(result !& hash(v.x) !& hash(v.y) !& hash(v.z))
+
+proc hash*(v: Vector4): hashes.Hash =
+  result = !$(result !& hash(v.x) !& hash(v.y) !& hash(v.z) !& hash(v.w))
 
 # String
 # NOTE: Changed from design doc
