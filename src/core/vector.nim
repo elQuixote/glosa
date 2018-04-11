@@ -525,20 +525,18 @@ proc refractSelf*(v: var Vector1, n: Vector1, eta: float): var Vector1 {.noinit.
     d = dot(n, v)
     k = 1.0 - eta * eta * (1.0 - d * d)
   if (k < 0):
-    # TODO: Refactor
-    v.x = 0.0
+    result = set(v, 0.0)
   else:
-    v = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d * sqrt(k)))
-  result = v
+    result = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d * sqrt(k)))
 
 proc refractNew*(v, n: Vector1, eta: float): Vector1 =
   let
     d = dot(n, v)
     k = 1.0 - eta * eta * (1.0 - d * d)
   if (k < 0):
-    # TODO: Refactor
-    result.x = 0.0
+    result = set(result, 0.0)
   else:
+    # NOTE: Should this be refactored?
     result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d * sqrt(k)))
 
 proc refractSelf*(v: var Vector2, n: Vector2, eta: float): var Vector2 {.noinit.} =
@@ -546,20 +544,18 @@ proc refractSelf*(v: var Vector2, n: Vector2, eta: float): var Vector2 {.noinit.
     d = dot(n, v)
     k = 1.0 - eta * eta * (1.0 - d * d)
   if (k < 0):
-    # TODO: Refactor
-    v.x = 0.0
+    result = set(v, 0.0)
   else:
-    v = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d * sqrt(k)))
-  result = v
+    result = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d * sqrt(k)))
 
 proc refractNew*(v, n: Vector2, eta: float): Vector2 =
   let
     d = dot(n, v)
     k = 1.0 - eta * eta * (1.0 - d * d)
   if (k < 0):
-    # TODO: Refactor
-    result.x = 0.0
+    result = set(result, 0.0)
   else:
+    # NOTE: Should this be refactored?
     result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d * sqrt(k)))
 
 proc refractSelf*(v: var Vector3, n: Vector3, eta: float): var Vector3 {.noinit.} =
@@ -567,20 +563,18 @@ proc refractSelf*(v: var Vector3, n: Vector3, eta: float): var Vector3 {.noinit.
     d = dot(n, v)
     k = 1.0 - eta * eta * (1.0 - d * d)
   if (k < 0):
-    # TODO: Refactor
-    v.x = 0.0
+    result = set(v, 0.0)
   else:
-    v = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d * sqrt(k)))
-  result = v
+    result = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d * sqrt(k)))
 
 proc refractNew*(v, n: Vector3, eta: float): Vector3 =
   let
     d = dot(n, v)
     k = 1.0 - eta * eta * (1.0 - d * d)
   if (k < 0):
-    # TODO: Refactor
-    result.x = 0.0
+    result = set(result, 0.0)
   else:
+    # NOTE: Should this be refactored?
     result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d * sqrt(k)))
 
 proc refractSelf*(v: var Vector4, n: Vector4, eta: float): var Vector4 {.noinit.} =
@@ -588,20 +582,18 @@ proc refractSelf*(v: var Vector4, n: Vector4, eta: float): var Vector4 {.noinit.
     d = dot(n, v)
     k = 1.0 - eta * eta * (1.0 - d * d)
   if (k < 0):
-    # TODO: Refactor
-    v.x = 0.0
+    result = set(v, 0.0)
   else:
-    v = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d * sqrt(k)))
-  result = v
+    result = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d * sqrt(k)))
 
 proc refractNew*(v, n: Vector4, eta: float): Vector4 =
   let
     d = dot(n, v)
     k = 1.0 - eta * eta * (1.0 - d * d)
   if (k < 0):
-    # TODO: Refactor
-    result.x = 0.0
+    result = set(result, 0.0)
   else:
+    # NOTE: Should this be refactored?
     result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d * sqrt(k)))
 
 template refract*(v, n: Vector1, eta): Vector1 = refractNew(v, n, eta)
