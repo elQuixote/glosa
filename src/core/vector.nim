@@ -771,6 +771,19 @@ proc hash*(v: Vector3): hashes.Hash =
 proc hash*(v: Vector4): hashes.Hash =
   result = !$(result !& hash(v.x) !& hash(v.y) !& hash(v.z) !& hash(v.w))
 
+# Dimension
+proc dimension*(v: Vector1): int =
+  result = 1
+
+proc dimension*(v: Vector2): int =
+  result = 2
+
+proc dimension*(v: Vector3): int =
+  result = 3
+
+proc dimension*(v: Vector4): int =
+  result = 4
+ 
 # String
 # NOTE: Changed from design doc
 proc `$`*(v: Vector1): string =
