@@ -615,6 +615,12 @@ proc magnitude*(v: Vector3): float =
 proc magnitude*(v: Vector4): float =
   result = sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w)
 
+# Length
+template length*(v: Vector1): float = magnitude(v)
+template length*(v: Vector2): float = magnitude(v)
+template length*(v: Vector3): float = magnitude(v)
+template length*(v: Vector4): float = magnitude(v)
+
 # Normalize
 proc normalizeSelf*(v: var Vector1, m: float = 1.0): var Vector1 {.noinit.} =
   let magnitude = magnitude(v)
