@@ -45,7 +45,8 @@ type
     a == b is bool
 
   Hash* = concept a
-    a.hash() is string
+    # NOTE: Changed from design doc (string to Hash)
+    a.hash() is hashes.Hash
 
   Transform* = concept a
     a.rotate(float) is Transform

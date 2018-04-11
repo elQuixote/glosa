@@ -13,6 +13,25 @@ type
     x*, y*, z*: float
   Vector4* = object
     x*, y*, z*, w*: float
+
+# Constructors
+proc vector1*(x: float): Vector1 =
+  result.x = x
+
+proc vector2*(x, y: float): Vector2 =
+  result.x = x
+  result.y = y
+
+proc vector3*(x, y, z: float): Vector3 =
+  result.x = x
+  result.y = y
+  result.z = z
+
+proc vector4*(x, y, z, w: float): Vector4 =
+  result.x = x
+  result.y = y
+  result.z = z
+  result.w = w
  
 # Copy
 proc copy*(v: Vector1): Vector1 =
