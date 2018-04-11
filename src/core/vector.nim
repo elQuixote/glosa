@@ -738,6 +738,20 @@ proc `>=`*(v1, v2: Vector4): bool =
 proc `<=`*(v1, v2: Vector4): bool =
   result = magnitude(v1) <= magnitude(v2)
 
+# Equals
+
+proc `==`*(v1, v2: Vector1): bool =
+  result = v1.x == v2.x
+
+proc `==`*(v1, v2: Vector2): bool =
+  result = v1.x == v2.x and v1.y == v2.y
+
+proc `==`*(v1, v2: Vector3): bool =
+  result = v1.x == v2.x and v1.y == v2.y and v1.z == v2.z
+
+proc `==`*(v1, v2: Vector4): bool =
+  result = v1.x == v2.x and v1.y == v2.y and v1.z == v2.z and v1.w == v2.w
+
 # String
 # NOTE: Changed from design doc
 proc `$`*(v: Vector1): string =
