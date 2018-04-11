@@ -1,3 +1,5 @@
+# NOTE: Added Set
+
 type
   Vector* = concept a, b
     a + b is Vector
@@ -20,8 +22,8 @@ type
     a.heading() is float
     a.reflect(b) is Vector
     a.refract(b, float) is Vector
+    a.magnitude() is float # NOTE: Moved above normalize
     a.normalize() is Vector
-    a.magnitude() is float
     a.angleBetween(b) is Vector
     a.toPolar() is Vector
     a.toCartesian() is Vector

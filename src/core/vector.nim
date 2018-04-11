@@ -13,6 +13,47 @@ type
   Vector4* = object
     x*, y*, z*, w*: float
 
+# Set
+proc setSelf*(v: var Vector1, n: float): var Vector1 {.noinit.} =
+  v.x = n
+  result = v
+
+proc setNew*(v: Vector1, n: float): Vector1 =
+  result.x = n
+
+proc setSelf*(v: var Vector2, n: float): var Vector2 {.noinit.} =
+  v.x = n
+  v.y = n
+  result = v
+
+proc setNew*(v: Vector2, n: float): Vector2 =
+  result.x = n
+  result.y = n
+
+proc setSelf*(v: var Vector3, n: float): var Vector3 {.noinit.} =
+  v.x = n
+  v.y = n
+  v.z = n
+  result = v
+
+proc setNew*(v: Vector3, n: float): Vector3 =
+  result.x = n
+  result.y = n
+  result.z = n
+
+proc setSelf*(v: var Vector4, n: float): var Vector4 {.noinit.} =
+  v.x = n
+  v.y = n
+  v.z = n
+  v.w = n
+  result = v
+
+proc setNew*(v: Vector4, n: float): Vector4 =
+  result.x = n
+  result.y = n
+  result.z = n
+  result.w = n
+
 # Copy
 proc copy*(v: Vector1): Vector1 =
   result = Vector1(x: v.x)
@@ -637,6 +678,8 @@ template normalize*(v: var Vector1, m: float = 1.0): var Vector1 = normalizeSelf
 template normalize*(v: var Vector2, m: float = 1.0): var Vector2 = normalizeSelf(v, m)
 template normalize*(v: var Vector3, m: float = 1.0): var Vector3 = normalizeSelf(v, m)
 template normalize*(v: var Vector4, m: float = 1.0): var Vector4 = normalizeSelf(v, m)
+
+# Angle Between
 
 # String
 # NOTE: Changed from design doc
