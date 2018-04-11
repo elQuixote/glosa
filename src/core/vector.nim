@@ -54,6 +54,11 @@ proc setNew*(v: Vector4, n: float): Vector4 =
   result.z = n
   result.w = n
 
+template set*(v: var Vector1, n: float): var Vector1 = setSelf(v, n)
+template set*(v: var Vector2, n: float): var Vector2 = setSelf(v, n)
+template set*(v: var Vector3, n: float): var Vector3 = setSelf(v, n)
+template set*(v: var Vector4, n: float): var Vector4 = setSelf(v, n)
+
 # Copy
 proc copy*(v: Vector1): Vector1 =
   result = Vector1(x: v.x)
