@@ -1,6 +1,6 @@
 import ./concepts
 
-from math import arctan2, sqrt
+from math import arctan2, arccos, sqrt
 from strformat import `&`
 
 type
@@ -12,6 +12,19 @@ type
     x*, y*, z*: float
   Vector4* = object
     x*, y*, z*, w*: float
+
+# Copy
+proc copy*(v: Vector1): Vector1 =
+  result = Vector1(x: v.x)
+
+proc copy*(v: Vector2): Vector2 =
+  result = Vector2(x: v.x, y: v.y)
+
+proc copy*(v: Vector3): Vector3 =
+  result = Vector3(x: v.x, y: v.y, z: v.z)
+
+proc copy*(v: Vector4): Vector4 =
+  result = Vector4(x: v.x, y: v.y, z: v.z, w: v.w)
 
 # Set
 proc setSelf*(v: var Vector1, n: float): var Vector1 {.noinit.} =
@@ -58,19 +71,6 @@ template set*(v: var Vector1, n: float): var Vector1 = setSelf(v, n)
 template set*(v: var Vector2, n: float): var Vector2 = setSelf(v, n)
 template set*(v: var Vector3, n: float): var Vector3 = setSelf(v, n)
 template set*(v: var Vector4, n: float): var Vector4 = setSelf(v, n)
-
-# Copy
-proc copy*(v: Vector1): Vector1 =
-  result = Vector1(x: v.x)
-
-proc copy*(v: Vector2): Vector2 =
-  result = Vector2(x: v.x, y: v.y)
-
-proc copy*(v: Vector3): Vector3 =
-  result = Vector3(x: v.x, y: v.y, z: v.z)
-
-proc copy*(v: Vector4): Vector4 =
-  result = Vector4(x: v.x, y: v.y, z: v.z, w: v.w)
 
 # Addition
 # NOTE: Added Scalar addition to all vectors
@@ -677,6 +677,17 @@ template normalize*(v: var Vector3, m: float = 1.0): var Vector3 = normalizeSelf
 template normalize*(v: var Vector4, m: float = 1.0): var Vector4 = normalizeSelf(v, m)
 
 # Angle Between
+proc angleBetween*(v1, v2: Vector1): float =
+  result = 0.0
+
+proc angleBetween*(v1, v2: Vector2): float =
+  result = arccos(dot(v1, v2) / (magnitude(v1) * magnitude(v2)))
+
+proc angleBetween*(v1, v2: Vector3): float =
+  result = arccos(dot(v1, v2) / (magnitude(v1) * magnitude(v2)))
+
+proc angleBetween*(v1, v2: Vector4): float =
+  result = arccos(dot(v1, v2) / (magnitude(v1) * magnitude(v2)))
 
 # String
 # NOTE: Changed from design doc
