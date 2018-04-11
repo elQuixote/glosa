@@ -461,7 +461,7 @@ template reflect*(v, n: Vector4) = reflectNew(v, n)
 
 # Refract
 # NOTE: Changed from design doc
-proc refractSelf*(v: var Vector1, n: Vector1, eta: float): var Vector1 =
+proc refractSelf*(v: var Vector1, n: Vector1, eta: float): var Vector1 {.noinit.} =
   let 
     d = dot(n, v)
     k = 1.0 - eta * eta * (1.0 - d * d)
@@ -482,7 +482,7 @@ proc refractNew*(v, n: Vector1, eta: float): Vector1 =
   else:
     result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d * sqrt(k)))
 
-proc refractSelf*(v: var Vector2, n: Vector2, eta: float): var Vector2 =
+proc refractSelf*(v: var Vector2, n: Vector2, eta: float): var Vector2 {.noinit.} =
   let 
     d = dot(n, v)
     k = 1.0 - eta * eta * (1.0 - d * d)
@@ -503,7 +503,7 @@ proc refractNew*(v, n: Vector2, eta: float): Vector2 =
   else:
     result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d * sqrt(k)))
 
-proc refractSelf*(v: var Vector3, n: Vector3, eta: float): var Vector3 =
+proc refractSelf*(v: var Vector3, n: Vector3, eta: float): var Vector3 {.noinit.} =
   let 
     d = dot(n, v)
     k = 1.0 - eta * eta * (1.0 - d * d)
@@ -524,7 +524,7 @@ proc refractNew*(v, n: Vector3, eta: float): Vector3 =
   else:
     result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d * sqrt(k)))
 
-proc refractSelf*(v: var Vector4, n: Vector4, eta: float): var Vector4 =
+proc refractSelf*(v: var Vector4, n: Vector4, eta: float): var Vector4 {.noinit.} =
   let 
     d = dot(n, v)
     k = 1.0 - eta * eta * (1.0 - d * d)
@@ -549,6 +549,23 @@ template refract*(v, n: Vector1, eta): Vector1 = refractNew(v, n, eta)
 template refract*(v, n: Vector2, eta): Vector2 = refractNew(v, n, eta)
 template refract*(v, n: Vector3, eta): Vector3 = refractNew(v, n, eta)
 template refract*(v, n: Vector4, eta): Vector4 = refractNew(v, n, eta)
+
+# Magnitude
+proc magnitude*(v: Vector1): float =
+  result = v.x
+
+proc magnitude*(v: Vector2): float =
+  result = sqrt(v.x * v.x + v.y * v.y)
+
+proc magnitude*(v: Vector3): float =
+  result = sqrt(v.x * v.x + v.y * v.y + v.z * v.z)
+
+proc magnitude*(v: Vector4): float =
+  result = sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w)
+
+# Normalize
+#proc normalizeSelf*(v: var Vector1): var Vector1 {.noinit.} =
+  
 
 # String
 # NOTE: Changed from design doc
