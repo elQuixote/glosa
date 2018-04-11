@@ -13,6 +13,19 @@ type
   Vector4* = object
     x*, y*, z*, w*: float
 
+# Copy
+proc copy*(v: Vector1): Vector1 =
+  result = Vector1(x: v.x)
+
+proc copy*(v: Vector2): Vector2 =
+  result = Vector2(x: v.x, y: v.y)
+
+proc copy*(v: Vector3): Vector3 =
+  result = Vector3(x: v.x, y: v.y, z: v.z)
+
+proc copy*(v: Vector4): Vector4 =
+  result = Vector4(x: v.x, y: v.y, z: v.z, w: v.w)
+
 # Addition
 # NOTE: Added Scalar addition to all vectors
 proc addSelf*(v: var Vector1, f: float): var Vector1 {.noinit.} =
@@ -576,8 +589,7 @@ proc normalizeNew*(v: Vector1, m: float = 1.0): Vector1 =
   if (magnitude > 0):
     result = multiplyNew(v, m / magnitude)
   else:
-    # TODO: Change to copy
-    result = v
+    result = copy(v)
 
 proc normalizeSelf*(v: var Vector2, m: float = 1.0): var Vector2 {.noinit.} =
   let magnitude = magnitude(v)
@@ -591,8 +603,7 @@ proc normalizeNew*(v: Vector2, m: float = 1.0): Vector2 =
   if (magnitude > 0):
     result = multiplyNew(v, m / magnitude)
   else:
-    # TODO: Change to copy
-    result = v
+    result = copy(v)
 
 proc normalizeSelf*(v: var Vector3, m: float = 1.0): var Vector3 {.noinit.} =
   let magnitude = magnitude(v)
@@ -606,8 +617,7 @@ proc normalizeNew*(v: Vector3, m: float = 1.0): Vector3 =
   if (magnitude > 0):
     result = multiplyNew(v, m / magnitude)
   else:
-    # TODO: Change to copy
-    result = v
+    result = copy(v)
 
 proc normalizeSelf*(v: var Vector4, m: float = 1.0): var Vector4 {.noinit.} =
   let magnitude = magnitude(v)
@@ -621,21 +631,12 @@ proc normalizeNew*(v: Vector4, m: float = 1.0): Vector4 =
   if (magnitude > 0):
     result = multiplyNew(v, m / magnitude)
   else:
-    # TODO: Change to copy
-    result = v
+    result = copy(v)
 
-# Copy
-proc copy*(v: Vector1): Vector1 =
-  result = Vector1(x: v.x)
-
-proc copy*(v: Vector2): Vector2 =
-  result = Vector2(x: v.x, y: v.y)
-
-proc copy*(v: Vector3): Vector3 =
-  result = Vector3(x: v.x, y: v.y, z: v.z)
-
-proc copy*(v: Vector4): Vector4 =
-  result = Vector4(x: v.x, y: v.y, z: v.z, v.w)
+template normalize*(v: var Vector1, m: float = 1.0): var Vector1 = normalizeSelf(v, m)
+template normalize*(v: var Vector2, m: float = 1.0): var Vector2 = normalizeSelf(v, m)
+template normalize*(v: var Vector3, m: float = 1.0): var Vector3 = normalizeSelf(v, m)
+template normalize*(v: var Vector4, m: float = 1.0): var Vector4 = normalizeSelf(v, m)
 
 # String
 # NOTE: Changed from design doc
