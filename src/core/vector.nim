@@ -13,7 +13,7 @@ type
     x*, y*, z*: float
   Vector4* = object
     x*, y*, z*, w*: float
-
+ 
 # Copy
 proc copy*(v: Vector1): Vector1 =
   result = Vector1(x: v.x)
@@ -72,6 +72,12 @@ template set*(v: var Vector1, n: float): var Vector1 = setSelf(v, n)
 template set*(v: var Vector2, n: float): var Vector2 = setSelf(v, n)
 template set*(v: var Vector3, n: float): var Vector3 = setSelf(v, n)
 template set*(v: var Vector4, n: float): var Vector4 = setSelf(v, n)
+
+# Clear
+template clear*(v: var Vector1): var Vector1 = setSelf(v, 0.0)
+template clear*(v: var Vector2): var Vector2 = setSelf(v, 0.0)
+template clear*(v: var Vector3): var Vector3 = setSelf(v, 0.0)
+template clear*(v: var Vector4): var Vector4 = setSelf(v, 0.0)
 
 # Addition
 # NOTE: Added Scalar addition to all vectors
