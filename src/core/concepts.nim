@@ -25,8 +25,9 @@ type
     a.magnitude() is float # NOTE: Moved above normalize
     a.normalize() is Vector
     a.angleBetween(b) is Vector
-    a.toPolar() is Vector
-    a.toCartesian() is Vector
+    # NOTE: REMOVED
+    # a.toPolar() is Vector
+    # a.toCartesian() is Vector
   
   Matrix* = concept a
     a.transpose() is Matrix
@@ -68,4 +69,5 @@ type
     a.copy() is Copy
 
   String* = concept a
+    # NOTE: This changed from design doc
     a.`$`() is string

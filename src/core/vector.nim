@@ -689,6 +689,55 @@ proc angleBetween*(v1, v2: Vector3): float =
 proc angleBetween*(v1, v2: Vector4): float =
   result = arccos(dot(v1, v2) / (magnitude(v1) * magnitude(v2)))
 
+# Compare
+proc `>`*(v1, v2: Vector1): bool =
+  result = magnitude(v1) > magnitude(v2)
+
+proc `<`*(v1, v2: Vector1): bool =
+  result = magnitude(v1) < magnitude(v2)
+
+proc `>=`*(v1, v2: Vector1): bool =
+  result = magnitude(v1) >= magnitude(v2)
+
+proc `<=`*(v1, v2: Vector1): bool =
+  result = magnitude(v1) <= magnitude(v2)
+
+proc `>`*(v1, v2: Vector2): bool =
+  result = magnitude(v1) > magnitude(v2)
+
+proc `<`*(v1, v2: Vector2): bool =
+  result = magnitude(v1) < magnitude(v2)
+
+proc `>=`*(v1, v2: Vector2): bool =
+  result = magnitude(v1) >= magnitude(v2)
+
+proc `<=`*(v1, v2: Vector2): bool =
+  result = magnitude(v1) <= magnitude(v2)
+
+proc `>`*(v1, v2: Vector3): bool =
+  result = magnitude(v1) > magnitude(v2)
+
+proc `<`*(v1, v2: Vector3): bool =
+  result = magnitude(v1) < magnitude(v2)
+
+proc `>=`*(v1, v2: Vector3): bool =
+  result = magnitude(v1) >= magnitude(v2)
+
+proc `<=`*(v1, v2: Vector3): bool =
+  result = magnitude(v1) <= magnitude(v2)
+
+proc `>`*(v1, v2: Vector4): bool =
+  result = magnitude(v1) > magnitude(v2)
+
+proc `<`*(v1, v2: Vector4): bool =
+  result = magnitude(v1) < magnitude(v2)
+
+proc `>=`*(v1, v2: Vector4): bool =
+  result = magnitude(v1) >= magnitude(v2)
+
+proc `<=`*(v1, v2: Vector4): bool =
+  result = magnitude(v1) <= magnitude(v2)
+
 # String
 # NOTE: Changed from design doc
 proc `$`*(v: Vector1): string =
