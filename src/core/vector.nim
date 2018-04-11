@@ -564,8 +564,78 @@ proc magnitude*(v: Vector4): float =
   result = sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w)
 
 # Normalize
-#proc normalizeSelf*(v: var Vector1): var Vector1 {.noinit.} =
-  
+proc normalizeSelf*(v: var Vector1, m: float = 1.0): var Vector1 {.noinit.} =
+  let magnitude = magnitude(v)
+  if (magnitude > 0):
+    result = multiplySelf(v, m / magnitude)
+  else:
+    result = v
+
+proc normalizeNew*(v: Vector1, m: float = 1.0): Vector1 =
+  let magnitude = magnitude(v)
+  if (magnitude > 0):
+    result = multiplyNew(v, m / magnitude)
+  else:
+    # TODO: Change to copy
+    result = v
+
+proc normalizeSelf*(v: var Vector2, m: float = 1.0): var Vector2 {.noinit.} =
+  let magnitude = magnitude(v)
+  if (magnitude > 0):
+    result = multiplySelf(v, m / magnitude)
+  else:
+    result = v
+
+proc normalizeNew*(v: Vector2, m: float = 1.0): Vector2 =
+  let magnitude = magnitude(v)
+  if (magnitude > 0):
+    result = multiplyNew(v, m / magnitude)
+  else:
+    # TODO: Change to copy
+    result = v
+
+proc normalizeSelf*(v: var Vector3, m: float = 1.0): var Vector3 {.noinit.} =
+  let magnitude = magnitude(v)
+  if (magnitude > 0):
+    result = multiplySelf(v, m / magnitude)
+  else:
+    result = v
+
+proc normalizeNew*(v: Vector3, m: float = 1.0): Vector3 =
+  let magnitude = magnitude(v)
+  if (magnitude > 0):
+    result = multiplyNew(v, m / magnitude)
+  else:
+    # TODO: Change to copy
+    result = v
+
+proc normalizeSelf*(v: var Vector4, m: float = 1.0): var Vector4 {.noinit.} =
+  let magnitude = magnitude(v)
+  if (magnitude > 0):
+    result = multiplySelf(v, m / magnitude)
+  else:
+    result = v
+
+proc normalizeNew*(v: Vector4, m: float = 1.0): Vector4 =
+  let magnitude = magnitude(v)
+  if (magnitude > 0):
+    result = multiplyNew(v, m / magnitude)
+  else:
+    # TODO: Change to copy
+    result = v
+
+# Copy
+proc copy*(v: Vector1): Vector1 =
+  result = Vector1(x: v.x)
+
+proc copy*(v: Vector2): Vector2 =
+  result = Vector2(x: v.x, y: v.y)
+
+proc copy*(v: Vector3): Vector3 =
+  result = Vector3(x: v.x, y: v.y, z: v.z)
+
+proc copy*(v: Vector4): Vector4 =
+  result = Vector4(x: v.x, y: v.y, z: v.z, v.w)
 
 # String
 # NOTE: Changed from design doc
