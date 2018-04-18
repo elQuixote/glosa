@@ -62,3 +62,69 @@ suite "Creating a new Vector":
         v1.z == v2.z
         v1.w == THREE_F
         v1.w == v2.w
+
+suite "Copying a new Vector":
+  test "Copying a Vector1":
+    block:
+      var 
+        v1 = Vector1(x: ZERO_F)
+        v2 = v1.copy()
+      v2.x += ONE_F
+      check:
+        v1.x != v2.x
+        v1.x == ZERO_F
+        v2.x == ONE_F
+  test "Copying a Vector2":
+    block:
+      var 
+        v1 = Vector2(x: ZERO_F, y: ZERO_F)
+        v2 = v1.copy()
+      v2.x += ONE_F
+      v2.y += ONE_F
+      check:
+        v1.x != v2.x
+        v1.x == ZERO_F
+        v2.x == ONE_F
+        v1.y != v2.y
+        v1.y == ZERO_F
+        v2.y == ONE_F
+  test "Copying a Vector3":
+    block:
+      var 
+        v1 = Vector3(x: ZERO_F, y: ZERO_F, z: ZERO_F)
+        v2 = v1.copy()
+      v2.x += ONE_F
+      v2.y += ONE_F
+      v2.z += ONE_F
+      check:
+        v1.x != v2.x
+        v1.x == ZERO_F
+        v2.x == ONE_F
+        v1.y != v2.y
+        v1.y == ZERO_F
+        v2.y == ONE_F
+        v1.z != v2.z
+        v1.z == ZERO_F
+        v2.z == ONE_F
+  test "Copying a Vector4":
+    block:
+      var 
+        v1 = Vector4(x: ZERO_F, y: ZERO_F, z: ZERO_F, w: ZERO_F)
+        v2 = v1.copy()
+      v2.x += ONE_F
+      v2.y += ONE_F
+      v2.z += ONE_F
+      v2.w += ONE_F
+      check:
+        v1.x != v2.x
+        v1.x == ZERO_F
+        v2.x == ONE_F
+        v1.y != v2.y
+        v1.y == ZERO_F
+        v2.y == ONE_F
+        v1.z != v2.z
+        v1.z == ZERO_F
+        v2.z == ONE_F
+        v1.w != v2.w
+        v1.w == ZERO_F
+        v2.w == ONE_F
