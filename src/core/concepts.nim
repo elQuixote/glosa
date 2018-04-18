@@ -1,8 +1,9 @@
+{.hint[XDeclaredButNotUsed]: off.}
 # NOTE: Added Set
 import hashes
 
 type
-  Vector* = concept a, b
+  Vector* {.explain.} = concept a, var b, type T
     a + b is Vector
     a.addSelf(b) is Vector
     a.addNew(b) is Vector
@@ -30,25 +31,25 @@ type
     # a.toPolar() is Vector
     # a.toCartesian() is Vector
   
-  Matrix* = concept a
+  Matrix* {.explain.} = concept a
     a.transpose() is Matrix
     a.determinant() is float
     a.invert() is Matrix
 
-  Compare* = concept a, b
+  Compare* {.explain.} = concept a, b
     a > b is bool
     a < b is bool
     a >= b is bool
     a <= b is bool
 
-  Equals* = concept a, b
+  Equals* {.explain.} = concept a, b
     a == b is bool
 
-  Hash* = concept a
+  Hash* {.explain.} = concept a
     # NOTE: Changed from design doc (string to Hash)
     a.hash() is hashes.Hash
 
-  Transform* = concept a
+  Transform* {.explain.} = concept a
     a.rotate(float) is Transform
     a.rotate(int) is Transform
     a.scale(float) is Transform
@@ -58,18 +59,18 @@ type
     a.translate(Vector) is Transform
     a.transform(Matrix) is Transform
 
-  Length* = concept a
+  Length* {.explain.} = concept a
     a.length() is float
 
-  Dimension* = concept a
+  Dimension* {.explain.} = concept a
     a.dimensions() is int
 
-  Clear* = concept a
+  Clear* {.explain.} = concept a
     a.clear() is Clear
 
-  Copy* = concept a
+  Copy* {.explain.} = concept a
     a.copy() is Copy
 
-  String* = concept a
+  String* {.explain.} = concept a
     # NOTE: This changed from design doc
     a.`$`() is string
