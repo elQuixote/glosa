@@ -5,17 +5,19 @@ import hashes
 type
   Vector* {.explain.} = concept a, b, var va, type T
     a + b is T
+    a += b is T
     va.addSelf(b) is T
     a.addNew(b) is T
     a - b is T
+    a -= b is T
     va.subtractSelf(b) is T
     a.subtractNew(b) is T
     a / float is T
-    a / int is T
+    a /= float is T
     va.divideSelf(float) is T
     a.divideNew(float) is T
     a * float is T
-    a * int is T
+    a *= float is T
     va.multiplySelf(float) is T
     a.multiplyNew(float) is T
     a.dot(b) is float
