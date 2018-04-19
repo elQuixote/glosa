@@ -1,5 +1,8 @@
 import ./concepts
 
+from strformat import `&`
+import hashes
+
 type 
     Matrix32* = object
         m00*, m01*, m02*, 
@@ -201,3 +204,16 @@ proc `==`*(m1, m2: Matrix44): bool =
            m1.m10 == m2.m10 and m1.m11 == m2.m11 and m1.m12 == m2.m12 and m1.m13 == m2.m13 and
            m1.m20 == m2.m20 and m1.m21 == m2.m21 and m1.m22 == m2.m22 and m1.m23 == m2.m23 and
            m1.m30 == m2.m30 and m1.m31 == m2.m31 and m1.m32 == m2.m32 and m1.m33 == m2.m33  
+
+# Hash
+proc hash*(m: Matrix32): hashes.Hash =
+    result = !$(result !& 
+      hash(m.m00) !& hash(m.m01) !& hash(m.m02) !&
+      hash(m.m10) !& hash(m.m11) !& hash(m.m12))
+  
+proc hash*(m: Matrix44): hashes.Hash =
+    result = !$(result !& 
+        hash(m.m00) !& hash(m.m01) !& hash(m.m02) !& hash(m.m03) !&
+        hash(m.m10) !& hash(m.m11) !& hash(m.m12) !& hash(m.m13) !&
+        hash(m.m20) !& hash(m.m21) !& hash(m.m22) !& hash(m.m23) !&
+        hash(m.m30) !& hash(m.m31) !& hash(m.m32) !& hash(m.m33))
