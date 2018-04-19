@@ -229,3 +229,50 @@ proc `$`*(m: Matrix44): string =
                 &"{m.m10}, {m.m11}, {m.m12}, {m.m13}, \n" &
                 &"{m.m20}, {m.m21}, {m.m22}, {m.m23}, \n" &
                 &"{m.m30}, {m.m31}, {m.m32}, {m.m33}]"
+
+#Transpose
+proc transposeSelf*(m: var Matrix32): var Matrix32 {.noinit.} =
+    swap(m.matrix[0][1], m.matrix[1][0])
+    swap(m.matrix[1][0], m.matrix[1][1])
+    swap(m.matrix[0][2], m.matrix[1][1])
+    result = m
+
+proc transposeNew*(m: Matrix32): Matrix32 =
+    result.matrix[0][0] = m.matrix[0][0]
+    result.matrix[0][1] = m.matrix[1][0]
+    result.matrix[0][2] = m.matrix[0][1]
+    result.matrix[1][0] = m.matrix[1][1]
+    result.matrix[1][1] = m.matrix[0][2]
+    result.matrix[1][2] = m.matrix[1][2]
+
+proc transposeSelf*(m: var Matrix44): var Matrix44 {.noinit.} =
+    swap(m.matrix[0][1], m.matrix[1][0])
+    swap(m.matrix[0][2], m.matrix[2][0])
+    swap(m.matrix[1][2], m.matrix[2][1])
+    swap(m.matrix[0][3], m.matrix[3][0])
+    swap(m.matrix[1][3], m.matrix[3][1])
+    swap(m.matrix[2][3], m.matrix[3][2])
+    result = m
+
+proc transposeNew*(m: Matrix44): Matrix44 =
+    result.matrix[0][0] = m.matrix[0][0]
+    result.matrix[0][1] = m.matrix[1][0]
+    result.matrix[0][2] = m.matrix[2][0]
+    result.matrix[0][3] = m.matrix[3][0]
+    result.matrix[1][0] = m.matrix[0][1]
+    result.matrix[1][1] = m.matrix[1][1]
+    result.matrix[1][2] = m.matrix[2][1]
+    result.matrix[1][3] = m.matrix[3][1]
+    result.matrix[2][0] = m.matrix[0][2]
+    result.matrix[2][1] = m.matrix[1][2]
+    result.matrix[2][2] = m.matrix[2][2]
+    result.matrix[2][3] = m.matrix[3][2]
+    result.matrix[3][0] = m.matrix[0][3]
+    result.matrix[3][1] = m.matrix[1][3]
+    result.matrix[3][2] = m.matrix[2][3]
+    result.matrix[3][3] = m.matrix[3][3]
+
+template transpose*(m: Matrix32): Matrix32 = transposeNew*(m)
+template transpose*(m: Matrix44): Matrix44 = transposeNew*(m)
+#Determinant
+#Invert
