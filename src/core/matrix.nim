@@ -74,7 +74,7 @@ proc matrix44*(
     result.matrix = mx
     
 #Set
-#NOTE : Added, not in design doc
+#NOTE : This is Added, not in design doc
 proc set*(m: var Matrix32, n: float): var Matrix32 {.noinit.} =
     m.m00 = n
     m.m01 = n
@@ -175,3 +175,15 @@ proc set*(m: var Matrix44, a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p: float): var Matrix44
     m.matrix[3][3] = p
     result = m      
 
+#Copy
+proc copy*(m: Matrix32): Matrix32 =
+    result = Matrix32(
+      m00: m.m00, m01: m.m01, m02: m.m02, 
+      m10: m.m10, m11: m.m11, m12: m.m12, matrix: m.matrix)
+  
+proc copy*(m: Matrix44): Matrix44 =
+    result = Matrix44(
+        m00: m.m00, m01: m.m01, m02: m.m02, m03: m.m03, 
+        m10: m.m10, m11: m.m11, m12: m.m12, m13: m.m13,
+        m20: m.m20, m21: m.m21, m22: m.m22, m23: m.m23, 
+        m30: m.m30, m31: m.m31, m32: m.m32, m33: m.m33, matrix: m.matrix)
