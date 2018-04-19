@@ -192,3 +192,12 @@ proc copy*(m: Matrix44): Matrix44 =
 template clear*(m: var Matrix32): var Matrix32 = set(m, 0.0)
 template clear*(m: var Matrix44): var Matrix44 = set(m, 0.0)
 
+#Equals
+proc `==`*(m1, m2: Matrix32): bool = 
+   result = m1.m00 == m2.m00 and m1.m01 == m2.m01 and m1.m02 == m2.m02 and
+           m1.m10 == m2.m10 and m1.m11 == m2.m11 and m1.m12 == m2.m12   
+proc `==`*(m1, m2: Matrix44): bool =
+  result = m1.m00 == m2.m00 and m1.m01 == m2.m01 and m1.m02 == m2.m02 and m1.m03 == m2.m03 and
+           m1.m10 == m2.m10 and m1.m11 == m2.m11 and m1.m12 == m2.m12 and m1.m13 == m2.m13 and
+           m1.m20 == m2.m20 and m1.m21 == m2.m21 and m1.m22 == m2.m22 and m1.m23 == m2.m23 and
+           m1.m30 == m2.m30 and m1.m31 == m2.m31 and m1.m32 == m2.m32 and m1.m33 == m2.m33  
