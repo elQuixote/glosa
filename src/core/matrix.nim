@@ -217,3 +217,15 @@ proc hash*(m: Matrix44): hashes.Hash =
         hash(m.m10) !& hash(m.m11) !& hash(m.m12) !& hash(m.m13) !&
         hash(m.m20) !& hash(m.m21) !& hash(m.m22) !& hash(m.m23) !&
         hash(m.m30) !& hash(m.m31) !& hash(m.m32) !& hash(m.m33))
+
+# String
+# NOTE: Changed from design doc
+proc `$`*(m: Matrix32): string =
+    result = &"[{m.m00}, {m.m01}, {m.m02}, \n" &
+             &"{m.m10}, {m.m11}, {m.m12}]"
+  
+proc `$`*(m: Matrix44): string =
+    result = &"[{m.m00}, {m.m01}, {m.m02}, {m.m03}, \n" &
+                &"{m.m10}, {m.m11}, {m.m12}, {m.m13}, \n" &
+                &"{m.m20}, {m.m21}, {m.m22}, {m.m23}, \n" &
+                &"{m.m30}, {m.m31}, {m.m32}, {m.m33}]"
