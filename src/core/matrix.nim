@@ -274,5 +274,32 @@ proc transposeNew*(m: Matrix44): Matrix44 =
 
 template transpose*(m: Matrix32): Matrix32 = transposeNew*(m)
 template transpose*(m: Matrix44): Matrix44 = transposeNew*(m)
+
 #Determinant
+#Note can we calculate the determinant of a non square matrix?
+proc determinant(m: Matrix44): float = 
+    result = m.matrix[0][0] * 
+        (m.matrix[1][1] * m.matrix[2][2] * m.matrix[3][3] + m.matrix[1][2] * 
+        m.matrix[2][3] * m.matrix[3][1] + m.matrix[1][3] * m.matrix[2][1] * 
+        m.matrix[3][2] - m.matrix[1][3] * m.matrix[2][2]  * m.matrix[3][1] - 
+        m.matrix[1][1] * m.matrix[2][3] * m.matrix[3][2] - m.matrix[1][2] * 
+        m.matrix[2][1] * m.matrix[3][3])
+    result -= m.matrix[0][1] * 
+        (m.matrix[1][0] * m.matrix[2][2] * m.matrix[3][3] + m.matrix[1][2] * 
+        m.matrix[2][3] * m.matrix[3][0] + m.matrix[1][3] * m.matrix[2][0] * 
+        m.matrix[3][2] - m.matrix[1][3] * m.matrix[2][2]  * m.matrix[3][0] - 
+        m.matrix[1][0] * m.matrix[2][3] * m.matrix[3][2] - m.matrix[1][2] * 
+        m.matrix[2][0] * m.matrix[3][3])
+    result += m.matrix[0][2] * 
+        (m.matrix[1][0] * m.matrix[2][1] * m.matrix[3][3] + m.matrix[1][1] * 
+        m.matrix[2][3] * m.matrix[3][0] + m.matrix[1][3] * m.matrix[2][0] * 
+        m.matrix[3][1] - m.matrix[1][3] * m.matrix[2][1]  * m.matrix[3][0] - 
+        m.matrix[1][0] * m.matrix[2][3] * m.matrix[3][1] - m.matrix[1][1] * 
+        m.matrix[2][0] * m.matrix[3][3])
+    result -= m.matrix[0][3] * 
+        (m.matrix[1][0] * m.matrix[2][1] * m.matrix[3][2] + m.matrix[1][1] * 
+        m.matrix[2][2] * m.matrix[3][0] + m.matrix[1][2] * m.matrix[2][0] * 
+        m.matrix[3][1] - m.matrix[1][2] * m.matrix[2][1]  * m.matrix[3][0] - 
+        m.matrix[1][0] * m.matrix[2][2] * m.matrix[3][1] - m.matrix[1][1] * 
+        m.matrix[2][0] * m.matrix[3][2])
 #Invert
