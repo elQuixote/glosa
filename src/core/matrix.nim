@@ -7,14 +7,14 @@ type
     Matrix32* = object
         m00*, m01*, m02*, 
         m10*, m11*, m12*: float
-        matrix*: array[2,array[3,string]] #NOTE: Do we want an array for matrix access?
+        matrix*: array[2,array[3,float]] #NOTE: Do we want an array for matrix access?
     
     Matrix44* = object
         m00*, m01*, m02*, m03*, 
         m10*, m11*, m12*, m13*, 
         m20*, m21*, m22*, m23*, 
         m30*, m31*, m32*, m33*: float
-        matrix*: array[4,array[4,string]] #NOTE: Do we want an array for matrix access?
+        matrix*: array[4,array[4,float]] #NOTE: Do we want an array for matrix access?
 
 #Constructors
 proc matrix32*(
