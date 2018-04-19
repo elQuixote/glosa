@@ -40,7 +40,8 @@ proc matrix44*(
     m00, m01, m02, m03, 
     m10, m11, m12, m13, 
     m20, m21, m22, m23, 
-    m30, m31, m32, m33): Matrix44 = 
+    m30, m31, m32, m33 : float
+    ): Matrix44 = 
     var mx: array[4,array[4,float]] # NOTE: Do we need this for better access to matrix data?
     mx[0][0] = m00
     mx[0][1] = m01
