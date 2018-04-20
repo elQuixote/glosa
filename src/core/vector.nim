@@ -783,6 +783,19 @@ proc `==`*(v1, v2: Vector3): bool =
 proc `==`*(v1, v2: Vector4): bool =
   result = v1.x == v2.x and v1.y == v2.y and v1.z == v2.z and v1.w == v2.w
 
+# Non Equals
+proc `!=`*(v1, v2: Vector1): bool =
+  result = not (v1 == v2)
+
+proc `!=`*(v1, v2: Vector2): bool =
+  result = not (v1 == v2)
+
+proc `!=`*(v1, v2: Vector3): bool =
+  result = not (v1 == v2)
+
+proc `!=`*(v1, v2: Vector4): bool =
+  result = not (v1 == v2)
+
 # Hash
 proc hash*(v: Vector1): hashes.Hash =
   result = !$(result !& hash(v.x))
