@@ -290,13 +290,13 @@ proc invert*(m: Matrix44): Matrix44 {.noInit.} =
 
 #Module Level Procs (Constructors)
 #Rotation 
-proc rotate32(radians: float): Matrix32 {.noinit.} =
+proc rotate32*(radians: float): Matrix32 {.noinit.} =
     let  
         s = sin(radians)
         c = cos(radians)
     result.set(c,s,-s,c,0,0)
 
-proc rotate44X(angle: float): Matrix44 {.noinit.} = 
+proc rotate44X*(angle: float): Matrix44 {.noinit.} = 
     let 
         c = cos(angle)
         s = sin(angle)
@@ -306,7 +306,7 @@ proc rotate44X(angle: float): Matrix44 {.noinit.} =
         0,-s,c,0,
         0,0,0,1)
 
-proc rotate44Y(angle: float): Matrix44 {.noinit.} = 
+proc rotate44Y*(angle: float): Matrix44 {.noinit.} = 
     let 
         c = cos(angle)
         s = sin(angle)
@@ -316,7 +316,7 @@ proc rotate44Y(angle: float): Matrix44 {.noinit.} =
         s,0,c,0,
         0,0,0,1)
 
-proc rotate44Z(angle: float): Matrix44 {.noinit.} = 
+proc rotate44Z*(angle: float): Matrix44 {.noinit.} = 
     let 
         c = cos(angle)
         s = sin(angle)
