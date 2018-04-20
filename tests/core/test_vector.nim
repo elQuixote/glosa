@@ -7,6 +7,44 @@ const
   TWO_F: float = 2.0
   THREE_F: float = 3.0
 
+suite "Testing Vector equality and inequality":
+  test "Testing Vector1 equality and inequality":
+    block:
+      let
+        v1 = Vector1(x: ZERO_F)
+        v2 = Vector1(x: ZERO_F)
+        v3 = Vector1(x: ONE_F)
+      check:
+        v1 == v2
+        v1 != v3
+  test "Testing Vector2 equality and inequality":
+    block:
+      let
+        v1 = Vector2(x: ZERO_F, y: ONE_F)
+        v2 = Vector2(x: ZERO_F, y: ONE_F )
+        v3 = Vector2(x: ONE_F, y: TWO_F)
+      check:
+        v1 == v2
+        v1 != v3
+  test "Testing Vector3 equality and inequality":
+    block:
+      let
+        v1 = Vector3(x: ZERO_F, y: ONE_F, z: TWO_F)
+        v2 = Vector3(x: ZERO_F, y: ONE_F, z: TWO_F )
+        v3 = Vector3(x: ONE_F, y: TWO_F, z: THREE_F)
+      check:
+        v1 == v2
+        v1 != v3
+  test "Testing Vector4 equality and inequality":
+    block:
+      let
+        v1 = Vector4(x: ZERO_F, y: ONE_F, z: TWO_F, w: THREE_F)
+        v2 = Vector4(x: ZERO_F, y: ONE_F, z: TWO_F, w: THREE_F )
+        v3 = Vector4(x: ONE_F, y: TWO_F, z: THREE_F, w: ZERO_F)
+      check:
+        v1 == v2
+        v1 != v3
+
 suite "Creating a new Vector":
   test "Creating a Vector1 with the default constructor":
     block:
