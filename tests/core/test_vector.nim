@@ -1,3 +1,4 @@
+from ../../src/core/concepts import Vector
 import ../../src/core/vector
 import unittest
 
@@ -9,8 +10,16 @@ const
   THREE_F: float = 3.0
 
 # Vector testing utilities
-proc checkValues(): bool =
-  discard
+proc compareVectorToValues(vector: Vector, values: seq[float]): bool =
+  let a = vector.toArray()
+  result = true
+  if len(values)!= len(a):
+    result = false
+  else:
+    for i, value in values:
+      if value != a[i]:
+        result = false
+  
 
 suite "Testing Vector equality and inequality":
   test "Testing Vector1 equality and inequality":
@@ -55,7 +64,7 @@ suite "Creating a new Vector":
     block:
       let v1 = Vector1(x: ZERO_F)
       check:
-        v1.x == ZERO_F
+        compareVectorToValues(v1, @[ZERO_F])
       let v2 = vector1(ZERO_F)
       check:
         v1 == v2
@@ -63,8 +72,7 @@ suite "Creating a new Vector":
     block:
       let v1 = Vector2(x: ZERO_F, y: ONE_F)
       check:
-        v1.x == ZERO_F
-        v1.y == ONE_F
+        compareVectorToValues(v1, @[ZERO_F, ONE_F])
       let v2 = vector2(ZERO_F, ONE_F)
       check:
         v1 == v2
@@ -72,9 +80,7 @@ suite "Creating a new Vector":
     block:
       let v1 = Vector3(x: ZERO_F, y: ONE_F, z: TWO_F)
       check:
-        v1.x == ZERO_F
-        v1.y == ONE_F
-        v1.z == TWO_F
+        compareVectorToValues(v1, @[ZERO_F, ONE_F, TWO_F])
       let v2 = vector3(ZERO_F, ONE_F, TWO_F)
       check:
         v1 == v2
@@ -82,10 +88,7 @@ suite "Creating a new Vector":
     block:
       let v1 = Vector4(x: ZERO_F, y: ONE_F, z: TWO_F, w: THREE_F)
       check:
-        v1.x == ZERO_F
-        v1.y == ONE_F
-        v1.z == TWO_F
-        v1.w == THREE_F
+        compareVectorToValues(v1, @[ZERO_F, ONE_F, TWO_F, THREE_F])
       let v2 = vector4(ZERO_F, ONE_F, TWO_F, THREE_F)
       check:
         v1 == v2

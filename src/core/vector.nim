@@ -87,16 +87,16 @@ proc setNew*(v: Vector4, n: float): Vector4 =
   result.z = n
   result.w = n
 
-template set*(v: var Vector1, n: float): var Vector1 = setSelf(v, n)
-template set*(v: var Vector2, n: float): var Vector2 = setSelf(v, n)
-template set*(v: var Vector3, n: float): var Vector3 = setSelf(v, n)
-template set*(v: var Vector4, n: float): var Vector4 = setSelf(v, n)
+proc set*(v: var Vector1, n: float): var Vector1 = setSelf(v, n)
+proc set*(v: var Vector2, n: float): var Vector2 = setSelf(v, n)
+proc set*(v: var Vector3, n: float): var Vector3 = setSelf(v, n)
+proc set*(v: var Vector4, n: float): var Vector4 = setSelf(v, n)
 
 # Clear
-template clear*(v: var Vector1): var Vector1 = setSelf(v, 0.0)
-template clear*(v: var Vector2): var Vector2 = setSelf(v, 0.0)
-template clear*(v: var Vector3): var Vector3 = setSelf(v, 0.0)
-template clear*(v: var Vector4): var Vector4 = setSelf(v, 0.0)
+proc clear*(v: var Vector1): var Vector1 = setSelf(v, 0.0)
+proc clear*(v: var Vector2): var Vector2 = setSelf(v, 0.0)
+proc clear*(v: var Vector3): var Vector3 = setSelf(v, 0.0)
+proc clear*(v: var Vector4): var Vector4 = setSelf(v, 0.0)
 
 # Addition
 # NOTE: Added Scalar addition to all vectors
@@ -181,16 +181,16 @@ proc addNew*(v1, v2: Vector4): Vector4 =
   result.w = v1.w + v2.w
 
 # NOTE: This is changed from design doc
-template `+`*(v1, v2: Vector1): Vector1 = addNew(v1, v2)
-template `+`*(v1, v2: Vector2): Vector2 = addNew(v1, v2)
-template `+`*(v1, v2: Vector3): Vector3 = addNew(v1, v2)
-template `+`*(v1, v2: Vector4): Vector4 = addNew(v1, v2)
+proc `+`*(v1, v2: Vector1): Vector1 = addNew(v1, v2)
+proc `+`*(v1, v2: Vector2): Vector2 = addNew(v1, v2)
+proc `+`*(v1, v2: Vector3): Vector3 = addNew(v1, v2)
+proc `+`*(v1, v2: Vector4): Vector4 = addNew(v1, v2)
 
 # NOTE: This is added from design doc
-template `+=`*(v1: var Vector1, v2: Vector1): var Vector1 = addSelf(v1, v2)
-template `+=`*(v1: var Vector2, v2: Vector2): var Vector2 = addSelf(v1, v2)
-template `+=`*(v1: var Vector3, v2: Vector3): var Vector3 = addSelf(v1, v2)
-template `+=`*(v1: var Vector4, v2: Vector4): var Vector4 = addSelf(v1, v2)
+proc `+=`*(v1: var Vector1, v2: Vector1): var Vector1 = addSelf(v1, v2)
+proc `+=`*(v1: var Vector2, v2: Vector2): var Vector2 = addSelf(v1, v2)
+proc `+=`*(v1: var Vector3, v2: Vector3): var Vector3 = addSelf(v1, v2)
+proc `+=`*(v1: var Vector4, v2: Vector4): var Vector4 = addSelf(v1, v2)
 
 # Subtraction
 # NOTE: Added scalar subtraction to all vectors
@@ -276,16 +276,16 @@ proc subtractNew*(v1, v2: Vector4): Vector4 =
   result.w = v1.w - v2.w
 
 # NOTE: This is changed from design doc
-template `-`*(v1, v2: Vector1): Vector1 = subtractNew(v1, v2)
-template `-`*(v1, v2: Vector2): Vector2 = subtractNew(v1, v2)
-template `-`*(v1, v2: Vector3): Vector3 = subtractNew(v1, v2)
-template `-`*(v1, v2: Vector4): Vector4 = subtractNew(v1, v2)
+proc `-`*(v1, v2: Vector1): Vector1 = subtractNew(v1, v2)
+proc `-`*(v1, v2: Vector2): Vector2 = subtractNew(v1, v2)
+proc `-`*(v1, v2: Vector3): Vector3 = subtractNew(v1, v2)
+proc `-`*(v1, v2: Vector4): Vector4 = subtractNew(v1, v2)
 
 # NOTE: This is added from design doc
-template `-=`*(v1: var Vector1, v2: Vector1): var Vector1 = subtractSelf(v1, v2)
-template `-=`*(v1: var Vector2, v2: Vector2): var Vector2 = subtractSelf(v1, v2)
-template `-=`*(v1: var Vector3, v2: Vector3): var Vector3 = subtractSelf(v1, v2)
-template `-=`*(v1: var Vector4, v2: Vector4): var Vector4 = subtractSelf(v1, v2)
+proc `-=`*(v1: var Vector1, v2: Vector1): var Vector1 = subtractSelf(v1, v2)
+proc `-=`*(v1: var Vector2, v2: Vector2): var Vector2 = subtractSelf(v1, v2)
+proc `-=`*(v1: var Vector3, v2: Vector3): var Vector3 = subtractSelf(v1, v2)
+proc `-=`*(v1: var Vector4, v2: Vector4): var Vector4 = subtractSelf(v1, v2)
 
 # Multiply
 proc multiplySelf*(v: var Vector1, f: float): var Vector1 {.noinit.} =
@@ -329,16 +329,16 @@ proc multiplyNew*(v: Vector4, f: float): Vector4 =
   result.w = v.w * f
 
 # NOTE: This is changed from design doc
-template `*`*(v: Vector1, f: float): Vector1 = multiplyNew(v, f)
-template `*`*(v: Vector2, f: float): Vector2 = multiplyNew(v, f)
-template `*`*(v: Vector3, f: float): Vector3 = multiplyNew(v, f)
-template `*`*(v: Vector4, f: float): Vector4 = multiplyNew(v, f)
+proc `*`*(v: Vector1, f: float): Vector1 = multiplyNew(v, f)
+proc `*`*(v: Vector2, f: float): Vector2 = multiplyNew(v, f)
+proc `*`*(v: Vector3, f: float): Vector3 = multiplyNew(v, f)
+proc `*`*(v: Vector4, f: float): Vector4 = multiplyNew(v, f)
 
 # NOTE: This is added from design doc
-template `*=`*(v: var Vector1, f: float): var Vector1 = multiplySelf(v, f)
-template `*=`*(v: var Vector2, f: float): var Vector2 = multiplySelf(v, f)
-template `*=`*(v: var Vector3, f: float): var Vector3 = multiplySelf(v, f)
-template `*=`*(v: var Vector4, f: float): var Vector4 = multiplySelf(v, f)
+proc `*=`*(v: var Vector1, f: float): var Vector1 = multiplySelf(v, f)
+proc `*=`*(v: var Vector2, f: float): var Vector2 = multiplySelf(v, f)
+proc `*=`*(v: var Vector3, f: float): var Vector3 = multiplySelf(v, f)
+proc `*=`*(v: var Vector4, f: float): var Vector4 = multiplySelf(v, f)
 
 # Divide
 proc divideSelf*(v: var Vector1, f: float): var Vector1 {.noinit.} =
@@ -382,16 +382,16 @@ proc divideNew*(v: Vector4, f: float): Vector4 =
   result.w = v.w / f
 
 # NOTE: This is changed from design doc
-template `/`*(v: Vector1, f: float): Vector1 = divideNew(v, f)
-template `/`*(v: Vector2, f: float): Vector2 = divideNew(v, f)
-template `/`*(v: Vector3, f: float): Vector3 = divideNew(v, f)
-template `/`*(v: Vector4, f: float): Vector4 = divideNew(v, f)
+proc `/`*(v: Vector1, f: float): Vector1 = divideNew(v, f)
+proc `/`*(v: Vector2, f: float): Vector2 = divideNew(v, f)
+proc `/`*(v: Vector3, f: float): Vector3 = divideNew(v, f)
+proc `/`*(v: Vector4, f: float): Vector4 = divideNew(v, f)
 
 # NOTE: This is added from design doc
-template `/=`*(v: var Vector1, f: float): var Vector1 = divideSelf(v, f)
-template `/=`*(v: var Vector2, f: float): var Vector2 = divideSelf(v, f)
-template `/=`*(v: var Vector3, f: float): var Vector3 = divideSelf(v, f)
-template `/=`*(v: var Vector4, f: float): var Vector4 = divideSelf(v, f)
+proc `/=`*(v: var Vector1, f: float): var Vector1 = divideSelf(v, f)
+proc `/=`*(v: var Vector2, f: float): var Vector2 = divideSelf(v, f)
+proc `/=`*(v: var Vector3, f: float): var Vector3 = divideSelf(v, f)
+proc `/=`*(v: var Vector4, f: float): var Vector4 = divideSelf(v, f)
 
 # Dot
 proc dot*(v1, v2: Vector1): float =
@@ -466,10 +466,10 @@ proc inverseNew*(v: Vector4): Vector4 =
   result.z = -v.z
   result.w = -v.w
 
-template inverse*(v: Vector1): Vector1 = inverseNew(v)
-template inverse*(v: Vector2): Vector2 = inverseNew(v)
-template inverse*(v: Vector3): Vector3 = inverseNew(v)
-template inverse*(v: Vector4): Vector4 = inverseNew(v)
+proc inverse*(v: Vector1): Vector1 = inverseNew(v)
+proc inverse*(v: Vector2): Vector2 = inverseNew(v)
+proc inverse*(v: Vector3): Vector3 = inverseNew(v)
+proc inverse*(v: Vector4): Vector4 = inverseNew(v)
 
 # Heading
 # NOTE: Additional heading procs
@@ -503,10 +503,10 @@ proc headingYW*(v: Vector4): float =
 proc headingZW*(v: Vector4): float =
   result = arctan2(v.w, v.z)
 
-template heading*(v: Vector1): float = 0.0
-template heading*(v: Vector2): float = headingXY(v)
-template heading*(v: Vector3): float = headingXY(v)
-template heading*(v: Vector4): float = headingXY(v)
+proc heading*(v: Vector1): float = 0.0
+proc heading*(v: Vector2): float = headingXY(v)
+proc heading*(v: Vector3): float = headingXY(v)
+proc heading*(v: Vector4): float = headingXY(v)
 
 # Reflect
 # NOTE: Changed from design doc
@@ -539,10 +539,10 @@ proc reflectNew*(v, n: Vector4): Vector4 =
   result = subtractNew(v, multiplyNew(n, 2 * dot(v, n)))
 
 # NOTE: Discuss self or new
-template reflect*(v, n: Vector1) = reflectNew(v, n)
-template reflect*(v, n: Vector2) = reflectNew(v, n)
-template reflect*(v, n: Vector3) = reflectNew(v, n)
-template reflect*(v, n: Vector4) = reflectNew(v, n)
+proc reflect*(v, n: Vector1): Vector1 = reflectNew(v, n)
+proc reflect*(v, n: Vector2): Vector2 = reflectNew(v, n)
+proc reflect*(v, n: Vector3): Vector3 = reflectNew(v, n)
+proc reflect*(v, n: Vector4): Vector4 = reflectNew(v, n)
 
 # Refract
 # NOTE: Changed from design doc
@@ -622,10 +622,10 @@ proc refractNew*(v, n: Vector4, eta: float): Vector4 =
     # NOTE: Should this be refactored?
     result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d * sqrt(k)))
 
-template refract*(v, n: Vector1, eta): Vector1 = refractNew(v, n, eta)
-template refract*(v, n: Vector2, eta): Vector2 = refractNew(v, n, eta)
-template refract*(v, n: Vector3, eta): Vector3 = refractNew(v, n, eta)
-template refract*(v, n: Vector4, eta): Vector4 = refractNew(v, n, eta)
+proc refract*(v, n: Vector1, eta: float): Vector1 = refractNew(v, n, eta)
+proc refract*(v, n: Vector2, eta: float): Vector2 = refractNew(v, n, eta)
+proc refract*(v, n: Vector3, eta: float): Vector3 = refractNew(v, n, eta)
+proc refract*(v, n: Vector4, eta: float): Vector4 = refractNew(v, n, eta)
 
 # Magnitude
 proc magnitude*(v: Vector1): float =
@@ -641,10 +641,11 @@ proc magnitude*(v: Vector4): float =
   result = sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w)
 
 # Length
-template length*(v: Vector1): float = magnitude(v)
-template length*(v: Vector2): float = magnitude(v)
-template length*(v: Vector3): float = magnitude(v)
-template length*(v: Vector4): float = magnitude(v)
+# 
+proc length*(v: Vector1): float = magnitude(v)
+proc length*(v: Vector2): float = magnitude(v)
+proc length*(v: Vector3): float = magnitude(v)
+proc length*(v: Vector4): float = magnitude(v)
 
 # Normalize
 proc normalizeSelf*(v: var Vector1, m: float = 1.0): var Vector1 {.noinit.} =
@@ -703,10 +704,10 @@ proc normalizeNew*(v: Vector4, m: float = 1.0): Vector4 =
   else:
     result = copy(v)
 
-template normalize*(v: var Vector1, m: float = 1.0): var Vector1 = normalizeSelf(v, m)
-template normalize*(v: var Vector2, m: float = 1.0): var Vector2 = normalizeSelf(v, m)
-template normalize*(v: var Vector3, m: float = 1.0): var Vector3 = normalizeSelf(v, m)
-template normalize*(v: var Vector4, m: float = 1.0): var Vector4 = normalizeSelf(v, m)
+proc normalize*(v: var Vector1, m: float = 1.0): var Vector1 = normalizeSelf(v, m)
+proc normalize*(v: var Vector2, m: float = 1.0): var Vector2 = normalizeSelf(v, m)
+proc normalize*(v: var Vector3, m: float = 1.0): var Vector3 = normalizeSelf(v, m)
+proc normalize*(v: var Vector4, m: float = 1.0): var Vector4 = normalizeSelf(v, m)
 
 # Angle Between
 proc angleBetween*(v1, v2: Vector1): float =

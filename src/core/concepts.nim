@@ -4,34 +4,35 @@ import hashes
 
 type
   Vector* {.explain.} = concept a, b, var va, type T
-    a + b is T
-    a += b is T
+    `+`(a, b) is T
+    `+=`(va, b) is T
     va.addSelf(b) is T
     a.addNew(b) is T
-    a - b is T
-    a -= b is T
+    `-`(a, b) is T
+    `-=`(va, b) is T
     va.subtractSelf(b) is T
     a.subtractNew(b) is T
-    a / float is T
-    a /= float is T
+    `/`(a, float) is T
+    `/=`(va, float) is T
     va.divideSelf(float) is T
     a.divideNew(float) is T
-    a * float is T
-    a *= float is T
+    `*`(a, float) is T
+    `*=`(va, float) is T
     va.multiplySelf(float) is T
     a.multiplyNew(float) is T
     a.dot(b) is float
-    a.cross(b) # NOTE: Different return types (No 4D)
+    # a.cross(b) # NOTE: Different return types (No 4D)
     a.inverse() is T
     a.heading() is float
     a.reflect(b) is T
     a.refract(b, float) is T
     a.magnitude() is float # NOTE: Moved above normalize
     va.normalize() is T
-    a.angleBetween(b) is T
-    # NOTE: REMOVED
-    # a.toPolar() is Vector
-    # a.toCartesian() is Vector
+    a.angleBetween(b) is float
+    a.toArray() is array
+  # NOTE: REMOVED
+  # a.toPolar() is Vector
+  # a.toCartesian() is Vector
   
   Matrix* {.explain.} = concept a, type T
     a.transpose() is T
