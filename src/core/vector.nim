@@ -821,7 +821,20 @@ proc dimension*(v: Vector3): int =
 
 proc dimension*(v: Vector4): int =
   result = 4
- 
+
+# Converters
+proc toArray*(v: Vector1): array[1, float] =
+  result = [v.x]
+
+proc toArray*(v: Vector2): array[2, float] =
+  result = [v.x, v.y]
+
+proc toArray*(v: Vector3): array[3, float] =
+  result = [v.x, v.y, v.z]
+
+proc toArray*(v: Vector4): array[4, float] =
+  result = [v.x, v.y, v.z, v.w]
+
 # String
 # NOTE: Changed from design doc
 proc `$`*(v: Vector1): string =
