@@ -288,14 +288,15 @@ proc invert*(m: Matrix44): Matrix44 {.noInit.} =
         (-m.matrix[1][0]*O4+m.matrix[1][1]*O12-m.matrix[1][2]*O17)/det , (m.matrix[0][0]*O4-m.matrix[0][1]*O12+m.matrix[0][2]*O17)/det,
         (-m.matrix[0][0]*O7+m.matrix[0][1]*O14-m.matrix[0][2]*O18)/det , (m.matrix[0][0]*O10-m.matrix[0][1]*O16+m.matrix[0][2]*O19)/det)
 
-#Rotation
-proc rotate32(rad: float): Matrix32 {.noinit.} =
+#Module Level Procs (Constructors)
+#Rotation 
+proc rotate32(radians: float): Matrix32 {.noinit.} =
     let  
-        s = sin(rad)
-        c = cos(rad)
+        s = sin(radians)
+        c = cos(radians)
     result.set(c,s,-s,c,0,0)
 
-proc rotate44X(m: var Matrix44, angle: float): var Matrix44 {.noinit.} = 
+proc rotate44X(angle: float): Matrix44 {.noinit.} = 
     let 
         c = cos(angle)
         s = sin(angle)
@@ -305,7 +306,7 @@ proc rotate44X(m: var Matrix44, angle: float): var Matrix44 {.noinit.} =
         0,-s,c,0,
         0,0,0,1)
 
-proc rotate44Y(m: var Matrix44, angle: float): var Matrix44 {.noinit.} = 
+proc rotate44Y(angle: float): Matrix44 {.noinit.} = 
     let 
         c = cos(angle)
         s = sin(angle)
@@ -315,7 +316,7 @@ proc rotate44Y(m: var Matrix44, angle: float): var Matrix44 {.noinit.} =
         s,0,c,0,
         0,0,0,1)
 
-proc rotate44Z(m: var Matrix44, angle: float): var Matrix44 {.noinit.} = 
+proc rotate44Z(angle: float): Matrix44 {.noinit.} = 
     let 
         c = cos(angle)
         s = sin(angle)
