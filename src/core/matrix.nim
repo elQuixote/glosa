@@ -285,3 +285,34 @@ proc invert*(m: Matrix44): Matrix44 {.noInit.} =
         (m.matrix[0][3]*O18+m.matrix[0][0]*O5-m.matrix[0][1]*O13)/det  , (-m.matrix[0][3]*O19-m.matrix[0][0]*O8+m.matrix[0][1]*O15)/det,
         (-m.matrix[1][0]*O4+m.matrix[1][1]*O12-m.matrix[1][2]*O17)/det , (m.matrix[0][0]*O4-m.matrix[0][1]*O12+m.matrix[0][2]*O17)/det,
         (-m.matrix[0][0]*O7+m.matrix[0][1]*O14-m.matrix[0][2]*O18)/det , (m.matrix[0][0]*O10-m.matrix[0][1]*O16+m.matrix[0][2]*O19)/det)
+
+#Rotation
+proc rotate44X(m: var Matrix44, angle: float): var Matrix44 {.noinit.} = 
+    let 
+        c = cos(angle)
+        s = sin(angle)
+    result.set(
+        1,0,0,0,
+        0,c,s,0,
+        0,-s,c,0,
+        0,0,0,1)
+
+proc rotate44Y(m: var Matrix44, angle: float): var Matrix44 {.noinit.} = 
+    let 
+        c = cos(angle)
+        s = sin(angle)
+    result.set(
+        c,0,-s,0,
+        0,1,0,0,
+        s,0,c,0,
+        0,0,0,1)
+
+proc rotate44Z(m: var Matrix44, angle: float): var Matrix44 {.noinit.} = 
+    let 
+        c = cos(angle)
+        s = sin(angle)
+    result.set(
+        c,s,0,0,
+        -s,c,0,0,
+        0,0,1,0,
+        0,0,0,1)
