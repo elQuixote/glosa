@@ -256,8 +256,8 @@ suite "Setting a Vector to a single value":
         v1.y == ONE_F
         v1.z == ONE_F
         v1.w == ONE_F
-  
-suite "Clearing a Vector to a single value":
+
+suite "Clearing a Vector":
   test "Clearing a Vector1":
     block:
       var 
