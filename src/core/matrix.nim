@@ -225,17 +225,17 @@ proc determinants*(m: Matrix44): float =
         m.matrix[1][0] * m.matrix[2][2] * m.matrix[3][1] - m.matrix[1][1] * 
         m.matrix[2][0] * m.matrix[3][2])
 #Note calculate the determinant of a non square matrix?
-proc determinant*(m:Matrix32):float=
+proc determinant*(m: Matrix32): float =
     return m.matrix[0][0]*m.matrix[1][1]-m.matrix[1][0]*m.matrix[0][1]
 
-proc determinant*(m:Matrix44):float=
+proc determinant*(m: Matrix44): float =
     let
-        O1=m.matrix[2][0]*m.matrix[3][3]-m.matrix[2][3]*m.matrix[3][0]
-        O2=m.matrix[2][1]*m.matrix[3][3]-m.matrix[2][3]*m.matrix[3][1]
-        O3=m.matrix[2][0]*m.matrix[3][1]-m.matrix[2][1]*m.matrix[3][0]
-        O4=m.matrix[2][2]*m.matrix[3][3]-m.matrix[2][3]*m.matrix[3][2]
-        O5=m.matrix[2][0]*m.matrix[3][2]-m.matrix[2][2]*m.matrix[3][0]
-        O6=m.matrix[2][2]*m.matrix[3][2]-m.matrix[2][2]*m.matrix[3][1]
+        O1 = m.matrix[2][0]*m.matrix[3][3]-m.matrix[2][3]*m.matrix[3][0]
+        O2 = m.matrix[2][1]*m.matrix[3][3]-m.matrix[2][3]*m.matrix[3][1]
+        O3 = m.matrix[2][0]*m.matrix[3][1]-m.matrix[2][1]*m.matrix[3][0]
+        O4 = m.matrix[2][2]*m.matrix[3][3]-m.matrix[2][3]*m.matrix[3][2]
+        O5 = m.matrix[2][0]*m.matrix[3][2]-m.matrix[2][2]*m.matrix[3][0]
+        O6 = m.matrix[2][2]*m.matrix[3][2]-m.matrix[2][2]*m.matrix[3][1]
     
     return (O1*m.matrix[0][1]-O2*m.matrix[0][0]-O3*m.matrix[0][3])*m.matrix[1][2]+
         (-O1*m.matrix[0][2]+O4*m.matrix[0][0]+O5*m.matrix[0][3])*m.matrix[1][1]+
@@ -243,9 +243,9 @@ proc determinant*(m:Matrix44):float=
         (O3*m.matrix[0][2]-O5*m.matrix[0][1]+O6*m.matrix[0][0])*m.matrix[1][3]
 
 #Invert
-proc invert*(m:Matrix32):Matrix32 {.noInit.} =
-    let d=m.determinant
-    if d==0.0:
+proc invert*(m: Matrix32): Matrix32 {.noInit.} =
+    let d = m.determinant
+    if d == 0.0:
         raise newException(DivByZeroError,"Cannot invert a zero determinant matrix")
     result.set(
         m.matrix[1][1]/d,-m.matrix[0][1]/d,
@@ -253,28 +253,28 @@ proc invert*(m:Matrix32):Matrix32 {.noInit.} =
         (m.matrix[1][0]*m.matrix[2][1]-m.matrix[1][1]*m.matrix[2][0])/d,
         (m.matrix[0][1]*m.matrix[2][0]-m.matrix[0][0]*m.matrix[2][1])/d)
 
-proc invert*(m:Matrix44):Matrix44 {.noInit.}=
+proc invert*(m: Matrix44): Matrix44 {.noInit.} =
     let
-        det=m.determinant
-        O2=m.matrix[2][1]*m.matrix[3][3]-m.matrix[2][3]*m.matrix[3][1]
-        O3=m.matrix[2][2]*m.matrix[3][3]-m.matrix[2][3]*m.matrix[3][2]
-        O4=m.matrix[2][1]*m.matrix[3][2]-m.matrix[2][2]*m.matrix[3][1]
-        O5=m.matrix[1][1]*m.matrix[3][3]-m.matrix[1][3]*m.matrix[3][1]
-        O6=m.matrix[1][2]*m.matrix[3][3]-m.matrix[1][3]*m.matrix[3][2]
-        O7=m.matrix[1][1]*m.matrix[3][2]-m.matrix[1][2]*m.matrix[3][1]
-        O8=m.matrix[1][1]*m.matrix[2][3]-m.matrix[1][3]*m.matrix[2][1]
-        O9=m.matrix[1][2]*m.matrix[2][3]-m.matrix[1][3]*m.matrix[2][2]
-        O10=m.matrix[1][1]*m.matrix[2][2]-m.matrix[1][2]*m.matrix[2][1]
-        O11=m.matrix[2][0]*m.matrix[3][3]-m.matrix[2][3]*m.matrix[3][0]
-        O12=m.matrix[2][0]*m.matrix[3][2]-m.matrix[2][2]*m.matrix[3][0]
-        O13=m.matrix[1][0]*m.matrix[3][3]-m.matrix[1][3]*m.matrix[3][0]
-        O14=m.matrix[1][0]*m.matrix[3][2]-m.matrix[1][2]*m.matrix[3][0]
-        O15=m.matrix[1][0]*m.matrix[2][3]-m.matrix[1][3]*m.matrix[2][0]
-        O16=m.matrix[1][0]*m.matrix[2][2]-m.matrix[1][2]*m.matrix[2][0]
-        O17=m.matrix[2][0]*m.matrix[3][1]-m.matrix[2][1]*m.matrix[3][0]
-        O18=m.matrix[1][0]*m.matrix[3][1]-m.matrix[1][1]*m.matrix[3][0]
-        O19=m.matrix[1][0]*m.matrix[2][1]-m.matrix[1][1]*m.matrix[2][0]
-    if det==0.0:
+        det = m.determinant
+        O2 = m.matrix[2][1]*m.matrix[3][3]-m.matrix[2][3]*m.matrix[3][1]
+        O3 = m.matrix[2][2]*m.matrix[3][3]-m.matrix[2][3]*m.matrix[3][2]
+        O4 = m.matrix[2][1]*m.matrix[3][2]-m.matrix[2][2]*m.matrix[3][1]
+        O5 = m.matrix[1][1]*m.matrix[3][3]-m.matrix[1][3]*m.matrix[3][1]
+        O6 = m.matrix[1][2]*m.matrix[3][3]-m.matrix[1][3]*m.matrix[3][2]
+        O7 = m.matrix[1][1]*m.matrix[3][2]-m.matrix[1][2]*m.matrix[3][1]
+        O8 = m.matrix[1][1]*m.matrix[2][3]-m.matrix[1][3]*m.matrix[2][1]
+        O9 = m.matrix[1][2]*m.matrix[2][3]-m.matrix[1][3]*m.matrix[2][2]
+        O10 = m.matrix[1][1]*m.matrix[2][2]-m.matrix[1][2]*m.matrix[2][1]
+        O11 = m.matrix[2][0]*m.matrix[3][3]-m.matrix[2][3]*m.matrix[3][0]
+        O12 = m.matrix[2][0]*m.matrix[3][2]-m.matrix[2][2]*m.matrix[3][0]
+        O13 = m.matrix[1][0]*m.matrix[3][3]-m.matrix[1][3]*m.matrix[3][0]
+        O14 = m.matrix[1][0]*m.matrix[3][2]-m.matrix[1][2]*m.matrix[3][0]
+        O15 = m.matrix[1][0]*m.matrix[2][3]-m.matrix[1][3]*m.matrix[2][0]
+        O16 = m.matrix[1][0]*m.matrix[2][2]-m.matrix[1][2]*m.matrix[2][0]
+        O17 = m.matrix[2][0]*m.matrix[3][1]-m.matrix[2][1]*m.matrix[3][0]
+        O18 = m.matrix[1][0]*m.matrix[3][1]-m.matrix[1][1]*m.matrix[3][0]
+        O19 = m.matrix[1][0]*m.matrix[2][1]-m.matrix[1][1]*m.matrix[2][0]
+    if det == 0.0:
         raise newException(DivByZeroError,"Cannot normalize zero length vector") 
     result.set(
         (m.matrix[1][3]*O4+m.matrix[1][1]*O3-m.matrix[1][2]*O2)/det    , (-m.matrix[0][3]*O4-m.matrix[0][1]*O3+m.matrix[0][2]*O2)/det,
@@ -285,4 +285,3 @@ proc invert*(m:Matrix44):Matrix44 {.noInit.}=
         (m.matrix[0][3]*O18+m.matrix[0][0]*O5-m.matrix[0][1]*O13)/det  , (-m.matrix[0][3]*O19-m.matrix[0][0]*O8+m.matrix[0][1]*O15)/det,
         (-m.matrix[1][0]*O4+m.matrix[1][1]*O12-m.matrix[1][2]*O17)/det , (m.matrix[0][0]*O4-m.matrix[0][1]*O12+m.matrix[0][2]*O17)/det,
         (-m.matrix[0][0]*O7+m.matrix[0][1]*O14-m.matrix[0][2]*O18)/det , (m.matrix[0][0]*O10-m.matrix[0][1]*O16+m.matrix[0][2]*O19)/det)
-          
