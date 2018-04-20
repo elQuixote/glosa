@@ -340,4 +340,13 @@ proc shear32X(sh: float): Matrix32 {.noinit.} =
 proc shear32Y(sh: float): Matrix32 {.noinit} = 
     result.set(1,sh,0,1,0,0)
 
-#Not sure about shear32Z --
+#NOTE : Not sure about shear32Z 
+#NOTE : Shear Operations for Matrix44 incomplete
+proc shear44X(sh: float): Matrix44 {.noinit} =
+    result.set(1,sh,sh,0, 0,1,0,0, 0,0,1,0, 0,0,0,1)
+
+proc shear44Y(sh: float): Matrix44 {.noinit} =
+    result.set(1,0,0,0, sh,1,sh,0, 0,0,1,0, 0,0,0,1)
+
+proc shear44Z(sh: float): Matrix44 {.noinit} =
+    result.set(1,0,0,0, 0,1,0,0, sh,sh,1,0, 0,0,0,1)
