@@ -50,7 +50,19 @@ proc matrix44*(
     mx[3][2] = m32
     mx[3][3] = m33
     result.matrix = mx
-    
+
+#Identity
+#NOTE : This is Added, not in design doc
+let 
+    IDMATRIX32*: Matrix32 = matrix32(
+        1.0,0.0, 
+        0.0,0.0, 
+        1.0,0.0)
+    IDMATRIX44*: Matrix44 = matrix44(      
+        1.0,0.0,0.0,0.0,
+        0.0,1.0,0.0,0.0,
+        0.0,0.0,1.0,0.0,
+        0.0,0.0,0.0,1.0)
 #Set
 #NOTE : This is Added, not in design doc
 proc set*(m: var Matrix32, n: float): var Matrix32 {.noinit.} =
