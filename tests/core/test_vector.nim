@@ -101,9 +101,9 @@ suite "Copying a new Vector":
         v2 = v1.copy()
       v2.x += ONE_F
       check:
-        v1.x != v2.x
-        v1.x == ZERO_F
-        v2.x == ONE_F
+        v1 != v2
+        compareVectorToValues(v1, @[ZERO_F])
+        compareVectorToValues(v2, @[ONE_F])
   test "Copying a Vector2":
     block:
       var 
@@ -112,12 +112,9 @@ suite "Copying a new Vector":
       v2.x += ONE_F
       v2.y += ONE_F
       check:
-        v1.x != v2.x
-        v1.x == ZERO_F
-        v2.x == ONE_F
-        v1.y != v2.y
-        v1.y == ZERO_F
-        v2.y == ONE_F
+        v1 != v2
+        compareVectorToValues(v1, @[ZERO_F, ZERO_F])
+        compareVectorToValues(v2, @[ONE_F, ONE_F])
   test "Copying a Vector3":
     block:
       var 
@@ -127,15 +124,9 @@ suite "Copying a new Vector":
       v2.y += ONE_F
       v2.z += ONE_F
       check:
-        v1.x != v2.x
-        v1.x == ZERO_F
-        v2.x == ONE_F
-        v1.y != v2.y
-        v1.y == ZERO_F
-        v2.y == ONE_F
-        v1.z != v2.z
-        v1.z == ZERO_F
-        v2.z == ONE_F
+        v1 != v2
+        compareVectorToValues(v1, @[ZERO_F, ZERO_F, ZERO_F])
+        compareVectorToValues(v2, @[ONE_F, ONE_F, ONE_F])
   test "Copying a Vector4":
     block:
       var 
@@ -146,18 +137,9 @@ suite "Copying a new Vector":
       v2.z += ONE_F
       v2.w += ONE_F
       check:
-        v1.x != v2.x
-        v1.x == ZERO_F
-        v2.x == ONE_F
-        v1.y != v2.y
-        v1.y == ZERO_F
-        v2.y == ONE_F
-        v1.z != v2.z
-        v1.z == ZERO_F
-        v2.z == ONE_F
-        v1.w != v2.w
-        v1.w == ZERO_F
-        v2.w == ONE_F
+        v1 != v2
+        compareVectorToValues(v1, @[ZERO_F, ZERO_F, ZERO_F, ZERO_F])
+        compareVectorToValues(v2, @[ONE_F, ONE_F, ONE_F, ONE_F])
 
 suite "Setting a Vector to a single value":
   test "Setting a Vector1":
@@ -167,20 +149,22 @@ suite "Setting a Vector to a single value":
       let
         v2 = v1.setNew(ONE_F)
       check:
-        v1.x != v2.x
-        v1.x == ZERO_F
-        v2.x == ONE_F
-      v1 = v1.setSelf(TWO_F)
+        v1 != v2
+        compareVectorToValues(v1, @[ZERO_F])
+        compareVectorToValues(v2, @[ONE_F])
+    block:
+      var 
+        v1 = Vector1(x: ZERO_F)
+      v1 = v1.setSelf(ONE_F)
       check:
-        v1.x != v2.x
-        v1.x == TWO_F
-        v2.x == ONE_F
+        not compareVectorToValues(v1, @[ZERO_F])
+        compareVectorToValues(v1, @[ONE_F])
     block:
       var
         v1 = Vector1(x: ZERO_F)
       v1 = v1.set(ONE_F)
       check:
-        v1.x == ONE_F
+        compareVectorToValues(v1, @[ONE_F])
   test "Setting a Vector2":
     block:
       var 
@@ -188,27 +172,22 @@ suite "Setting a Vector to a single value":
       let
         v2 = v1.setNew(ONE_F)
       check:
-        v1.x != v2.x
-        v1.x == ZERO_F
-        v2.x == ONE_F
-        v1.y != v2.y
-        v1.y == ZERO_F
-        v2.y == ONE_F
-      v1 = v1.setSelf(TWO_F)
+        v1 != v2
+        compareVectorToValues(v1, @[ZERO_F, ZERO_F])
+        compareVectorToValues(v2, @[ONE_F, ONE_F])
+    block:
+      var 
+        v1 = Vector2(x: ZERO_F, y: ZERO_F)
+      v1 = v1.setSelf(ONE_F)
       check:
-        v1.x != v2.x
-        v1.x == TWO_F
-        v2.x == ONE_F
-        v1.y != v2.y
-        v1.y == TWO_F
-        v2.y == ONE_F
+        not compareVectorToValues(v1, @[ZERO_F, ZERO_F])
+        compareVectorToValues(v1, @[ONE_F, ONE_F])
     block:
       var
         v1 = Vector2(x: ZERO_F, y: ZERO_F)
       v1 = v1.set(ONE_F)
       check:
-        v1.x == ONE_F
-        v1.y == ONE_F
+        compareVectorToValues(v1, @[ONE_F, ONE_F])
   test "Setting a Vector3":
     block:
       var 
@@ -216,34 +195,22 @@ suite "Setting a Vector to a single value":
       let
         v2 = v1.setNew(ONE_F)
       check:
-        v1.x != v2.x
-        v1.x == ZERO_F
-        v2.x == ONE_F
-        v1.y != v2.y
-        v1.y == ZERO_F
-        v2.y == ONE_F
-        v1.z != v2.z
-        v1.z == ZERO_F
-        v2.z == ONE_F
-      v1 = v1.setSelf(TWO_F)
+        v1 != v2
+        compareVectorToValues(v1, @[ZERO_F, ZERO_F, ZERO_F])
+        compareVectorToValues(v2, @[ONE_F, ONE_F, ONE_F])
+    block:
+      var 
+        v1 = Vector3(x: ZERO_F, y: ZERO_F, z: ZERO_F)
+      v1 = v1.setSelf(ONE_F)
       check:
-        v1.x != v2.x
-        v1.x == TWO_F
-        v2.x == ONE_F
-        v1.y != v2.y
-        v1.y == TWO_F
-        v2.y == ONE_F
-        v1.z != v2.z
-        v1.z == TWO_F
-        v2.z == ONE_F
+        not compareVectorToValues(v1, @[ZERO_F, ZERO_F, ZERO_F])
+        compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F])
     block:
       var
         v1 = Vector3(x: ZERO_F, y: ZERO_F, z: ZERO_F)
       v1 = v1.set(ONE_F)
       check:
-        v1.x == ONE_F
-        v1.y == ONE_F
-        v1.z == ONE_F
+        compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F])
   test "Setting a Vector4":
     block:
       var 
@@ -251,41 +218,22 @@ suite "Setting a Vector to a single value":
       let
         v2 = v1.setNew(ONE_F)
       check:
-        v1.x != v2.x
-        v1.x == ZERO_F
-        v2.x == ONE_F
-        v1.y != v2.y
-        v1.y == ZERO_F
-        v2.y == ONE_F
-        v1.z != v2.z
-        v1.z == ZERO_F
-        v2.z == ONE_F
-        v1.w != v2.w
-        v1.w == ZERO_F
-        v2.w == ONE_F
-      v1 = v1.setSelf(TWO_F)
+        v1 != v2
+        compareVectorToValues(v1, @[ZERO_F, ZERO_F, ZERO_F, ZERO_F])
+        compareVectorToValues(v2, @[ONE_F, ONE_F, ONE_F, ONE_F])
+    block:
+      var 
+        v1 = Vector4(x: ZERO_F, y: ZERO_F, z: ZERO_F, w: ZERO_F)
+      v1 = v1.setSelf(ONE_F)
       check:
-        v1.x != v2.x
-        v1.x == TWO_F
-        v2.x == ONE_F
-        v1.y != v2.y
-        v1.y == TWO_F
-        v2.y == ONE_F
-        v1.z != v2.z
-        v1.z == TWO_F
-        v2.z == ONE_F
-        v1.w != v2.w
-        v1.w == TWO_F
-        v2.w == ONE_F
+        not compareVectorToValues(v1, @[ZERO_F, ZERO_F, ZERO_F, ZERO_F])
+        compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F, ONE_F])
     block:
       var
         v1 = Vector4(x: ZERO_F, y: ZERO_F, z: ZERO_F, w: ZERO_F)
       v1 = v1.set(ONE_F)
       check:
-        v1.x == ONE_F
-        v1.y == ONE_F
-        v1.z == ONE_F
-        v1.w == ONE_F
+        compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F, ONE_F])
 
 suite "Clearing a Vector":
   test "Clearing a Vector1":
@@ -294,31 +242,29 @@ suite "Clearing a Vector":
         v1 = Vector1(x: ONE_F)
       v1 = v1.clear()
       check:
-        v1.x == ZERO_F
-  test "Setting a Vector2":
+        not compareVectorToValues(v1, @[ONE_F])
+        compareVectorToValues(v1, @[ZERO_F])
+  test "Clearing a Vector2":
     block:
       var 
         v1 = Vector2(x: ONE_F, y: ONE_F)
       v1 = v1.clear()
       check:
-        v1.x == ZERO_F
-        v1.y == ZERO_F
-  test "Setting a Vector3":
+        not compareVectorToValues(v1, @[ONE_F, ONE_F])
+        compareVectorToValues(v1, @[ZERO_F, ZERO_F])
+  test "Clearing a Vector3":
     block:
       var 
         v1 = Vector3(x: ONE_F, y: ONE_F, z: ONE_F)
       v1 = v1.clear()
       check:
-        v1.x == ZERO_F
-        v1.y == ZERO_F
-        v1.z == ZERO_F
-  test "Setting a Vector4":
+        not compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F])
+        compareVectorToValues(v1, @[ZERO_F, ZERO_F, ZERO_F])
+  test "Clearing a Vector4":
     block:
       var 
         v1 = Vector4(x: ONE_F, y: ONE_F, z: ONE_F, w: ONE_F)
       v1 = v1.clear()
       check:
-        v1.x == ZERO_F
-        v1.y == ZERO_F
-        v1.z == ZERO_F
-        v1.w == ZERO_F
+        not compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F, ONE_F])
+        compareVectorToValues(v1, @[ZERO_F, ZERO_F, ZERO_F, ZERO_F])
