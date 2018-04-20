@@ -1,6 +1,8 @@
 import ./concepts
 
 from strformat import `&`
+from math import arctan2, arccos, sqrt, sin, cos
+
 import hashes
 
 type 
@@ -292,7 +294,7 @@ proc rotate32(rad: float): Matrix32 {.noinit.} =
         s = sin(rad)
         c = cos(rad)
     result.set(c,s,-s,c,0,0)
-    
+
 proc rotate44X(m: var Matrix44, angle: float): var Matrix44 {.noinit.} = 
     let 
         c = cos(angle)
