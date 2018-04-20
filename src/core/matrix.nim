@@ -325,3 +325,10 @@ proc rotate44Z(angle: float): Matrix44 {.noinit.} =
         -s,c,0,0,
         0,0,1,0,
         0,0,0,1)
+
+#Scale
+proc scale32*(s: float): Matrix32 {.noinit} = 
+    result.set(s,0,0,s,0,0)
+
+proc scale44*(s: float): Matrix44 {.noinit} = 
+    result.set(s,0,0,0,0,s,0,0,0,0,0,s,0,0,0,1)
