@@ -199,8 +199,7 @@ template transpose*(m: Matrix32): Matrix32 = transposeNew*(m)
 template transpose*(m: Matrix44): Matrix44 = transposeNew*(m)
 
 #Determinant
-#Note can we calculate the determinant of a non square matrix?
-proc determinant(m: Matrix44): float = 
+proc determinant*(m: Matrix44): float = 
     result = m.matrix[0][0] * 
         (m.matrix[1][1] * m.matrix[2][2] * m.matrix[3][3] + m.matrix[1][2] * 
         m.matrix[2][3] * m.matrix[3][1] + m.matrix[1][3] * m.matrix[2][1] * 
@@ -225,4 +224,21 @@ proc determinant(m: Matrix44): float =
         m.matrix[3][1] - m.matrix[1][2] * m.matrix[2][1]  * m.matrix[3][0] - 
         m.matrix[1][0] * m.matrix[2][2] * m.matrix[3][1] - m.matrix[1][1] * 
         m.matrix[2][0] * m.matrix[3][2])
+#Note can we calculate the determinant of a non square matrix?
+proc determinant*(m:Matrix32):float=
+    return m.matrix[0][0]*m.matrix[1][1]-m.matrix[1][0]*m.matrix[0][1]
+
+proc determinants*(m:Matrix44):float=
+    let
+        O1=m.matrix[2][0]*m.matrix[3][3]-m.matrix[2][3]*m.matrix[3][0]
+        O2=m.matrix[2][1]*m.matrix[3][3]-m.matrix[2][3]*m.matrix[3][1]
+        O3=m.matrix[2][0]*m.matrix[3][1]-m.matrix[2][1]*m.matrix[3][0]
+        O4=m.matrix[2][2]*m.matrix[3][3]-m.matrix[2][3]*m.matrix[3][2]
+        O5=m.matrix[2][0]*m.matrix[3][2]-m.matrix[2][2]*m.matrix[3][0]
+        O6=m.matrix[2][2]*m.matrix[3][2]-m.matrix[2][2]*m.matrix[3][1]
+    
+    return (O1*m.matrix[0][1]-O2*m.matrix[0][0]-O3*m.matrix[0][3])*m.matrix[1][2]+
+        (-O1*m.matrix[0][2]+O4*m.matrix[0][0]+O5*m.matrix[0][3])*m.matrix[1][1]+
+        (O2*m.matrix[0][2]-O4*m.matrix[0][1]-O6*m.aw)*m.matrix[1][0]+
+        (O3*m.matrix[0][2]-O5*m.matrix[0][1]+O6*m.matrix[0][0])*m.matrix[1][3]
 #Invert
