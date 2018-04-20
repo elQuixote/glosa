@@ -331,7 +331,7 @@ proc scale32*(s: float): Matrix32 {.noinit} =
     result.set(s,0,0,s,0,0)
 
 proc scale44*(s: float): Matrix44 {.noinit} = 
-    result.set(s,0,0,0,0,s,0,0,0,0,0,s,0,0,0,1)
+    result.set(s,0,0,0, 0,s,0,0, 0,0,s,0, 0,0,0,1)
 
 #Shear
 proc shear32X(sh: float): Matrix32 {.noinit.} = 
