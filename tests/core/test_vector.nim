@@ -268,3 +268,121 @@ suite "Clearing a Vector":
       check:
         not compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F, ONE_F])
         compareVectorToValues(v1, @[ZERO_F, ZERO_F, ZERO_F, ZERO_F])
+
+suite "Adding Vectors":
+  test "Adding Vector1s":
+    block:
+      let
+        v1 = Vector1(x: ONE_F)
+        v2 = Vector1(x: TWO_F)
+        v3 = addNew(v1, v2)
+        v4 = v1 + v2
+      check:
+        compareVectorToValues(v3, @[THREE_F])
+        compareVectorToValues(v4, @[THREE_F])
+        v3 == v4
+    block:
+      var
+        v1 = Vector1(x: ONE_F)
+      let
+        v2 = Vector1(x: TWO_F)
+      v1 = addSelf(v1, v2)
+      check:
+        not compareVectorToValues(v1, @[ONE_F])
+        compareVectorToValues(v1, @[THREE_F])
+    block:
+      var
+        v1 = Vector1(x: ONE_F)
+      let
+        v2 = Vector1(x: TWO_F)
+      v1 += v2
+      check:
+        not compareVectorToValues(v1, @[ONE_F])
+        compareVectorToValues(v1, @[THREE_F])
+  test "Adding Vector2s":
+    block:
+      let
+        v1 = Vector2(x: ONE_F, y: ONE_F)
+        v2 = Vector2(x: TWO_F, y: TWO_F)
+        v3 = addNew(v1, v2)
+        v4 = v1 + v2
+      check:
+        compareVectorToValues(v3, @[THREE_F, THREE_F])
+        compareVectorToValues(v4, @[THREE_F, THREE_F])
+        v3 == v4
+    block:
+      var
+        v1 = Vector2(x: ONE_F, y: ONE_F)
+      let
+        v2 = Vector2(x: TWO_F, y: TWO_F)
+      v1 = addSelf(v1, v2)
+      check:
+        not compareVectorToValues(v1, @[ONE_F, ONE_F])
+        compareVectorToValues(v1, @[THREE_F, THREE_F])
+    block:
+      var
+        v1 = Vector2(x: ONE_F, y: ONE_F)
+      let
+        v2 = Vector2(x: TWO_F, y: TWO_F)
+      v1 += v2
+      check:
+        not compareVectorToValues(v1, @[ONE_F, ONE_F])
+        compareVectorToValues(v1, @[THREE_F, THREE_F])
+  test "Adding Vector3s":
+    block:
+      let
+        v1 = Vector3(x: ONE_F, y: ONE_F, z: ONE_F)
+        v2 = Vector3(x: TWO_F, y: TWO_F, z: TWO_F)
+        v3 = addNew(v1, v2)
+        v4 = v1 + v2
+      check:
+        compareVectorToValues(v3, @[THREE_F, THREE_F, THREE_F])
+        compareVectorToValues(v4, @[THREE_F, THREE_F, THREE_F])
+        v3 == v4
+    block:
+      var
+        v1 = Vector3(x: ONE_F, y: ONE_F, z: ONE_F)
+      let
+        v2 = Vector3(x: TWO_F, y: TWO_F, z: TWO_F)
+      v1 = addSelf(v1, v2)
+      check:
+        not compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F])
+        compareVectorToValues(v1, @[THREE_F, THREE_F, THREE_F])
+    block:
+      var
+        v1 = Vector3(x: ONE_F, y: ONE_F, z: ONE_F)
+      let
+        v2 = Vector3(x: TWO_F, y: TWO_F, z: TWO_F)
+      v1 += v2
+      check:
+        not compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F])
+        compareVectorToValues(v1, @[THREE_F, THREE_F, THREE_F])
+  test "Adding Vector4s":
+    block:
+      let
+        v1 = Vector4(x: ONE_F, y: ONE_F, z: ONE_F, w: ONE_F)
+        v2 = Vector4(x: TWO_F, y: TWO_F, z: TWO_F, w: TWO_F)
+        v3 = addNew(v1, v2)
+        v4 = v1 + v2
+      check:
+        compareVectorToValues(v3, @[THREE_F, THREE_F, THREE_F, THREE_F])
+        compareVectorToValues(v4, @[THREE_F, THREE_F, THREE_F, THREE_F])
+        v3 == v4
+    block:
+      var
+        v1 = Vector4(x: ONE_F, y: ONE_F, z: ONE_F, w: ONE_F)
+      let
+        v2 = Vector4(x: TWO_F, y: TWO_F, z: TWO_F, w: TWO_F)
+      v1 = addSelf(v1, v2)
+      check:
+        not compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F, ONE_F])
+        compareVectorToValues(v1, @[THREE_F, THREE_F, THREE_F, THREE_F])
+    block:
+      var
+        v1 = Vector4(x: ONE_F, y: ONE_F, z: ONE_F, w: ONE_F)
+      let
+        v2 = Vector4(x: TWO_F, y: TWO_F, z: TWO_F, w: TWO_F)
+      v1 += v2
+      check:
+        not compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F, ONE_F])
+        compareVectorToValues(v1, @[THREE_F, THREE_F, THREE_F, THREE_F])
