@@ -34,9 +34,25 @@ proc vector4*(x, y, z, w: float): Vector4 =
   result.z = z
   result.w = w
 
-# From Vector(s)
-# From Array
-# From Sequence
+# From single value
+proc vector2*(v: float): Vector2 =
+  result.x = v
+  result.y = v
+
+proc vector3*(v: float): Vector3 =
+  result.x = v
+  result.y = v
+  result.z = v
+
+proc vector4*(v: float): Vector4 =
+  result.x = v
+  result.y = v
+  result.z = v
+  result.w = v
+
+# From vector(s)
+# From array
+# From sequence
  
 # Copy
 proc copy*(v: Vector1): Vector1 =
@@ -52,56 +68,33 @@ proc copy*(v: Vector4): Vector4 =
   result = Vector4(x: v.x, y: v.y, z: v.z, w: v.w)
 
 # Set
-proc setSelf*(v: var Vector1, n: float): var Vector1 {.noinit.} =
+proc set*(v: var Vector1, n: float): var Vector1 {.noinit.} =
   v.x = n
   result = v
 
-proc setNew*(v: Vector1, n: float): Vector1 =
-  result.x = n
-
-proc setSelf*(v: var Vector2, n: float): var Vector2 {.noinit.} =
+proc set*(v: var Vector2, n: float): var Vector2 {.noinit.} =
   v.x = n
   v.y = n
   result = v
 
-proc setNew*(v: Vector2, n: float): Vector2 =
-  result.x = n
-  result.y = n
-
-proc setSelf*(v: var Vector3, n: float): var Vector3 {.noinit.} =
+proc set*(v: var Vector3, n: float): var Vector3 {.noinit.} =
   v.x = n
   v.y = n
   v.z = n
   result = v
 
-proc setNew*(v: Vector3, n: float): Vector3 =
-  result.x = n
-  result.y = n
-  result.z = n
-
-proc setSelf*(v: var Vector4, n: float): var Vector4 {.noinit.} =
+proc set*(v: var Vector4, n: float): var Vector4 {.noinit.} =
   v.x = n
   v.y = n
   v.z = n
   v.w = n
   result = v
 
-proc setNew*(v: Vector4, n: float): Vector4 =
-  result.x = n
-  result.y = n
-  result.z = n
-  result.w = n
-
-proc set*(v: var Vector1, n: float): var Vector1 = setSelf(v, n)
-proc set*(v: var Vector2, n: float): var Vector2 = setSelf(v, n)
-proc set*(v: var Vector3, n: float): var Vector3 = setSelf(v, n)
-proc set*(v: var Vector4, n: float): var Vector4 = setSelf(v, n)
-
 # Clear
-proc clear*(v: var Vector1): var Vector1 = setSelf(v, 0.0)
-proc clear*(v: var Vector2): var Vector2 = setSelf(v, 0.0)
-proc clear*(v: var Vector3): var Vector3 = setSelf(v, 0.0)
-proc clear*(v: var Vector4): var Vector4 = setSelf(v, 0.0)
+proc clear*(v: var Vector1): var Vector1 = set(v, 0.0)
+proc clear*(v: var Vector2): var Vector2 = set(v, 0.0)
+proc clear*(v: var Vector3): var Vector3 = set(v, 0.0)
+proc clear*(v: var Vector4): var Vector4 = set(v, 0.0)
 
 # Addition
 # NOTE: Added Scalar addition to all vectors

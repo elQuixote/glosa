@@ -1,4 +1,4 @@
-from ../../src/core/concepts import Vector
+from ../../src/core/concepts import Vector, Set
 import ../../src/core/vector
 import unittest
 
@@ -10,379 +10,243 @@ const
   THREE_F: float = 3.0
 
 # Vector testing utilities
-proc compareVectorToValues(vector: Vector, values: seq[float]): bool =
+proc compareVectorToValue(vector: Vector, value: float): bool =
   let a = vector.toArray()
   result = true
-  if len(values)!= len(a):
-    result = false
-  else:
-    for i, value in values:
-      if value != a[i]:
-        result = false
-  
+  for v in a:
+    if v != value:
+      result = false
 
 suite "Testing Vector equality and inequality":
+  proc testVectorEquality(v1, v2, v3: Vector) =
+    check:
+      v1 == v2
+      v1 != v3
   test "Testing Vector1 equality and inequality":
-    block:
-      let
-        v1 = Vector1(x: ZERO_F)
-        v2 = Vector1(x: ZERO_F)
-        v3 = Vector1(x: ONE_F)
-      check:
-        v1 == v2
-        v1 != v3
+    testVectorEquality(
+      Vector1(x: ZERO_F),
+      Vector1(x: ZERO_F),
+      Vector1(x: ONE_F))
   test "Testing Vector2 equality and inequality":
-    block:
-      let
-        v1 = Vector2(x: ZERO_F, y: ONE_F)
-        v2 = Vector2(x: ZERO_F, y: ONE_F )
-        v3 = Vector2(x: ONE_F, y: TWO_F)
-      check:
-        v1 == v2
-        v1 != v3
+    testVectorEquality(
+      Vector2(x: ZERO_F, y: ONE_F),
+      Vector2(x: ZERO_F, y: ONE_F ),
+      Vector2(x: ONE_F, y: TWO_F))
   test "Testing Vector3 equality and inequality":
-    block:
-      let
-        v1 = Vector3(x: ZERO_F, y: ONE_F, z: TWO_F)
-        v2 = Vector3(x: ZERO_F, y: ONE_F, z: TWO_F )
-        v3 = Vector3(x: ONE_F, y: TWO_F, z: THREE_F)
-      check:
-        v1 == v2
-        v1 != v3
+    testVectorEquality(
+      Vector3(x: ZERO_F, y: ONE_F, z: TWO_F),
+      Vector3(x: ZERO_F, y: ONE_F, z: TWO_F ),
+      Vector3(x: ONE_F, y: TWO_F, z: THREE_F))
   test "Testing Vector4 equality and inequality":
-    block:
-      let
-        v1 = Vector4(x: ZERO_F, y: ONE_F, z: TWO_F, w: THREE_F)
-        v2 = Vector4(x: ZERO_F, y: ONE_F, z: TWO_F, w: THREE_F )
-        v3 = Vector4(x: ONE_F, y: TWO_F, z: THREE_F, w: ZERO_F)
-      check:
-        v1 == v2
-        v1 != v3
+    testVectorEquality(
+      Vector4(x: ZERO_F, y: ONE_F, z: TWO_F, w: THREE_F),
+      Vector4(x: ZERO_F, y: ONE_F, z: TWO_F, w: THREE_F ),
+      Vector4(x: ONE_F, y: TWO_F, z: THREE_F, w: ZERO_F))
 
-suite "Creating a new Vector":
+suite "Creating a new Vector with default constructor":
+  proc testCreateVectorDefaultConstructor(v1, v2: Vector) =
+    check:
+      v1 == v2
   test "Creating a Vector1 with the default constructor":
-    block:
-      let v1 = Vector1(x: ZERO_F)
-      check:
-        compareVectorToValues(v1, @[ZERO_F])
-      let v2 = vector1(ZERO_F)
-      check:
-        v1 == v2
+    testCreateVectorDefaultConstructor(
+      Vector1(x: ZERO_F),
+      vector1(ZERO_F))
   test "Creating a Vector2 with the default constructor":
-    block:
-      let v1 = Vector2(x: ZERO_F, y: ONE_F)
-      check:
-        compareVectorToValues(v1, @[ZERO_F, ONE_F])
-      let v2 = vector2(ZERO_F, ONE_F)
-      check:
-        v1 == v2
+    testCreateVectorDefaultConstructor(
+      Vector2(x: ZERO_F, y: ONE_F),
+      vector2(ZERO_F, ONE_F))
   test "Creating a Vector3 with the default constructor":
-    block:
-      let v1 = Vector3(x: ZERO_F, y: ONE_F, z: TWO_F)
-      check:
-        compareVectorToValues(v1, @[ZERO_F, ONE_F, TWO_F])
-      let v2 = vector3(ZERO_F, ONE_F, TWO_F)
-      check:
-        v1 == v2
+    testCreateVectorDefaultConstructor(
+      Vector3(x: ZERO_F, y: ONE_F, z: TWO_F),
+      vector3(ZERO_F, ONE_F, TWO_F))
   test "Creating a Vector4 with the default constructor":
-    block:
-      let v1 = Vector4(x: ZERO_F, y: ONE_F, z: TWO_F, w: THREE_F)
-      check:
-        compareVectorToValues(v1, @[ZERO_F, ONE_F, TWO_F, THREE_F])
-      let v2 = vector4(ZERO_F, ONE_F, TWO_F, THREE_F)
-      check:
-        v1 == v2
+    testCreateVectorDefaultConstructor(
+      Vector4(x: ZERO_F, y: ONE_F, z: TWO_F, w: THREE_F),
+      vector4(ZERO_F, ONE_F, TWO_F, THREE_F))
+
+suite "Creating a new Vector with single value constructor":
+  proc testCreateVectorSingleValueConstructor(v1, v2: Vector) =
+    check:
+      v1 == v2
+  test "Creating a Vector2 with single value constructor":
+    testCreateVectorSingleValueConstructor(
+        Vector2(x: ZERO_F, y: ZERO_F),
+        vector2(ZERO_F))
+  test "Creating a Vector3 with single value constructor":
+    testCreateVectorSingleValueConstructor(
+        Vector3(x: ZERO_F, y: ZERO_F, z: ZERO_F),
+        vector3(ZERO_F))
+  test "Creating a Vector4 with single value constructor":
+    testCreateVectorSingleValueConstructor(
+        Vector4(x: ZERO_F, y: ZERO_F, z: ZERO_F, w: ZERO_F),
+        vector4(ZERO_F))
 
 suite "Copying a new Vector":
+  proc testCopyVector(v1, v2: Vector) =
+    var v3 = v1.copy()
+    v3 += v2
+    check:
+      v1 != v3
+      compareVectorToValue(v1, ZERO_F)
+      compareVectorToValue(v3, ONE_F)
   test "Copying a Vector1":
-    block:
-      var 
-        v1 = Vector1(x: ZERO_F)
-        v2 = v1.copy()
-      v2.x += ONE_F
-      check:
-        v1 != v2
-        compareVectorToValues(v1, @[ZERO_F])
-        compareVectorToValues(v2, @[ONE_F])
+    testCopyVector(vector1(ZERO_F), vector1(ONE_F))
   test "Copying a Vector2":
-    block:
-      var 
-        v1 = Vector2(x: ZERO_F, y: ZERO_F)
-        v2 = v1.copy()
-      v2.x += ONE_F
-      v2.y += ONE_F
-      check:
-        v1 != v2
-        compareVectorToValues(v1, @[ZERO_F, ZERO_F])
-        compareVectorToValues(v2, @[ONE_F, ONE_F])
+    testCopyVector(vector2(ZERO_F), vector2(ONE_F))
   test "Copying a Vector3":
-    block:
-      var 
-        v1 = Vector3(x: ZERO_F, y: ZERO_F, z: ZERO_F)
-        v2 = v1.copy()
-      v2.x += ONE_F
-      v2.y += ONE_F
-      v2.z += ONE_F
-      check:
-        v1 != v2
-        compareVectorToValues(v1, @[ZERO_F, ZERO_F, ZERO_F])
-        compareVectorToValues(v2, @[ONE_F, ONE_F, ONE_F])
+    testCopyVector(vector3(ZERO_F), vector3(ONE_F))
   test "Copying a Vector4":
-    block:
-      var 
-        v1 = Vector4(x: ZERO_F, y: ZERO_F, z: ZERO_F, w: ZERO_F)
-        v2 = v1.copy()
-      v2.x += ONE_F
-      v2.y += ONE_F
-      v2.z += ONE_F
-      v2.w += ONE_F
-      check:
-        v1 != v2
-        compareVectorToValues(v1, @[ZERO_F, ZERO_F, ZERO_F, ZERO_F])
-        compareVectorToValues(v2, @[ONE_F, ONE_F, ONE_F, ONE_F])
+    testCopyVector(vector4(ZERO_F), vector4(ONE_F))
 
 suite "Setting a Vector to a single value":
+  proc testSetVector(v1: Vector) =
+    var
+      v2 = v1.copy()
+      v3 = v2.set(ONE_F)
+    check:
+      compareVectorToValue(v2, ONE_F)
+      v2 == v3
   test "Setting a Vector1":
-    block:
-      var 
-        v1 = Vector1(x: ZERO_F)
-      let
-        v2 = v1.setNew(ONE_F)
-      check:
-        v1 != v2
-        compareVectorToValues(v1, @[ZERO_F])
-        compareVectorToValues(v2, @[ONE_F])
-    block:
-      var 
-        v1 = Vector1(x: ZERO_F)
-      v1 = v1.setSelf(ONE_F)
-      check:
-        not compareVectorToValues(v1, @[ZERO_F])
-        compareVectorToValues(v1, @[ONE_F])
-    block:
-      var
-        v1 = Vector1(x: ZERO_F)
-      v1 = v1.set(ONE_F)
-      check:
-        compareVectorToValues(v1, @[ONE_F])
+    testSetVector(vector1(ZERO_F))
   test "Setting a Vector2":
-    block:
-      var 
-        v1 = Vector2(x: ZERO_F, y: ZERO_F)
-      let
-        v2 = v1.setNew(ONE_F)
-      check:
-        v1 != v2
-        compareVectorToValues(v1, @[ZERO_F, ZERO_F])
-        compareVectorToValues(v2, @[ONE_F, ONE_F])
-    block:
-      var 
-        v1 = Vector2(x: ZERO_F, y: ZERO_F)
-      v1 = v1.setSelf(ONE_F)
-      check:
-        not compareVectorToValues(v1, @[ZERO_F, ZERO_F])
-        compareVectorToValues(v1, @[ONE_F, ONE_F])
-    block:
-      var
-        v1 = Vector2(x: ZERO_F, y: ZERO_F)
-      v1 = v1.set(ONE_F)
-      check:
-        compareVectorToValues(v1, @[ONE_F, ONE_F])
+    testSetVector(vector2(ZERO_F))
   test "Setting a Vector3":
-    block:
-      var 
-        v1 = Vector3(x: ZERO_F, y: ZERO_F, z: ZERO_F)
-      let
-        v2 = v1.setNew(ONE_F)
-      check:
-        v1 != v2
-        compareVectorToValues(v1, @[ZERO_F, ZERO_F, ZERO_F])
-        compareVectorToValues(v2, @[ONE_F, ONE_F, ONE_F])
-    block:
-      var 
-        v1 = Vector3(x: ZERO_F, y: ZERO_F, z: ZERO_F)
-      v1 = v1.setSelf(ONE_F)
-      check:
-        not compareVectorToValues(v1, @[ZERO_F, ZERO_F, ZERO_F])
-        compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F])
-    block:
-      var
-        v1 = Vector3(x: ZERO_F, y: ZERO_F, z: ZERO_F)
-      v1 = v1.set(ONE_F)
-      check:
-        compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F])
+    testSetVector(vector3(ZERO_F))
   test "Setting a Vector4":
-    block:
-      var 
-        v1 = Vector4(x: ZERO_F, y: ZERO_F, z: ZERO_F, w: ZERO_F)
-      let
-        v2 = v1.setNew(ONE_F)
-      check:
-        v1 != v2
-        compareVectorToValues(v1, @[ZERO_F, ZERO_F, ZERO_F, ZERO_F])
-        compareVectorToValues(v2, @[ONE_F, ONE_F, ONE_F, ONE_F])
-    block:
-      var 
-        v1 = Vector4(x: ZERO_F, y: ZERO_F, z: ZERO_F, w: ZERO_F)
-      v1 = v1.setSelf(ONE_F)
-      check:
-        not compareVectorToValues(v1, @[ZERO_F, ZERO_F, ZERO_F, ZERO_F])
-        compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F, ONE_F])
-    block:
-      var
-        v1 = Vector4(x: ZERO_F, y: ZERO_F, z: ZERO_F, w: ZERO_F)
-      v1 = v1.set(ONE_F)
-      check:
-        compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F, ONE_F])
+    testSetVector(vector4(ZERO_F))
 
 suite "Clearing a Vector":
+  proc testClearVector(v1: Vector) =
+    var 
+      v2 = v1.copy()
+      v3 = v2.clear()
+    check:
+      not compareVectorToValue(v2, ONE_F)
+      compareVectorToValue(v2, ZERO_F)
+      v3 == v2
   test "Clearing a Vector1":
-    block:
-      var 
-        v1 = Vector1(x: ONE_F)
-      v1 = v1.clear()
-      check:
-        not compareVectorToValues(v1, @[ONE_F])
-        compareVectorToValues(v1, @[ZERO_F])
+    testClearVector(vector1(ONE_F))
   test "Clearing a Vector2":
-    block:
-      var 
-        v1 = Vector2(x: ONE_F, y: ONE_F)
-      v1 = v1.clear()
-      check:
-        not compareVectorToValues(v1, @[ONE_F, ONE_F])
-        compareVectorToValues(v1, @[ZERO_F, ZERO_F])
+    testClearVector(vector2(ONE_F))
   test "Clearing a Vector3":
-    block:
-      var 
-        v1 = Vector3(x: ONE_F, y: ONE_F, z: ONE_F)
-      v1 = v1.clear()
-      check:
-        not compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F])
-        compareVectorToValues(v1, @[ZERO_F, ZERO_F, ZERO_F])
+    testClearVector(vector3(ONE_F))
   test "Clearing a Vector4":
-    block:
-      var 
-        v1 = Vector4(x: ONE_F, y: ONE_F, z: ONE_F, w: ONE_F)
-      v1 = v1.clear()
-      check:
-        not compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F, ONE_F])
-        compareVectorToValues(v1, @[ZERO_F, ZERO_F, ZERO_F, ZERO_F])
+    testClearVector(vector4(ONE_F))
 
 suite "Adding Vectors":
   test "Adding Vector1s":
     block:
       let
-        v1 = Vector1(x: ONE_F)
-        v2 = Vector1(x: TWO_F)
+        v1 = vector1(ONE_F)
+        v2 = vector1(TWO_F)
         v3 = addNew(v1, v2)
         v4 = v1 + v2
       check:
-        compareVectorToValues(v3, @[THREE_F])
-        compareVectorToValues(v4, @[THREE_F])
+        compareVectorToValue(v3, THREE_F)
+        compareVectorToValue(v4, THREE_F)
         v3 == v4
     block:
       var
-        v1 = Vector1(x: ONE_F)
+        v1 = vector1(ONE_F)
       let
-        v2 = Vector1(x: TWO_F)
+        v2 = vector1(TWO_F)
       v1 = addSelf(v1, v2)
       check:
-        not compareVectorToValues(v1, @[ONE_F])
-        compareVectorToValues(v1, @[THREE_F])
+        not compareVectorToValue(v1, ONE_F)
+        compareVectorToValue(v1, THREE_F)
     block:
       var
-        v1 = Vector1(x: ONE_F)
+        v1 = vector1(ONE_F)
       let
-        v2 = Vector1(x: TWO_F)
+        v2 = vector1(TWO_F)
       v1 += v2
       check:
-        not compareVectorToValues(v1, @[ONE_F])
-        compareVectorToValues(v1, @[THREE_F])
+        not compareVectorToValue(v1, ONE_F)
+        compareVectorToValue(v1, THREE_F)
   test "Adding Vector2s":
     block:
       let
-        v1 = Vector2(x: ONE_F, y: ONE_F)
-        v2 = Vector2(x: TWO_F, y: TWO_F)
+        v1 = vector2(ONE_F)
+        v2 = vector2(TWO_F)
         v3 = addNew(v1, v2)
         v4 = v1 + v2
       check:
-        compareVectorToValues(v3, @[THREE_F, THREE_F])
-        compareVectorToValues(v4, @[THREE_F, THREE_F])
+        compareVectorToValue(v3, THREE_F)
+        compareVectorToValue(v4, THREE_F)
         v3 == v4
     block:
       var
-        v1 = Vector2(x: ONE_F, y: ONE_F)
+        v1 = vector2(ONE_F)
       let
-        v2 = Vector2(x: TWO_F, y: TWO_F)
+        v2 = vector2(TWO_F)
       v1 = addSelf(v1, v2)
       check:
-        not compareVectorToValues(v1, @[ONE_F, ONE_F])
-        compareVectorToValues(v1, @[THREE_F, THREE_F])
+        not compareVectorToValue(v1, ONE_F)
+        compareVectorToValue(v1, THREE_F)
     block:
       var
-        v1 = Vector2(x: ONE_F, y: ONE_F)
+        v1 = vector2(ONE_F)
       let
-        v2 = Vector2(x: TWO_F, y: TWO_F)
+        v2 = vector2(TWO_F)
       v1 += v2
       check:
-        not compareVectorToValues(v1, @[ONE_F, ONE_F])
-        compareVectorToValues(v1, @[THREE_F, THREE_F])
+        not compareVectorToValue(v1, ONE_F)
+        compareVectorToValue(v1, THREE_F)
   test "Adding Vector3s":
     block:
       let
-        v1 = Vector3(x: ONE_F, y: ONE_F, z: ONE_F)
-        v2 = Vector3(x: TWO_F, y: TWO_F, z: TWO_F)
+        v1 = vector3(ONE_F)
+        v2 = vector3(TWO_F)
         v3 = addNew(v1, v2)
         v4 = v1 + v2
       check:
-        compareVectorToValues(v3, @[THREE_F, THREE_F, THREE_F])
-        compareVectorToValues(v4, @[THREE_F, THREE_F, THREE_F])
+        compareVectorToValue(v3, THREE_F)
+        compareVectorToValue(v4, THREE_F)
         v3 == v4
     block:
       var
-        v1 = Vector3(x: ONE_F, y: ONE_F, z: ONE_F)
+        v1 = vector3(ONE_F)
       let
-        v2 = Vector3(x: TWO_F, y: TWO_F, z: TWO_F)
+        v2 = vector3(TWO_F)
       v1 = addSelf(v1, v2)
       check:
-        not compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F])
-        compareVectorToValues(v1, @[THREE_F, THREE_F, THREE_F])
+        not compareVectorToValue(v1, ONE_F)
+        compareVectorToValue(v1, THREE_F)
     block:
       var
-        v1 = Vector3(x: ONE_F, y: ONE_F, z: ONE_F)
+        v1 = vector3(ONE_F)
       let
-        v2 = Vector3(x: TWO_F, y: TWO_F, z: TWO_F)
+        v2 = vector3(TWO_F)
       v1 += v2
       check:
-        not compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F])
-        compareVectorToValues(v1, @[THREE_F, THREE_F, THREE_F])
+        not compareVectorToValue(v1, ONE_F)
+        compareVectorToValue(v1, THREE_F)
   test "Adding Vector4s":
     block:
       let
-        v1 = Vector4(x: ONE_F, y: ONE_F, z: ONE_F, w: ONE_F)
-        v2 = Vector4(x: TWO_F, y: TWO_F, z: TWO_F, w: TWO_F)
+        v1 = vector4(ONE_F)
+        v2 = vector4(TWO_F)
         v3 = addNew(v1, v2)
         v4 = v1 + v2
       check:
-        compareVectorToValues(v3, @[THREE_F, THREE_F, THREE_F, THREE_F])
-        compareVectorToValues(v4, @[THREE_F, THREE_F, THREE_F, THREE_F])
+        compareVectorToValue(v3, THREE_F)
+        compareVectorToValue(v4, THREE_F)
         v3 == v4
     block:
       var
-        v1 = Vector4(x: ONE_F, y: ONE_F, z: ONE_F, w: ONE_F)
+        v1 = vector4(ONE_F)
       let
-        v2 = Vector4(x: TWO_F, y: TWO_F, z: TWO_F, w: TWO_F)
+        v2 = vector4(TWO_F)
       v1 = addSelf(v1, v2)
       check:
-        not compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F, ONE_F])
-        compareVectorToValues(v1, @[THREE_F, THREE_F, THREE_F, THREE_F])
+        not compareVectorToValue(v1, ONE_F)
+        compareVectorToValue(v1, THREE_F)
     block:
       var
-        v1 = Vector4(x: ONE_F, y: ONE_F, z: ONE_F, w: ONE_F)
+        v1 = vector4(ONE_F)
       let
-        v2 = Vector4(x: TWO_F, y: TWO_F, z: TWO_F, w: TWO_F)
+        v2 = vector4(TWO_F)
       v1 += v2
       check:
-        not compareVectorToValues(v1, @[ONE_F, ONE_F, ONE_F, ONE_F])
-        compareVectorToValues(v1, @[THREE_F, THREE_F, THREE_F, THREE_F])
+        not compareVectorToValue(v1, ONE_F)
+        compareVectorToValue(v1, THREE_F)

@@ -67,7 +67,11 @@ type
 
   Dimension* {.explain.} = concept a
     a.dimensions() is int
-
+  
+  # NOTE: Added
+  Set* {.explain.} = concept var va, type T
+    va.set(float) is T
+ 
   Clear* {.explain.} = concept var va, type T
     va.clear() is T
 
