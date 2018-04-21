@@ -63,6 +63,57 @@ let
         0.0,1.0,0.0,0.0,
         0.0,0.0,1.0,0.0,
         0.0,0.0,0.0,1.0)
+
+#Accessors 
+#NOTE : This is Added, not in design doc
+proc ax*(m: Matrix32): float = m.matrix[0][0]
+proc ay*(m: Matrix32): float = m.matrix[0][1]
+proc az*(m: Matrix32): float = m.matrix[0][2]
+proc bx*(m: Matrix32): float = m.matrix[1][0]
+proc by*(m: Matrix32): float = m.matrix[1][1]
+proc bz*(m: Matrix32): float = m.matrix[1][2]
+
+proc `ax=`*(m: var Matrix32, v: float) = m.matrix[0][0] = v
+proc `ay=`*(m: var Matrix32, v: float) = m.matrix[0][1] = v
+proc `az=`*(m: var Matrix32, v: float) = m.matrix[0][2] = v
+proc `bx=`*(m: var Matrix32, v: float) = m.matrix[1][0] = v
+proc `by=`*(m: var Matrix32, v: float) = m.matrix[1][1] = v
+proc `bz=`*(m: var Matrix32, v: float) = m.matrix[1][2] = v
+
+proc ax*(m: Matrix44): float = m.matrix[0][0]
+proc ay*(m: Matrix44): float = m.matrix[0][1]
+proc az*(m: Matrix44): float = m.matrix[0][2]
+proc aw*(m: Matrix44): float = m.matrix[0][3]
+proc bx*(m: Matrix44): float = m.matrix[1][0]
+proc by*(m: Matrix44): float = m.matrix[1][1]
+proc bz*(m: Matrix44): float = m.matrix[1][2]
+proc bw*(m: Matrix44): float = m.matrix[1][3]
+proc cx*(m: Matrix44): float = m.matrix[2][0]
+proc cy*(m: Matrix44): float = m.matrix[2][1]
+proc cz*(m: Matrix44): float = m.matrix[2][2]
+proc cw*(m: Matrix44): float = m.matrix[2][3]
+proc tx*(m: Matrix44): float = m.matrix[3][0]
+proc ty*(m: Matrix44): float = m.matrix[3][1]
+proc tz*(m: Matrix44): float = m.matrix[3][2]
+proc tw*(m: Matrix44): float = m.matrix[3][3]
+
+proc `ax=`*(m: var Matrix44, v: float) = m.matrix[0][0] = v
+proc `ay=`*(m: var Matrix44, v: float) = m.matrix[0][1] = v
+proc `az=`*(m: var Matrix44, v: float) = m.matrix[0][2] = v
+proc `aw=`*(m: var Matrix44, v: float) = m.matrix[0][3] = v
+proc `bx=`*(m: var Matrix44, v: float) = m.matrix[1][0] = v
+proc `by=`*(m: var Matrix44, v: float) = m.matrix[1][1] = v
+proc `bz=`*(m: var Matrix44, v: float) = m.matrix[1][2] = v
+proc `bw=`*(m: var Matrix44, v: float) = m.matrix[1][3] = v
+proc `cx=`*(m: var Matrix44, v: float) = m.matrix[2][0] = v
+proc `cy=`*(m: var Matrix44, v: float) = m.matrix[2][1] = v
+proc `cz=`*(m: var Matrix44, v: float) = m.matrix[2][2] = v
+proc `cw=`*(m: var Matrix44, v: float) = m.matrix[2][3] = v
+proc `tx=`*(m: var Matrix44, v: float) = m.matrix[3][0] = v
+proc `ty=`*(m: var Matrix44, v: float) = m.matrix[3][1] = v
+proc `tz=`*(m: var Matrix44, v: float) = m.matrix[3][2] = v
+proc `tw=`*(m: var Matrix44, v: float) = m.matrix[3][3] = v
+
 #Set
 #NOTE : This is Added, not in design doc
 proc set*(m: var Matrix32, n: float): var Matrix32 {.noinit.} =
