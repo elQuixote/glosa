@@ -117,59 +117,25 @@ proc `tw=`*(m: var Matrix44, v: float) = m.matrix[3][3] = v
 #Set
 #NOTE : This is Added, not in design doc
 proc set*(m: var Matrix32, n: float): var Matrix32 {.noinit.} =
-    m.matrix[0][0] = n
-    m.matrix[0][1] = n
-    m.matrix[0][2] = n
-    m.matrix[1][0] = n
-    m.matrix[1][1] = n
-    m.matrix[1][2] = n
+    m.matrix = [[n, n, n],[n, n, n]]
     result = m
 
 proc set*(m: var Matrix44, n: float): var Matrix44 {.noinit.} =
-    m.matrix[0][0] = n
-    m.matrix[0][1] = n
-    m.matrix[0][2] = n
-    m.matrix[0][3] = n
-    m.matrix[1][0] = n
-    m.matrix[1][1] = n
-    m.matrix[1][2] = n
-    m.matrix[1][3] = n
-    m.matrix[2][0] = n
-    m.matrix[2][1] = n
-    m.matrix[2][2] = n
-    m.matrix[2][3] = n
-    m.matrix[3][0] = n
-    m.matrix[3][1] = n
-    m.matrix[3][2] = n
-    m.matrix[3][3] = n
-    result = m   
+    m.matrix = [[n, n, n, n],
+                [n, n, n, n],
+                [n, n, n, n],
+                [n, n, n, n]]
+    result = m    
 
-proc set*(m: var Matrix32, a,b,c,d,e,f: float): var Matrix32 {.noinit.} =
-    m.matrix[0][0] = a
-    m.matrix[0][1] = b
-    m.matrix[0][2] = c
-    m.matrix[1][0] = d
-    m.matrix[1][1] = e
-    m.matrix[1][2] = f
+proc set*(m: var Matrix32, ax, ay, az, bx, by, bz: float): var Matrix32 {.noinit.} =
+    m.matrix = [[ax, ay, az],[bx, by, bz]]
     result = m
 
-proc set*(m: var Matrix44, a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p: float): var Matrix44 {.noinit.} =
-    m.matrix[0][0] = a
-    m.matrix[0][1] = b
-    m.matrix[0][2] = c
-    m.matrix[0][3] = d
-    m.matrix[1][0] = e
-    m.matrix[1][1] = f
-    m.matrix[1][2] = g
-    m.matrix[1][3] = h
-    m.matrix[2][0] = i
-    m.matrix[2][1] = j
-    m.matrix[2][2] = k
-    m.matrix[2][3] = l
-    m.matrix[3][0] = m
-    m.matrix[3][1] = n
-    m.matrix[3][2] = o
-    m.matrix[3][3] = p
+proc set*(m: var Matrix44, ax, ay, az, aw, bx, by, bz, bw, cx, cy, cz, cw, tx, ty, tz, tw: float): var Matrix44 {.noinit.} =
+    m.matrix = [[ax, ay, az, aw],
+                [bx, by, bz, bw],
+                [cx, cy, cz, cw],
+                [tx, ty, tz, tw]]
     result = m      
 
 #Copy
