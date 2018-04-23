@@ -103,3 +103,33 @@ template `*`*(q: Quaternion, f: float): Quaternion = multiplyNew(q,f)
 template `*=`*(q: var Quaternion, f: float): var Quaternion = multiplySelf(q,f)
 
 #Addition
+proc addNew(q: Quaternion, f: float): Quaternion =
+    result.x = q.x + f 
+    result.y = q.y + f 
+    result.z = q.z + f 
+    result.w = q.w + f 
+
+proc addNew(q1, q2: Quaternion): Quaternion = 
+    result.x = q1.x + q2.x
+    result.y = q1.y + q2.y
+    result.z = q1.z + q2.z
+    result.w = q1.w + q2.w
+
+proc addSelf(q: var Quaternion, f: float): var Quaternion {.noinit.} = 
+    q.x += f 
+    q.y += f
+    q.z += f
+    q.w += f
+    result = q
+
+proc addSelf(q1: var Quaternion, q2: Quaternion): var Quaternion {.noinit} = 
+    q1.x += q2.x 
+    q1.y += q2.y 
+    q1.z += q2.z 
+    q1.w += q2.w 
+    result = q1
+
+template `+`*(q1,q2: Quaternion): Quaternion = addNew(q1, q2)
+template `+`*(q: Quaternion, f: float): Quaternion = addNew(q, f)
+template `+=`*(q1: var Quaternion, q2: Quaternion): var Quaternion = addSelf(q1, q2)
+template `+=`*(q: var Quaternion, f: float): var Quaternion = addSelf(q, f)
