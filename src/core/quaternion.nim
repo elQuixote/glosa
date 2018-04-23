@@ -18,3 +18,18 @@ proc quaternion(x, y, z, w: float): Quaternion =
 #Copy
 proc copy*(q: Quaternion): Quaternion = 
     result = Quaternion(x: q.x, y: q.y, z: q.z, w: q.w)
+
+#Set
+#NOTE : This is Added, not in design doc
+proc set*(q: var Quaternion, x,y,z,w: float): var Quaternion {.noinit.} = 
+    result.x = x
+    result.y = y
+    result.z = z
+    result.w = w
+
+proc set*(q: var Quaternion, n: float): var Quaternion {.noinit.} =
+    result.x = x
+    result.y = y
+    result.z = z
+    result.w = w
+    
