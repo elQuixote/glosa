@@ -168,18 +168,24 @@ template `-=`*(q: var Quaternion, f: float): var Quaternion = subtractSelf(q, f)
 
 #Divide
 proc divideNew(q: Quaternion, f: float): Quaternion =
+    if f == 0.0:
+        raise newException(DivByZeroError,"Cannot divide by zero")
     result.x = q.x / f 
     result.y = q.y / f 
     result.z = q.z / f 
     result.w = q.w / f 
 
 proc divideNew(q1, q2: Quaternion): Quaternion = 
+    if q2.x == 0.0 or q2.y == 0.0 or q2.z == 0.0 or q2.w == 0.0:
+        raise newException(DivByZeroError,"Cannot divide by zero")
     result.x = q1.x / q2.x
     result.y = q1.y / q2.y
     result.z = q1.z / q2.z
     result.w = q1.w / q2.w
 
 proc divideSelf(q: var Quaternion, f: float): var Quaternion {.noinit.} = 
+    if f == 0.0:
+        raise newException(DivByZeroError,"Cannot divide by zero")
     q.x /= f 
     q.y /= f
     q.z /= f
@@ -187,6 +193,8 @@ proc divideSelf(q: var Quaternion, f: float): var Quaternion {.noinit.} =
     result = q
 
 proc divideSelf(q1: var Quaternion, q2: Quaternion): var Quaternion {.noinit} = 
+    if q2.x == 0.0 or q2.y == 0.0 or q2.z == 0.0 or q2.w == 0.0:
+        raise newException(DivByZeroError,"Cannot divide by zero")
     q1.x /= q2.x 
     q1.y /= q2.y 
     q1.z /= q2.z 
