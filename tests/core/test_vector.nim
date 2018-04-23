@@ -3,6 +3,7 @@ import unittest
 
 # Vector testing constants
 const
+  NEGATIVE_ONE_F = -1.0
   ZERO_F: float = 0.0
   ONE_F: float = 1.0
   TWO_F: float = 2.0
@@ -421,3 +422,31 @@ suite "Calculating cross product of Vectors":
         y: ONE_F * THREE_F - TWO_F * ZERO_F,
         z: TWO_F * ONE_F - FOUR_F * THREE_F
       ))
+
+suite "Calculating the inverse of a Vector":
+  proc testInverseVector(v1: Vector, expected: float) =
+    block:
+      let
+        v2 = inverseNew(v1)
+        v3 = inverse(v1)
+      check:
+        compareVectorToValue(v1, NEGATIVE_ONE_F * expected)
+        compareVectorToValue(v2, expected)
+        compareVectorToValue(v3, expected)
+    block:
+      var
+        v2 = v1.copy()
+      let
+        v3 = inverseSelf(v2)
+      check:
+        compareVectorToValue(v2, expected)
+        compareVectorToValue(v3, expected)
+        v2 == v3
+  test "Calculating the inverse of a Vector1":
+    testInverseVector(vector1(TWO_F), NEGATIVE_ONE_F * TWO_F)
+  test "Calculating the inverse of a Vector2":
+    testInverseVector(vector2(TWO_F), NEGATIVE_ONE_F * TWO_F)
+  test "Calculating the inverse of a Vector3":
+    testInverseVector(vector3(TWO_F), NEGATIVE_ONE_F * TWO_F)
+  test "Calculating the inverse of a Vector4":
+    testInverseVector(vector4(TWO_F), NEGATIVE_ONE_F * TWO_F)
