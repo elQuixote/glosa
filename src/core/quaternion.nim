@@ -205,3 +205,7 @@ template `/`*(q1,q2: Quaternion): Quaternion = divideNew(q1, q2)
 template `/`*(q: Quaternion, f: float): Quaternion = divideNew(q, f)
 template `/=`*(q1: var Quaternion, q2: Quaternion): var Quaternion = divideSelf(q1, q2)
 template `/=`*(q: var Quaternion, f: float): var Quaternion = divideSelf(q, f)
+
+#Dot
+proc dot*(q1, q2: Quaternion): float =
+    result = q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w
