@@ -1,4 +1,3 @@
-from ../../src/core/concepts import Vector, Set
 import ../../src/core/vector
 import unittest
 
@@ -168,35 +167,35 @@ suite "Adding Vectors":
     testAddingVectors(vector4(ONE_F), vector4(TWO_F))
   
 suite "Adding Vector and float":
-  proc testAddingVectors(v1, v2: Vector) =
+  proc testAddingVectorAndFloat(v1: Vector) =
     block:
       let
-        v3 = addNew(v1, v2)
-        v4 = v1 + v2
+        v2 = addNew(v1, TWO_F)
+        v3 = v1 + TWO_F
       check:
+        compareVectorToValue(v2, THREE_F)
         compareVectorToValue(v3, THREE_F)
-        compareVectorToValue(v4, THREE_F)
     block:
       var
-        v3 = v1.copy()
+        v2 = v1.copy()
       let
-        v4 = addSelf(v3, v2)
+        v3 = addSelf(v2, TWO_F)
       check:
+        compareVectorToValue(v2, THREE_F)
         compareVectorToValue(v3, THREE_F)
-        compareVectorToValue(v4, THREE_F)
-        v3 == v4
+        v2 == v3
     block:
       var
-        v3 = v1.copy()
-      v3 += v2
+        v2 = v1.copy()
+      v2 += TWO_F
       check:
-        not compareVectorToValue(v3, ONE_F)
-        compareVectorToValue(v3, THREE_F)
+        not compareVectorToValue(v2, ONE_F)
+        compareVectorToValue(v2, THREE_F)
   test "Adding Vector1s":
-    testAddingVectors(vector1(ONE_F), vector1(TWO_F))
+    testAddingVectorAndFloat(vector1(ONE_F))
   test "Adding Vector2s":
-    testAddingVectors(vector2(ONE_F), vector2(TWO_F))
+    testAddingVectorAndFloat(vector2(ONE_F))
   test "Adding Vector3s":
-    testAddingVectors(vector3(ONE_F), vector3(TWO_F))
+    testAddingVectorAndFloat(vector3(ONE_F))
   test "Adding Vector4s":
-    testAddingVectors(vector4(ONE_F), vector4(TWO_F))
+    testAddingVectorAndFloat(vector4(ONE_F))
