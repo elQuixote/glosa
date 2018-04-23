@@ -209,3 +209,20 @@ template `/=`*(q: var Quaternion, f: float): var Quaternion = divideSelf(q, f)
 #Dot
 proc dot*(q1, q2: Quaternion): float =
     result = q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w
+
+#Invert
+proc invertNew(q: Quaternion): Quaternion = 
+    result.x = -q.x
+    result.y = -q.y
+    result.z = -q.z
+    result.w = -q.w
+
+proc invertSelf(q: var Quaternion): var Quaternion {.noinit.} = 
+    q.x = -q.x
+    q.y = -q.y
+    q.z = -q.z
+    q.w = -q.w
+    result = q
+
+template inverse*(q: Quaternion): Quaternion = invertNew(q)
+template inverse*(q: var Quaternion): var Quaternion = invertSelf(q)
