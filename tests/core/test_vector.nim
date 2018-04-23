@@ -1,10 +1,17 @@
 import ../../src/core/vector
 import unittest
 
+from system import abs
+from math import pow, PI
+
+const
+  ETA = pow(10.0, -6)
+
 # Vector testing constants
 const
   NEGATIVE_ONE_F = -1.0
   ZERO_F: float = 0.0
+  HALF_F: float = 0.5
   ONE_F: float = 1.0
   TWO_F: float = 2.0
   THREE_F: float = 3.0
@@ -422,6 +429,7 @@ suite "Calculating cross product of Vectors":
         y: ONE_F * THREE_F - TWO_F * ZERO_F,
         z: TWO_F * ONE_F - FOUR_F * THREE_F
       ))
+  # No Vector4 cross product
 
 suite "Calculating the inverse of a Vector":
   proc testInverseVector(v1: Vector, expected: float) =
@@ -450,3 +458,66 @@ suite "Calculating the inverse of a Vector":
     testInverseVector(vector3(TWO_F), NEGATIVE_ONE_F * TWO_F)
   test "Calculating the inverse of a Vector4":
     testInverseVector(vector4(TWO_F), NEGATIVE_ONE_F * TWO_F)
+
+suite "Calculating the heading of a Vector":
+  const
+    FORTY_FIVE_F = 45.0 * PI / 180
+    THIRTY_F = 30.0 * PI / 180
+    SIXTY_F = 60.0 * PI / 180
+  test "Calculating the heading of a Vector1":
+    check:
+      heading(vector1(TWO_F)) == ZERO_F
+  test "Calculating the heading of a Vector2":
+    let
+      v1 = vector2(TWO_F)
+      v2 = Vector2(x: pow(THREE_F, HALF_F) / TWO_F, y: HALF_F)
+    check:
+      heading(v1) == FORTY_FIVE_F
+      headingXY(v1) == FORTY_FIVE_F
+      heading(v1) == headingXY(v1)
+      abs(heading(v2) - THIRTY_F) < ETA
+      abs(headingXY(v2) - THIRTY_F) < ETA
+      abs(heading(v2) - headingXY(v2)) < ETA
+  test "Calculating the heading of a Vector3":
+    let
+      v1 = vector3(TWO_F)
+      v2 = Vector3(
+        x: pow(THREE_F, HALF_F) / TWO_F,
+        y: HALF_F,
+        z: HALF_F)
+    check:
+      heading(v1) == FORTY_FIVE_F
+      headingXY(v1) == FORTY_FIVE_F
+      heading(v1) == headingXY(v1)
+      headingXZ(v1) == FORTY_FIVE_F
+      headingYZ(v1) == FORTY_FIVE_F
+      abs(heading(v2) - THIRTY_F) < ETA
+      abs(headingXY(v2) - THIRTY_F) < ETA
+      abs(heading(v2) - headingXY(v2)) < ETA
+      abs(headingXZ(v2) - THIRTY_F) < ETA
+      headingYZ(v2) == FORTY_FIVE_F
+  test "Calculating the heading of a Vector4":
+    let
+      v1 = vector4(TWO_F)
+      v2 = Vector4(
+        x: pow(THREE_F, HALF_F) / TWO_F,
+        y: HALF_F,
+        z: HALF_F,
+        w: pow(THREE_F, HALF_F) / TWO_F)
+    check:
+      heading(v1) == FORTY_FIVE_F
+      headingXY(v1) == FORTY_FIVE_F
+      heading(v1) == headingXY(v1)
+      headingXZ(v1) == FORTY_FIVE_F
+      headingXW(v1) == FORTY_FIVE_F
+      headingYZ(v1) == FORTY_FIVE_F
+      headingYW(v1) == FORTY_FIVE_F
+      headingZW(v1) == FORTY_FIVE_F
+      abs(heading(v2) - THIRTY_F) < ETA
+      abs(headingXY(v2) - THIRTY_F) < ETA
+      abs(heading(v2) - headingXY(v2)) < ETA
+      abs(headingXZ(v2) - THIRTY_F) < ETA
+      headingXW(v2) == FORTY_FIVE_F
+      headingYZ(v2) == FORTY_FIVE_F
+      abs(headingYW(v2) - SIXTY_F) < ETA
+      abs(headingZW(v2) - SIXTY_F) < ETA
