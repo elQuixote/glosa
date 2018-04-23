@@ -1,15 +1,23 @@
 import ./concepts
 
 from strformat import `&`
-from math import arctan2, arccos, sqrt, sin, cos
+from math import sin, cos
 
 import hashes
 
 type 
     Matrix32* = object
+        ## Implements a row major 2D matrix
+        ## ax ay az
+        ## bx by bz
         matrix*: array[2,array[3,float]] #NOTE: Do we want an array for matrix access?
     
     Matrix44* = object
+        ## Implements a row major 3D matrix 
+        ## [ ax(0,0) ay(0,1) az(0,2) aw(0,3) ]
+        ## [ bx(1,0) by(1,1) bz(1,2) bw(1,3) ]
+        ## [ cx(2,0) cy(2,1) cz(2,2) cw(2,3) ]
+        ## [ tx(3,0) ty(3,1) tz(3,2) tw(3,3) ]
         matrix*: array[4,array[4,float]] #NOTE: Do we want an array for matrix access?
 
 #Constructors
@@ -17,7 +25,11 @@ proc matrix32*(
     m00, m01, m02, 
     m10, m11, m12 : float
     ): Matrix32 = 
-    var mx: array[2,array[3,float]] # NOTE: Do we need this for better access to matrix data?
+    ## Creates a new 2x3 2D transformation matrix.
+    ## `ax`,`ay` is the local x axis
+    ## `bx`,`by` is the local y axis
+    ## `tx`,`ty` is the translation
+    var mx: array[2,array[3,float]] 
     mx[0][0] = m00
     mx[0][1] = m01
     mx[0][2] = m02
@@ -32,7 +44,12 @@ proc matrix44*(
     m20, m21, m22, m23, 
     m30, m31, m32, m33 : float
     ): Matrix44 = 
-    var mx: array[4,array[4,float]] # NOTE: Do we need this for better access to matrix data?
+    ## Creates a new 4x4 3d transformation matrix.
+    ## `ax` , `ay` , `az` is the local x axis.
+    ## `bx` , `by` , `bz` is the local y axis.
+    ## `cx` , `cy` , `cz` is the local z axis.
+    ## `tx` , `ty` , `tz` is the translation.
+    var mx: array[4,array[4,float]] 
     mx[0][0] = m00
     mx[0][1] = m01
     mx[0][2] = m02
@@ -58,11 +75,13 @@ let
         1.0,0.0, 
         0.0,0.0, 
         1.0,0.0)
+        ## Quick access to an identity matrix
     IDMATRIX44*: Matrix44 = matrix44(      
         1.0,0.0,0.0,0.0,
         0.0,1.0,0.0,0.0,
         0.0,0.0,1.0,0.0,
         0.0,0.0,0.0,1.0)
+        ## Quick access to an identity matrix
 
 #Accessors 
 #NOTE : This is Added, not in design doc
@@ -117,10 +136,12 @@ proc `tw=`*(m: var Matrix44, v: float) = m.matrix[3][3] = v
 #Set
 #NOTE : This is Added, not in design doc
 proc set*(m: var Matrix32, n: float): var Matrix32 {.noinit.} =
+    ## Sets all elements in an existing matrix32 to single value.
     m.matrix = [[n, n, n],[n, n, n]]
     result = m
 
 proc set*(m: var Matrix44, n: float): var Matrix44 {.noinit.} =
+    ## Sets all elements in an existing matrix44 to single value.
     m.matrix = [[n, n, n, n],
                 [n, n, n, n],
                 [n, n, n, n],
@@ -128,10 +149,12 @@ proc set*(m: var Matrix44, n: float): var Matrix44 {.noinit.} =
     result = m    
 
 proc set*(m: var Matrix32, ax, ay, az, bx, by, bz: float): var Matrix32 {.noinit.} =
+    ## Sets arbitrary elements in an existing matrix32.
     m.matrix = [[ax, ay, az],[bx, by, bz]]
     result = m
 
 proc set*(m: var Matrix44, ax, ay, az, aw, bx, by, bz, bw, cx, cy, cz, cw, tx, ty, tz, tw: float): var Matrix44 {.noinit.} =
+    ## Sets arbitrary elements in an existing matrix44.
     m.matrix = [[ax, ay, az, aw],
                 [bx, by, bz, bw],
                 [cx, cy, cz, cw],
@@ -140,9 +163,11 @@ proc set*(m: var Matrix44, ax, ay, az, aw, bx, by, bz, bw, cx, cy, cz, cw, tx, t
 
 #Copy
 proc copy*(m: Matrix32): Matrix32 =
+    ## Copies an existing matrix32 to another
     result = Matrix32(matrix: m.matrix)
   
 proc copy*(m: Matrix44): Matrix44 =
+    ## Copies an existing matrix44 to another
     result = Matrix44(matrix: m.matrix)
 
 #Clear
@@ -151,9 +176,11 @@ template clear*(m: var Matrix44): var Matrix44 = set(m, 0.0)
 
 #Equals
 proc `==`*(m1, m2: Matrix32): bool = 
+    ## Checks is all elements of m1 and m2 are the same
     result = m1.matrix[0][0] == m2.matrix[0][0] and m1.matrix[0][1] == m2.matrix[0][1] and m1.matrix[0][2] == m2.matrix[0][2] and m1
         m1.matrix[1][0] == m2.matrix[1][0] and m1.matrix[1][1] == m2.matrix[1][1] and m1.matrix[1][2] == m2.matrix[1][2]  
 proc `==`*(m1, m2: Matrix44): bool =
+    ## Checks is all elements of m1 and m2 are the same
     result = m1.matrix[0][0] == m2.matrix[0][0] and m1.matrix[0][1] == m2.matrix[0][1] and m1.matrix[0][2] == m2.matrix[0][2] and m1.matrix[0][3] == m2.matrix[0][3] and
         m1.matrix[1][0] == m2.matrix[1][0] and m1.matrix[1][1] == m2.matrix[1][1] and m1.matrix[1][2] == m2.matrix[1][2] and m1.matrix[1][3] == m2.matrix[1][3] and
         m1.matrix[2][0] == m2.matrix[2][0] and m1.matrix[2][1] == m2.matrix[2][1] and m1.matrix[2][2] == m2.matrix[2][2] and m1.matrix[2][3] == m2.matrix[2][2] and
@@ -175,10 +202,12 @@ proc hash*(m: Matrix44): hashes.Hash =
 # String
 # NOTE: Changed from design doc
 proc `$`*(m: Matrix32): string =
+    ## Returns a string representation of the matrix32
     result = &"[{m.matrix[0][0]}, {m.matrix[0][1]}, {m.matrix[0][2]}, \n" &
              &"{m.matrix[1][0]}, {m.matrix[1][1]}, {m.matrix[1][2]}]"
   
 proc `$`*(m: Matrix44): string =
+    ## Returns a string representation of the matrix44
     result = &"[{m.matrix[0][0]}, {m.matrix[0][1]}, {m.matrix[0][2]}, {m.matrix[0][3]}, \n" &
                 &"{m.matrix[1][0]}, {m.matrix[1][1]}, {m.matrix[1][2]}, {m.matrix[1][3]}, \n" &
                 &"{m.matrix[2][0]}, {m.matrix[2][1]}, {m.matrix[2][2]}, {m.matrix[2][3]}, \n" &
@@ -186,12 +215,16 @@ proc `$`*(m: Matrix44): string =
 
 #Transpose
 proc transposeSelf*(m: var Matrix32): var Matrix32 {.noinit.} =
+    ## Transposes a matrix, whose rows are the columns, and
+    ## columns are the rows of the original.
     swap(m.matrix[0][1], m.matrix[1][0])
     swap(m.matrix[1][0], m.matrix[1][1])
     swap(m.matrix[0][2], m.matrix[1][1])
     result = m
 
 proc transposeNew*(m: Matrix32): Matrix32 =
+    ## Returns a new matrix whose rows are the columns, and
+    ## columns are the rows of the original.
     result.matrix[0][0] = m.matrix[0][0]
     result.matrix[0][1] = m.matrix[1][0]
     result.matrix[0][2] = m.matrix[0][1]
@@ -200,6 +233,8 @@ proc transposeNew*(m: Matrix32): Matrix32 =
     result.matrix[1][2] = m.matrix[1][2]
 
 proc transposeSelf*(m: var Matrix44): var Matrix44 {.noinit.} =
+    ## Transposes a matrix, whose rows are the columns, and
+    ## columns are the rows of the original.
     swap(m.matrix[0][1], m.matrix[1][0])
     swap(m.matrix[0][2], m.matrix[2][0])
     swap(m.matrix[1][2], m.matrix[2][1])
@@ -209,6 +244,8 @@ proc transposeSelf*(m: var Matrix44): var Matrix44 {.noinit.} =
     result = m
 
 proc transposeNew*(m: Matrix44): Matrix44 =
+    ## Returns a new matrix whose rows are the columns, and
+    ## columns are the rows of the original.
     result.matrix[0][0] = m.matrix[0][0]
     result.matrix[0][1] = m.matrix[1][0]
     result.matrix[0][2] = m.matrix[2][0]
@@ -231,6 +268,8 @@ template transpose*(m: Matrix44): Matrix44 = transposeNew*(m)
 
 #Determinant
 proc determinants*(m: Matrix44): float = 
+    ##Ignore this method
+    ## Computes the determinant of the matrix44.
     result = m.matrix[0][0] * 
         (m.matrix[1][1] * m.matrix[2][2] * m.matrix[3][3] + m.matrix[1][2] * 
         m.matrix[2][3] * m.matrix[3][1] + m.matrix[1][3] * m.matrix[2][1] * 
@@ -255,11 +294,13 @@ proc determinants*(m: Matrix44): float =
         m.matrix[3][1] - m.matrix[1][2] * m.matrix[2][1]  * m.matrix[3][0] - 
         m.matrix[1][0] * m.matrix[2][2] * m.matrix[3][1] - m.matrix[1][1] * 
         m.matrix[2][0] * m.matrix[3][2])
-#Note calculate the determinant of a non square matrix?
+
 proc determinant*(m: Matrix32): float =
+    ## Computes the determinant of the matrix32.
     return m.matrix[0][0]*m.matrix[1][1]-m.matrix[1][0]*m.matrix[0][1]
 
 proc determinant*(m: Matrix44): float =
+    ## Computes the determinant of the matrix44.
     let
         O1 = m.matrix[2][0]*m.matrix[3][3]-m.matrix[2][3]*m.matrix[3][0]
         O2 = m.matrix[2][1]*m.matrix[3][3]-m.matrix[2][3]*m.matrix[3][1]
@@ -275,6 +316,9 @@ proc determinant*(m: Matrix44): float =
 
 #Invert
 proc invert*(m: Matrix32): Matrix32 {.noInit.} =
+    ## Returns a new matrix, which is the inverse of the matrix
+    ## If the matrix is not invertible (determinant=0), an EDivByZero
+    ## will be raised.
     let d = m.determinant
     if d == 0.0:
         raise newException(DivByZeroError,"Cannot invert a zero determinant matrix")
@@ -285,6 +329,11 @@ proc invert*(m: Matrix32): Matrix32 {.noInit.} =
         (m.matrix[0][1]*m.matrix[2][0]-m.matrix[0][0]*m.matrix[2][1])/d)
 
 proc invert*(m: Matrix44): Matrix44 {.noInit.} =
+    ## Computes the inverse of matrix `m`. If the matrix
+    ## determinant is zero, thus not invertible, a EDivByZero
+    ## will be raised.
+
+    # this computation comes from optimize(invert(m)) in maxima CAS
     let
         det = m.determinant
         O2 = m.matrix[2][1]*m.matrix[3][3]-m.matrix[2][3]*m.matrix[3][1]
@@ -320,12 +369,16 @@ proc invert*(m: Matrix44): Matrix44 {.noInit.} =
 #Module Level Procs (Constructors)
 #Rotation 
 proc rotate32*(radians: float): Matrix32 {.noinit.} =
+    ## Returns a new rotation matrix, which
+    ## represents a rotation by `rad` radians
     let  
         s = sin(radians)
         c = cos(radians)
     result.set(c,s,-s,c,0,0)
 
 proc rotate44X*(angle: float): Matrix44 {.noinit.} = 
+    ## Creates a matrix that rotates around the x-axis with `angle` radians,
+    ## which is also called a 'roll' matrix.
     let 
         c = cos(angle)
         s = sin(angle)
@@ -336,6 +389,8 @@ proc rotate44X*(angle: float): Matrix44 {.noinit.} =
         0,0,0,1)
 
 proc rotate44Y*(angle: float): Matrix44 {.noinit.} = 
+    ## Creates a matrix that rotates around the y-axis with `angle` radians,
+    ## which is also called a 'pitch' matrix.
     let 
         c = cos(angle)
         s = sin(angle)
@@ -346,6 +401,8 @@ proc rotate44Y*(angle: float): Matrix44 {.noinit.} =
         0,0,0,1)
 
 proc rotate44Z*(angle: float): Matrix44 {.noinit.} = 
+    ## Creates a matrix that rotates around the z-axis with `angle` radians,
+    ## which is also called a 'yaw' matrix.
     let 
         c = cos(angle)
         s = sin(angle)
@@ -357,33 +414,44 @@ proc rotate44Z*(angle: float): Matrix44 {.noinit.} =
 
 #Scale
 proc scale32*(s: float): Matrix32 {.noinit} = 
+    ## Returns a new scale matrix32.
     result.set(s,0,0,s,0,0)
 
 proc scale44*(s: float): Matrix44 {.noinit} = 
+    ## Returns a new scale matrix44.
     result.set(s,0,0,0, 0,s,0,0, 0,0,s,0, 0,0,0,1)
 
 #Shear
 proc shear32X(sh: float): Matrix32 {.noinit.} = 
+    ## Returns a new X-Shear matrix32.
     result.set(1,0,sh,1,0,0)
 
 proc shear32Y(sh: float): Matrix32 {.noinit} = 
+    ## Returns a new Y-Shear matrix32.
     result.set(1,sh,0,1,0,0)
 
 #NOTE : Not sure about shear32Z 
 #NOTE : Shear Operations for Matrix44 incomplete
 proc shear44X(sh: float): Matrix44 {.noinit} =
+    ## Returns a new X-Shear matrix44.
     result.set(1,sh,sh,0, 0,1,0,0, 0,0,1,0, 0,0,0,1)
 
 proc shear44Y(sh: float): Matrix44 {.noinit} =
+    ## Returns a new Y-Shear matrix44.
     result.set(1,0,0,0, sh,1,sh,0, 0,0,1,0, 0,0,0,1)
 
 proc shear44Z(sh: float): Matrix44 {.noinit} =
+    ## Returns a new Z-Shear matrix44.
     result.set(1,0,0,0, 0,1,0,0, sh,sh,1,0, 0,0,0,1)
 
 #Stretch
 #NOTE : This is Added, not in design doc
 proc stretch*(sx, sy: float): Matrix32 {.noInit.} =
+    ## Returns new a stretch matrix, which is a
+    ## scale matrix with non uniform scale in x and y.
     result.set(sx,0,0,sy,0,0)
 
 proc stretch*(sx, sy, sz: float): Matrix44 {.noInit.} =
+    ## Returns new a stretch matrix, which is a
+    ## scale matrix with non uniform scale in x,y and z.
     result.set(sx,0,0,0, 0,sy,0,0, 0,0,sz,0, 0,0,0,1)
