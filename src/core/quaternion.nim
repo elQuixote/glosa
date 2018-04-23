@@ -70,3 +70,5 @@ proc normalizeNew*(q: Quaternion, m: float = 1.0): Quaternion =
     else:
         result = copy(q)
 
+template normalize*(q: var Quaternion, m: float = 1.0): var Quaternion = normalizeSelf(q, m)
+
