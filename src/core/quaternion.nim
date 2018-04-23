@@ -5,6 +5,7 @@ from math import arctan2, arccos, sqrt
 import hashes
 
 import matrix 
+import vector
 
 type 
     Quaternion* = object
@@ -16,6 +17,12 @@ proc quaternion(x, y, z, w: float): Quaternion =
     result.y = y
     result.z = z
     result.w = w
+
+proc quaternion(w: float, v: Vector3): Quaternion =
+    result.w = w
+    result.x = v.x
+    result.y = v.y
+    result.z = v.z
 
 #Copy
 proc copy*(q: Quaternion): Quaternion = 
@@ -277,3 +284,11 @@ proc fromMatrix(m: Matrix44): Quaternion =
     result.y = q[1]
     result.z = q[2]
     result.w = q[3]
+
+#FromAxisAngle
+proc fromAxisAngle(v: var Vector3, a: float): Quaternion = 
+    var 
+        s = sin(a * 0.5)
+        c = cos(a * 0.5)
+    result = quaternion(c, normalize(v, s))
+
