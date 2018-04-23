@@ -4,6 +4,8 @@ from strformat import `&`
 from math import arctan2, arccos, sqrt
 import hashes
 
+import matrix 
+
 type 
     Quaternion* = object
         x*,y*,z*,w* : float 
@@ -244,3 +246,34 @@ proc conjugateSelf(q: var Quaternion): var Quaternion {.noinit.} =
 template conjugate*(q: Quaternion): Quaternion = conjugateNew(q)
 template conjugate*(q: var Quaternion): var Quaternion = conjugateSelf(q)
 
+#Module Level Procs (Constructors)
+#FromMatrix44
+proc fromMatrix(m: Matrix44): Quaternion =
+    var 
+        s = 0.0
+        q : array[4,float]
+        t = m.matrix[0][0] + m.matrix[1][1] + m.matrix[2][2]
+    if t > 0:
+        s = 0.5 / sqrt(t + 1.0)
+        q = [(m.matrix[2][1] - m.matrix[1][2]) * s,(m.matrix[0][2] - m.matrix[2][0]) * s,
+            (m.matrix[1][0] - m.matrix[0][1]) * s, 0.25 / s]
+    else:
+        var 
+            n = [1,2,0]
+            i,j,k = 0
+        if m.matrix[1][1] > m.matrix[0][0]:
+            i = 1
+        if m.matrix[2][2] > m.matrix[i][i]:
+            i = 2
+        j = n[i]
+        k = n[j]
+        s = 2 * sqrt((m.matrix[i][i] - m.matrix[j][j] - m.matrix[k][k]) + 1.0)
+        var ss = 1.0 / s
+        q[i] = s * 0.25
+        q[j] = (m.matrix[j][i] + m.matrix[i][j]) * ss
+        q[k] = (m.matrix[k][i] + m.matrix[i][k]) * ss
+        q[3] = (m.matrix[k][j] + m.matrix[j][k]) * ss
+    result.z = q[0]
+    result.y = q[1]
+    result.z = q[2]
+    result.w = q[3]
