@@ -134,119 +134,35 @@ suite "Clearing a Vector":
     testClearVector(vector4(ONE_F))
 
 suite "Adding Vectors":
+  proc testAddingVectors(v1, v2: Vector) =
+    block:
+      let
+        v3 = addNew(v1, v2)
+        v4 = v1 + v2
+      check:
+        compareVectorToValue(v3, THREE_F)
+        compareVectorToValue(v4, THREE_F)
+    block:
+      var
+        v3 = v1.copy()
+      let
+        v4 = addSelf(v3, v2)
+      check:
+        compareVectorToValue(v3, THREE_F)
+        compareVectorToValue(v4, THREE_F)
+        v3 == v4
+    block:
+      var
+        v3 = v1.copy()
+      v3 += v2
+      check:
+        not compareVectorToValue(v3, ONE_F)
+        compareVectorToValue(v3, THREE_F)
   test "Adding Vector1s":
-    block:
-      let
-        v1 = vector1(ONE_F)
-        v2 = vector1(TWO_F)
-        v3 = addNew(v1, v2)
-        v4 = v1 + v2
-      check:
-        compareVectorToValue(v3, THREE_F)
-        compareVectorToValue(v4, THREE_F)
-        v3 == v4
-    block:
-      var
-        v1 = vector1(ONE_F)
-      let
-        v2 = vector1(TWO_F)
-      v1 = addSelf(v1, v2)
-      check:
-        not compareVectorToValue(v1, ONE_F)
-        compareVectorToValue(v1, THREE_F)
-    block:
-      var
-        v1 = vector1(ONE_F)
-      let
-        v2 = vector1(TWO_F)
-      v1 += v2
-      check:
-        not compareVectorToValue(v1, ONE_F)
-        compareVectorToValue(v1, THREE_F)
+    testAddingVectors(vector1(ONE_F), vector1(TWO_F))
   test "Adding Vector2s":
-    block:
-      let
-        v1 = vector2(ONE_F)
-        v2 = vector2(TWO_F)
-        v3 = addNew(v1, v2)
-        v4 = v1 + v2
-      check:
-        compareVectorToValue(v3, THREE_F)
-        compareVectorToValue(v4, THREE_F)
-        v3 == v4
-    block:
-      var
-        v1 = vector2(ONE_F)
-      let
-        v2 = vector2(TWO_F)
-      v1 = addSelf(v1, v2)
-      check:
-        not compareVectorToValue(v1, ONE_F)
-        compareVectorToValue(v1, THREE_F)
-    block:
-      var
-        v1 = vector2(ONE_F)
-      let
-        v2 = vector2(TWO_F)
-      v1 += v2
-      check:
-        not compareVectorToValue(v1, ONE_F)
-        compareVectorToValue(v1, THREE_F)
+    testAddingVectors(vector2(ONE_F), vector2(TWO_F))
   test "Adding Vector3s":
-    block:
-      let
-        v1 = vector3(ONE_F)
-        v2 = vector3(TWO_F)
-        v3 = addNew(v1, v2)
-        v4 = v1 + v2
-      check:
-        compareVectorToValue(v3, THREE_F)
-        compareVectorToValue(v4, THREE_F)
-        v3 == v4
-    block:
-      var
-        v1 = vector3(ONE_F)
-      let
-        v2 = vector3(TWO_F)
-      v1 = addSelf(v1, v2)
-      check:
-        not compareVectorToValue(v1, ONE_F)
-        compareVectorToValue(v1, THREE_F)
-    block:
-      var
-        v1 = vector3(ONE_F)
-      let
-        v2 = vector3(TWO_F)
-      v1 += v2
-      check:
-        not compareVectorToValue(v1, ONE_F)
-        compareVectorToValue(v1, THREE_F)
+    testAddingVectors(vector3(ONE_F), vector3(TWO_F))
   test "Adding Vector4s":
-    block:
-      let
-        v1 = vector4(ONE_F)
-        v2 = vector4(TWO_F)
-        v3 = addNew(v1, v2)
-        v4 = v1 + v2
-      check:
-        compareVectorToValue(v3, THREE_F)
-        compareVectorToValue(v4, THREE_F)
-        v3 == v4
-    block:
-      var
-        v1 = vector4(ONE_F)
-      let
-        v2 = vector4(TWO_F)
-      v1 = addSelf(v1, v2)
-      check:
-        not compareVectorToValue(v1, ONE_F)
-        compareVectorToValue(v1, THREE_F)
-    block:
-      var
-        v1 = vector4(ONE_F)
-      let
-        v2 = vector4(TWO_F)
-      v1 += v2
-      check:
-        not compareVectorToValue(v1, ONE_F)
-        compareVectorToValue(v1, THREE_F)
+    testAddingVectors(vector4(ONE_F), vector4(TWO_F))
