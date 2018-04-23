@@ -344,20 +344,36 @@ suite "Calculating dot product of Vectors":
       dot(v1, v2) == expected
   test "Adding Vector1s":
     testDotProduct(
+      vector1(ONE_F),
+      vector1(TWO_F),
+      ONE_F * TWO_F)
+    testDotProduct(
       vector1(TWO_F),
       vector1(THREE_F),
       TWO_F * THREE_F)
   test "Adding Vector2s":
+    testDotProduct(
+      vector2(ONE_F),
+      vector2(TWO_F),
+      ONE_F * TWO_F * TWO_F)
     testDotProduct(
       vector2(TWO_F),
       vector2(THREE_F),
       TWO_F * THREE_F * TWO_F)
   test "Adding Vector3s":
     testDotProduct(
+      vector3(ONE_F),
+      vector3(TWO_F),
+      ONE_F * TWO_F * THREE_F)
+    testDotProduct(
       vector3(TWO_F),
       vector3(THREE_F),
       TWO_F * THREE_F * THREE_F)
   test "Adding Vector4s":
+    testDotProduct(
+      vector4(ONE_F),
+      vector4(TWO_F),
+      ONE_F * TWO_F * FOUR_F)
     testDotProduct(
       vector4(TWO_F),
       vector4(THREE_F),
