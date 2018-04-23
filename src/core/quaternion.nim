@@ -39,3 +39,7 @@ template clear*(q: var Quaternion): var Quaternion = set(q, 0.0)
 #Equals
 proc `==`*(q1, q1: Quaternion): bool =
     result = q1.x == q2.x and q1.y == q2.y and q1.z == q2.z and q1.w == q2.w 
+
+#Hash
+proc hash*(q: Quaternion): hashes.Hash =
+    result = !$(result !& hash(q.x) !& hash(q.y) !& hash(q.z) !& hash(q.w))
