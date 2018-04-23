@@ -14,3 +14,7 @@ proc quaternion(x, y, z, w: float): Quaternion =
     result.y = y
     result.z = z
     result.w = w
+
+#Copy
+proc copy*(q: Quaternion): Quaternion = 
+    result = Quaternion(x: q.x, y: q.y, z: q.z, w: q.w)
