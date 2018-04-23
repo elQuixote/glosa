@@ -313,11 +313,21 @@ proc `-`*(v1, v2: Vector2): Vector2 = subtractNew(v1, v2)
 proc `-`*(v1, v2: Vector3): Vector3 = subtractNew(v1, v2)
 proc `-`*(v1, v2: Vector4): Vector4 = subtractNew(v1, v2)
 
+proc `-`*(v1: Vector1, f: float): Vector1 = subtractNew(v1, f)
+proc `-`*(v1: Vector2, f: float): Vector2 = subtractNew(v1, f)
+proc `-`*(v1: Vector3, f: float): Vector3 = subtractNew(v1, f)
+proc `-`*(v1: Vector4, f: float): Vector4 = subtractNew(v1, f)
+
 # NOTE: This is added from design doc
 proc `-=`*(v1: var Vector1, v2: Vector1) = discard subtractSelf(v1, v2)
 proc `-=`*(v1: var Vector2, v2: Vector2) = discard subtractSelf(v1, v2)
 proc `-=`*(v1: var Vector3, v2: Vector3) = discard subtractSelf(v1, v2)
 proc `-=`*(v1: var Vector4, v2: Vector4) = discard subtractSelf(v1, v2)
+
+proc `-=`*(v1: var Vector1, f: float) = discard subtractSelf(v1, f)
+proc `-=`*(v1: var Vector2, f: float) = discard subtractSelf(v1, f)
+proc `-=`*(v1: var Vector3, f: float) = discard subtractSelf(v1, f)
+proc `-=`*(v1: var Vector4, f: float) = discard subtractSelf(v1, f)
 
 # Multiply
 proc multiplySelf*(v: var Vector1, f: float): var Vector1 {.noinit.} =

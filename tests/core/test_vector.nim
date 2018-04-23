@@ -7,6 +7,9 @@ const
   ONE_F: float = 1.0
   TWO_F: float = 2.0
   THREE_F: float = 3.0
+  FOUR_F: float = 4.0
+  FIVE_F: float = 5.0
+  SIX_F: float = 6.0
 
 # Vector testing utilities
 proc compareVectorToValue(vector: Vector, value: float): bool =
@@ -166,7 +169,7 @@ suite "Adding Vectors":
   test "Adding Vector4s":
     testAddingVectors(vector4(ONE_F), vector4(TWO_F))
   
-suite "Adding Vector and float":
+suite "Adding a float to a Vector":
   proc testAddingVectorAndFloat(v1: Vector) =
     block:
       let
@@ -199,3 +202,139 @@ suite "Adding Vector and float":
     testAddingVectorAndFloat(vector3(ONE_F))
   test "Adding Vector4s":
     testAddingVectorAndFloat(vector4(ONE_F))
+
+suite "Subtracting Vectors":
+  proc testSubtactingVectors(v1, v2: Vector) =
+    block:
+      let
+        v3 = subtractNew(v2, v1)
+        v4 = v2 - v1
+      check:
+        compareVectorToValue(v3, TWO_F)
+        compareVectorToValue(v4, TWO_F)
+    block:
+      var
+        v3 = v2.copy()
+      let
+        v4 = subtractSelf(v3, v1)
+      check:
+        compareVectorToValue(v3, TWO_F)
+        compareVectorToValue(v4, TWO_F)
+        v3 == v4
+    block:
+      var
+        v3 = v2.copy()
+      v3 -= v1
+      check:
+        not compareVectorToValue(v3, THREE_F)
+        compareVectorToValue(v3, TWO_F)
+  test "Adding Vector1s":
+    testSubtactingVectors(vector1(ONE_F), vector1(THREE_F))
+  test "Adding Vector2s":
+    testSubtactingVectors(vector2(ONE_F), vector2(THREE_F))
+  test "Adding Vector3s":
+    testSubtactingVectors(vector3(ONE_F), vector3(THREE_F))
+  test "Adding Vector4s":
+    testSubtactingVectors(vector4(ONE_F), vector4(THREE_F))
+  
+suite "Subtacting a float from a Vector":
+  proc testSubtactingVectorAndFloat(v1: Vector) =
+    block:
+      let
+        v2 = subtractNew(v1, ONE_F)
+        v3 = v1 - ONE_F
+      check:
+        compareVectorToValue(v2, TWO_F)
+        compareVectorToValue(v3, TWO_F)
+    block:
+      var
+        v2 = v1.copy()
+      let
+        v3 = subtractSelf(v2, ONE_F)
+      check:
+        compareVectorToValue(v2, TWO_F)
+        compareVectorToValue(v3, TWO_F)
+        v2 == v3
+    block:
+      var
+        v2 = v1.copy()
+      v2 -= ONE_F
+      check:
+        not compareVectorToValue(v2, THREE_F)
+        compareVectorToValue(v2, TWO_F)
+  test "Adding Vector1s":
+    testSubtactingVectorAndFloat(vector1(THREE_F))
+  test "Adding Vector2s":
+    testSubtactingVectorAndFloat(vector2(THREE_F))
+  test "Adding Vector3s":
+    testSubtactingVectorAndFloat(vector3(THREE_F))
+  test "Adding Vector4s":
+    testSubtactingVectorAndFloat(vector4(THREE_F))
+
+suite "Multiplying a Vector by a float":
+  proc testMultiplyingVectorAndFloat(v1: Vector) =
+    block:
+      let
+        v2 = multiplyNew(v1, TWO_F)
+        v3 = v1 * TWO_F
+      check:
+        compareVectorToValue(v2, SIX_F)
+        compareVectorToValue(v3, SIX_F)
+    block:
+      var
+        v2 = v1.copy()
+      let
+        v3 = multiplySelf(v2, TWO_F)
+      check:
+        compareVectorToValue(v2, SIX_F)
+        compareVectorToValue(v3, SIX_F)
+        v2 == v3
+    block:
+      var
+        v2 = v1.copy()
+      v2 *= TWO_F
+      check:
+        not compareVectorToValue(v2, TWO_F)
+        compareVectorToValue(v2, SIX_F)
+  test "Adding Vector1s":
+    testMultiplyingVectorAndFloat(vector1(THREE_F))
+  test "Adding Vector2s":
+    testMultiplyingVectorAndFloat(vector2(THREE_F))
+  test "Adding Vector3s":
+    testMultiplyingVectorAndFloat(vector3(THREE_F))
+  test "Adding Vector4s":
+    testMultiplyingVectorAndFloat(vector4(THREE_F))
+
+suite "Dividing a Vector by a float":
+  proc testDividingVectorAndFloat(v1: Vector) =
+    block:
+      let
+        v2 = divideNew(v1, TWO_F)
+        v3 = v1 / TWO_F
+      check:
+        compareVectorToValue(v2, THREE_F)
+        compareVectorToValue(v3, THREE_F)
+    block:
+      var
+        v2 = v1.copy()
+      let
+        v3 = divideSelf(v2, TWO_F)
+      check:
+        compareVectorToValue(v2, THREE_F)
+        compareVectorToValue(v3, THREE_F)
+        v2 == v3
+    block:
+      var
+        v2 = v1.copy()
+      v2 /= TWO_F
+      check:
+        not compareVectorToValue(v2, SIX_F)
+        compareVectorToValue(v2, THREE_F)
+  test "Adding Vector1s":
+    testDividingVectorAndFloat(vector1(SIX_F))
+  test "Adding Vector2s":
+    testDividingVectorAndFloat(vector2(SIX_F))
+  test "Adding Vector3s":
+    testDividingVectorAndFloat(vector3(SIX_F))
+  test "Adding Vector4s":
+    testDividingVectorAndFloat(vector4(SIX_F))
