@@ -8,7 +8,6 @@ const
   TWO_F: float = 2.0
   THREE_F: float = 3.0
   FOUR_F: float = 4.0
-  FIVE_F: float = 5.0
   SIX_F: float = 6.0
 
 # Vector testing utilities
@@ -338,3 +337,28 @@ suite "Dividing a Vector by a float":
     testDividingVectorAndFloat(vector3(SIX_F))
   test "Adding Vector4s":
     testDividingVectorAndFloat(vector4(SIX_F))
+
+suite "Calculating dot product of Vectors":
+  proc testDotProduct(v1, v2: Vector, expected: float) =
+    check:
+      dot(v1, v2) == expected
+  test "Adding Vector1s":
+    testDotProduct(
+      vector1(TWO_F),
+      vector1(THREE_F),
+      TWO_F * THREE_F)
+  test "Adding Vector2s":
+    testDotProduct(
+      vector2(TWO_F),
+      vector2(THREE_F),
+      TWO_F * THREE_F * TWO_F)
+  test "Adding Vector3s":
+    testDotProduct(
+      vector3(TWO_F),
+      vector3(THREE_F),
+      TWO_F * THREE_F * THREE_F)
+  test "Adding Vector4s":
+    testDotProduct(
+      vector4(TWO_F),
+      vector4(THREE_F),
+      TWO_F * THREE_F * FOUR_F)
