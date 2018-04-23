@@ -379,3 +379,11 @@ proc shear44Y(sh: float): Matrix44 {.noinit} =
 
 proc shear44Z(sh: float): Matrix44 {.noinit} =
     result.set(1,0,0,0, 0,1,0,0, sh,sh,1,0, 0,0,0,1)
+
+#Stretch
+#NOTE : This is Added, not in design doc
+proc stretch*(sx, sy: float): Matrix32 {.noInit.} =
+    result.set(sx,0,0,sy,0,0)
+
+proc stretch*(sx, sy, sz: float): Matrix44 {.noInit.} =
+    result.set(sx,0,0,0, 0,sy,0,0, 0,0,sz,0, 0,0,0,1)
