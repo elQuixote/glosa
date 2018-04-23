@@ -72,3 +72,19 @@ proc normalizeNew*(q: Quaternion, m: float = 1.0): Quaternion =
 
 template normalize*(q: var Quaternion, m: float = 1.0): var Quaternion = normalizeSelf(q, m)
 
+#Multiply
+proc multiplyNew(q: Quaternion, f: float): Quaternion = 
+    result.x = q.x * f
+    result.y = q.y * f
+    result.z = q.y * f
+    result.w = q.w * f
+
+proc multiplySelf(q: var Quaternion, f: float) var Quaternion {.noinit.} = 
+    q.x *= f
+    q.y *= f 
+    q.z *= f
+    q.w *= f 
+    result = q
+
+template `*`*(q: Quaternion, f: float): Quaternion = multiplyNew(q,f)
+template `*=`*(q: var Quaternion, f: float): var Quaternion = multiplySelf(q,f)
