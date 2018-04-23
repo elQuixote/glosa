@@ -79,6 +79,12 @@ proc multiplyNew(q: Quaternion, f: float): Quaternion =
     result.z = q.y * f
     result.w = q.w * f
 
+proc multiplyNew(q1,q2: Quaternion): Quaternion =
+    result.x = q1.x * q2.x 
+    result.y = q1.y * q2.y
+    result.z = q1.z * q2.z
+    result.w = q1.w * q2.w
+
 proc multiplySelf(q: var Quaternion, f: float) var Quaternion {.noinit.} = 
     q.x *= f
     q.y *= f 
@@ -86,5 +92,14 @@ proc multiplySelf(q: var Quaternion, f: float) var Quaternion {.noinit.} =
     q.w *= f 
     result = q
 
+proc multiplySelf(q1: var Quaternion, q2: Quaternion): var Quaternion {.noinit.} =
+    q1.x *= q2.x
+    q2.y *= q2.y
+    q1.z *= q2.z
+    q1.w *= q2.w 
+    result = q1
+
 template `*`*(q: Quaternion, f: float): Quaternion = multiplyNew(q,f)
 template `*=`*(q: var Quaternion, f: float): var Quaternion = multiplySelf(q,f)
+
+#Addition
