@@ -166,3 +166,37 @@ suite "Adding Vectors":
     testAddingVectors(vector3(ONE_F), vector3(TWO_F))
   test "Adding Vector4s":
     testAddingVectors(vector4(ONE_F), vector4(TWO_F))
+  
+suite "Adding Vector and float":
+  proc testAddingVectors(v1, v2: Vector) =
+    block:
+      let
+        v3 = addNew(v1, v2)
+        v4 = v1 + v2
+      check:
+        compareVectorToValue(v3, THREE_F)
+        compareVectorToValue(v4, THREE_F)
+    block:
+      var
+        v3 = v1.copy()
+      let
+        v4 = addSelf(v3, v2)
+      check:
+        compareVectorToValue(v3, THREE_F)
+        compareVectorToValue(v4, THREE_F)
+        v3 == v4
+    block:
+      var
+        v3 = v1.copy()
+      v3 += v2
+      check:
+        not compareVectorToValue(v3, ONE_F)
+        compareVectorToValue(v3, THREE_F)
+  test "Adding Vector1s":
+    testAddingVectors(vector1(ONE_F), vector1(TWO_F))
+  test "Adding Vector2s":
+    testAddingVectors(vector2(ONE_F), vector2(TWO_F))
+  test "Adding Vector3s":
+    testAddingVectors(vector3(ONE_F), vector3(TWO_F))
+  test "Adding Vector4s":
+    testAddingVectors(vector4(ONE_F), vector4(TWO_F))

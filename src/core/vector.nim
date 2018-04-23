@@ -1,4 +1,28 @@
-import ./concepts
+from ./concepts import 
+  Vector, 
+  Compare, 
+  Equals,
+  Hash,
+  Transform,
+  Length,
+  Dimension,
+  Set,
+  Clear,
+  Copy,
+  String
+
+export 
+  Vector, 
+  Compare, 
+  Equals,
+  Hash,
+  Transform,
+  Length,
+  Dimension,
+  Set,
+  Clear,
+  Copy,
+  String
 
 from math import arctan2, arccos, sqrt
 from strformat import `&`
