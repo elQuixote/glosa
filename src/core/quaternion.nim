@@ -226,3 +226,21 @@ proc invertSelf(q: var Quaternion): var Quaternion {.noinit.} =
 
 template inverse*(q: Quaternion): Quaternion = invertNew(q)
 template inverse*(q: var Quaternion): var Quaternion = invertSelf(q)
+
+#Conjugate
+proc conjugateNew(q: Quaternion): Quaternion {.noinit.} = 
+    result.x = -q.x
+    result.y = -q.y
+    result.z = -q.z
+    result.w = q.w
+
+proc conjugateSelf(q: var Quaternion): var Quaternion {.noinit.} = 
+    q.x = -q.x
+    q.y = -q.y
+    q.z = -q.z
+    q.w = q.w
+    result = q
+
+template conjugate*(q: Quaternion): Quaternion = conjugateNew(q)
+template conjugate*(q: var Quaternion): var Quaternion = conjugateSelf(q)
+
