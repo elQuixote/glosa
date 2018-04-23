@@ -3,7 +3,7 @@ import ./concepts
 from strformat import `&`
 from math import sin, cos
 
-import hashes
+import hashes, quaternion
 
 type 
     Matrix32* = object
@@ -368,6 +368,29 @@ proc invert*(m: Matrix44): Matrix44 {.noInit.} =
 
 #Module Level Procs (Constructors)
 #Rotation 
+proc fromQuaternion(q1: Quaternion): Matrix44 {.noinit.} = 
+    ## Sets the value of this matrix to the matrix conversion of the single quaternion
+    result.matrix[0][0] = 1.0 - 2.0 * q1.y * q1.y - 2.0 * q1.z * q1.z
+    result.matrix[1][0] = 2.0 * (q1.x * q1.y + q1.w * q1.z)
+    result.matrix[2][0] = 2.0 * (q1.x * q1.z - q1.w * q1.y)
+
+    result.matrix[0][1] = 2.0 * (q1.x * q1.y - q1.w * q1.z)
+    result.matrix[1][1] = 1.0 - 2.0 * q1.x * q1.x - 2.0 * q1.z * q1.z
+    result.matrix[2][1] = 2.0 * (q1.y * q1.z + q1.w * q1.x)
+
+    result.matrix[0][2] = 2.0 * (q1.x * q1.z + q1.w * q1.y)
+    result.matrix[1][2] = 2.0 * (q1.y * q1.z - q1.w * q1.x)
+    result.matrix[2][2] = 1.0 - 2.0 * q1.x * q1.x - 2.0 * q1.y * q1.y
+
+    result.matrix[0][3] = 0.0 
+    result.matrix[1][3] = 0.0 
+    result.matrix[2][3] = 0.0
+
+    result.matrix[3][0] = 0.0 
+    result.matrix[3][1] = 0.0 
+    result.matrix[3][2] = 0.0 
+    result.matrix[3][3] = 1.0 
+
 proc rotate32*(radians: float): Matrix32 {.noinit.} =
     ## Returns a new rotation matrix, which
     ## represents a rotation by `rad` radians
