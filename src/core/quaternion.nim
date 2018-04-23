@@ -43,3 +43,7 @@ proc `==`*(q1, q1: Quaternion): bool =
 #Hash
 proc hash*(q: Quaternion): hashes.Hash =
     result = !$(result !& hash(q.x) !& hash(q.y) !& hash(q.z) !& hash(q.w))
+
+#String
+proc `$`*(q: Quaternion): string = 
+    result = &"[{q.x}, {q.y}, {q.z}, {q.w}]"
