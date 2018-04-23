@@ -193,13 +193,13 @@ suite "Adding a float to a Vector":
       check:
         not compareVectorToValue(v2, ONE_F)
         compareVectorToValue(v2, THREE_F)
-  test "Adding Vector1s":
+  test "Adding a float to a Vector1":
     testAddingVectorAndFloat(vector1(ONE_F))
-  test "Adding Vector2s":
+  test "Adding a float to a Vector2":
     testAddingVectorAndFloat(vector2(ONE_F))
-  test "Adding Vector3s":
+  test "Adding a float to a Vector3":
     testAddingVectorAndFloat(vector3(ONE_F))
-  test "Adding Vector4s":
+  test "Adding a float to a Vector4":
     testAddingVectorAndFloat(vector4(ONE_F))
 
 suite "Subtracting Vectors":
@@ -227,13 +227,13 @@ suite "Subtracting Vectors":
       check:
         not compareVectorToValue(v3, THREE_F)
         compareVectorToValue(v3, TWO_F)
-  test "Adding Vector1s":
+  test "Subtracting Vector1s":
     testSubtactingVectors(vector1(ONE_F), vector1(THREE_F))
-  test "Adding Vector2s":
+  test "Subtracting Vector2s":
     testSubtactingVectors(vector2(ONE_F), vector2(THREE_F))
-  test "Adding Vector3s":
+  test "Subtracting Vector3s":
     testSubtactingVectors(vector3(ONE_F), vector3(THREE_F))
-  test "Adding Vector4s":
+  test "Subtracting Vector4s":
     testSubtactingVectors(vector4(ONE_F), vector4(THREE_F))
   
 suite "Subtacting a float from a Vector":
@@ -261,13 +261,13 @@ suite "Subtacting a float from a Vector":
       check:
         not compareVectorToValue(v2, THREE_F)
         compareVectorToValue(v2, TWO_F)
-  test "Adding Vector1s":
+  test "Subtracting a float from a Vector1":
     testSubtactingVectorAndFloat(vector1(THREE_F))
-  test "Adding Vector2s":
+  test "Subtracting a float from a Vector2":
     testSubtactingVectorAndFloat(vector2(THREE_F))
-  test "Adding Vector3s":
+  test "Subtracting a float from a Vector3":
     testSubtactingVectorAndFloat(vector3(THREE_F))
-  test "Adding Vector4s":
+  test "Subtracting a float from a Vector4":
     testSubtactingVectorAndFloat(vector4(THREE_F))
 
 suite "Multiplying a Vector by a float":
@@ -295,13 +295,13 @@ suite "Multiplying a Vector by a float":
       check:
         not compareVectorToValue(v2, TWO_F)
         compareVectorToValue(v2, SIX_F)
-  test "Adding Vector1s":
+  test "Multiplying a Vector1 by a float":
     testMultiplyingVectorAndFloat(vector1(THREE_F))
-  test "Adding Vector2s":
+  test "Multiplying a Vector2 by a float":
     testMultiplyingVectorAndFloat(vector2(THREE_F))
-  test "Adding Vector3s":
+  test "Multiplying a Vector3 by a float":
     testMultiplyingVectorAndFloat(vector3(THREE_F))
-  test "Adding Vector4s":
+  test "Multiplying a Vector4 by a float":
     testMultiplyingVectorAndFloat(vector4(THREE_F))
 
 suite "Dividing a Vector by a float":
@@ -329,20 +329,20 @@ suite "Dividing a Vector by a float":
       check:
         not compareVectorToValue(v2, SIX_F)
         compareVectorToValue(v2, THREE_F)
-  test "Adding Vector1s":
+  test "Dividing a Vector1 by a float":
     testDividingVectorAndFloat(vector1(SIX_F))
-  test "Adding Vector2s":
+  test "Dividing a Vector2 by a float":
     testDividingVectorAndFloat(vector2(SIX_F))
-  test "Adding Vector3s":
+  test "Dividing a Vector3 by a float":
     testDividingVectorAndFloat(vector3(SIX_F))
-  test "Adding Vector4s":
+  test "Dividing a Vector4 by a float":
     testDividingVectorAndFloat(vector4(SIX_F))
 
 suite "Calculating dot product of Vectors":
   proc testDotProduct(v1, v2: Vector, expected: float) =
     check:
       dot(v1, v2) == expected
-  test "Adding Vector1s":
+  test "Calculating dot product of Vector1s":
     testDotProduct(
       vector1(ONE_F),
       vector1(TWO_F),
@@ -351,7 +351,7 @@ suite "Calculating dot product of Vectors":
       vector1(TWO_F),
       vector1(THREE_F),
       TWO_F * THREE_F)
-  test "Adding Vector2s":
+  test "Calculating dot product of Vector2s":
     testDotProduct(
       vector2(ONE_F),
       vector2(TWO_F),
@@ -360,7 +360,7 @@ suite "Calculating dot product of Vectors":
       vector2(TWO_F),
       vector2(THREE_F),
       TWO_F * THREE_F * TWO_F)
-  test "Adding Vector3s":
+  test "Calculating dot product of Vector3s":
     testDotProduct(
       vector3(ONE_F),
       vector3(TWO_F),
@@ -369,7 +369,7 @@ suite "Calculating dot product of Vectors":
       vector3(TWO_F),
       vector3(THREE_F),
       TWO_F * THREE_F * THREE_F)
-  test "Adding Vector4s":
+  test "Calculating dot product of Vector4s":
     testDotProduct(
       vector4(ONE_F),
       vector4(TWO_F),
@@ -378,3 +378,46 @@ suite "Calculating dot product of Vectors":
       vector4(TWO_F),
       vector4(THREE_F),
       TWO_F * THREE_F * FOUR_F)
+
+suite "Calculating cross product of Vectors":
+  proc testCrossProductFloat(v1, v2: Vector, expected: float) =
+    check:
+      cross(v1, v2) == expected
+  proc testCrossProductVector(v1, v2, expected: Vector) =
+    check:
+      cross(v1, v2) == expected
+  test "Calculating cross product of Vector1s (float)":
+    testCrossProductFloat(
+      vector1(ONE_F),
+      vector1(TWO_F),
+      ONE_F * TWO_F)
+    testCrossProductFloat(
+      vector1(TWO_F),
+      vector1(THREE_F),
+      TWO_F * THREE_F)
+  test "Calculating cross product of Vector2s (float)":
+    testCrossProductFloat(
+      Vector2(x: THREE_F, y: ONE_F),
+      Vector2(x: FOUR_F, y: TWO_F),
+      THREE_F * FOUR_F - ONE_F * TWO_F)
+    testCrossProductFloat(
+      Vector2(x: TWO_F, y: FOUR_F),
+      Vector2(x: THREE_F, y: ONE_F),
+      TWO_F * THREE_F - FOUR_F * ONE_F)
+  test "Calculating cross product of Vector3s (Vector)":
+    testCrossProductVector(
+      Vector3(x: THREE_F, y: ONE_F, z: TWO_F),
+      Vector3(x: FOUR_F, y: TWO_F, z: THREE_F),
+      Vector3(
+        x: ONE_F * THREE_F - TWO_F * TWO_F,
+        y: TWO_F * FOUR_F - THREE_F * THREE_F,
+        z: THREE_F * TWO_F - ONE_F * FOUR_F
+      ))
+    testCrossProductVector(
+      Vector3(x: TWO_F, y: FOUR_F, z: ONE_F),
+      Vector3(x: THREE_F, y: ONE_F, z: ZERO_F),
+      Vector3(
+        x: FOUR_F * ZERO_F - ONE_F * ONE_F,
+        y: ONE_F * THREE_F - TWO_F * ZERO_F,
+        z: TWO_F * ONE_F - FOUR_F * THREE_F
+      ))
