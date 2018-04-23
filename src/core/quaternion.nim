@@ -36,3 +36,6 @@ proc set*(q: var Quaternion, n: float): var Quaternion {.noinit.} =
 #Clear
 template clear*(q: var Quaternion): var Quaternion = set(q, 0.0)
 
+#Equals
+proc `==`*(q1, q1: Quaternion): bool =
+    result = q1.x == q2.x and q1.y == q2.y and q1.z == q2.z and q1.w == q2.w 
