@@ -55,3 +55,18 @@ proc magnitude*(q: Quaternion): float =
 #Length
 template length*(q: Quaternion): float = magnitude(q)
 
+#Normalize
+proc normalizeSelf*(q: var Quaternion, m: float = 1.0): var Quaternion {.noinit.} =
+    let magnitude = magnitude(q)
+    if(magnitude > 0):
+        result = multiplySelf(q, m / magnitude)
+    else:
+        result = copy(q)
+
+proc normalizeNew*(q: Quaternion, m: float = 1.0): Quaternion =
+    let magnitude = magnitude(q)
+    if(magnitude > 0):
+        result = multiplyNew(q, m / magnitude)
+    else:
+        result = copy(q)
+
