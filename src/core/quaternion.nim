@@ -51,3 +51,7 @@ proc `$`*(q: Quaternion): string =
 #Magnitude
 proc magnitude*(q: Quaternion): float = 
     result = sqrt(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w)
+
+#Length
+template length*(q: Quaternion): float = magnitude(q)
+
