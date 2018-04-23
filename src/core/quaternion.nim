@@ -32,4 +32,7 @@ proc set*(q: var Quaternion, n: float): var Quaternion {.noinit.} =
     result.y = y
     result.z = z
     result.w = w
-    
+
+#Clear
+template clear*(q: var Quaternion): var Quaternion = set(q, 0.0)
+
