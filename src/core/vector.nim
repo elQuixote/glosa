@@ -550,8 +550,90 @@ proc heading*(v: Vector2): float = headingXY(v)
 proc heading*(v: Vector3): float = headingXY(v)
 proc heading*(v: Vector4): float = headingXY(v)
 
+# Magnitude
+proc magnitude*(v: Vector1): float =
+  result = v.x
+
+proc magnitude*(v: Vector2): float =
+  result = sqrt(v.x * v.x + v.y * v.y)
+
+proc magnitude*(v: Vector3): float =
+  result = sqrt(v.x * v.x + v.y * v.y + v.z * v.z)
+
+proc magnitude*(v: Vector4): float =
+  result = sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w)
+
+# Length
+proc length*(v: Vector1): float = magnitude(v)
+proc length*(v: Vector2): float = magnitude(v)
+proc length*(v: Vector3): float = magnitude(v)
+proc length*(v: Vector4): float = magnitude(v)
+
+# Normalize
+proc normalizeSelf*(v: var Vector1, m: float = 1.0): var Vector1 {.noinit.} =
+  let magnitude = magnitude(v)
+  if (magnitude > 0):
+    result = multiplySelf(v, m / magnitude)
+  else:
+    result = v
+
+proc normalizeNew*(v: Vector1, m: float = 1.0): Vector1 =
+  let magnitude = magnitude(v)
+  if (magnitude > 0):
+    result = multiplyNew(v, m / magnitude)
+  else:
+    result = copy(v)
+
+proc normalizeSelf*(v: var Vector2, m: float = 1.0): var Vector2 {.noinit.} =
+  let magnitude = magnitude(v)
+  if (magnitude > 0):
+    result = multiplySelf(v, m / magnitude)
+  else:
+    result = v
+
+proc normalizeNew*(v: Vector2, m: float = 1.0): Vector2 =
+  let magnitude = magnitude(v)
+  if (magnitude > 0):
+    result = multiplyNew(v, m / magnitude)
+  else:
+    result = copy(v)
+
+proc normalizeSelf*(v: var Vector3, m: float = 1.0): var Vector3 {.noinit.} =
+  let magnitude = magnitude(v)
+  if (magnitude > 0):
+    result = multiplySelf(v, m / magnitude)
+  else:
+    result = v
+
+proc normalizeNew*(v: Vector3, m: float = 1.0): Vector3 =
+  let magnitude = magnitude(v)
+  if (magnitude > 0):
+    result = multiplyNew(v, m / magnitude)
+  else:
+    result = copy(v)
+
+proc normalizeSelf*(v: var Vector4, m: float = 1.0): var Vector4 {.noinit.} =
+  let magnitude = magnitude(v)
+  if (magnitude > 0):
+    result = multiplySelf(v, m / magnitude)
+  else:
+    result = v
+
+proc normalizeNew*(v: Vector4, m: float = 1.0): Vector4 =
+  let magnitude = magnitude(v)
+  if (magnitude > 0):
+    result = multiplyNew(v, m / magnitude)
+  else:
+    result = copy(v)
+
+proc normalize*(v: var Vector1, m: float = 1.0): var Vector1 = normalizeSelf(v, m)
+proc normalize*(v: var Vector2, m: float = 1.0): var Vector2 = normalizeSelf(v, m)
+proc normalize*(v: var Vector3, m: float = 1.0): var Vector3 = normalizeSelf(v, m)
+proc normalize*(v: var Vector4, m: float = 1.0): var Vector4 = normalizeSelf(v, m)
+
 # Reflect
 # NOTE: Changed from design doc
+# NOTE: n (normal vector) must be normalized
 proc reflectSelf*(v: var Vector1, n: Vector1): var Vector1 {.noinit.} =
   v = subtractSelf(v, multiplyNew(n, 2 * dot(v, n)))
   result = v
@@ -668,88 +750,6 @@ proc refract*(v, n: Vector1, eta: float): Vector1 = refractNew(v, n, eta)
 proc refract*(v, n: Vector2, eta: float): Vector2 = refractNew(v, n, eta)
 proc refract*(v, n: Vector3, eta: float): Vector3 = refractNew(v, n, eta)
 proc refract*(v, n: Vector4, eta: float): Vector4 = refractNew(v, n, eta)
-
-# Magnitude
-proc magnitude*(v: Vector1): float =
-  result = v.x
-
-proc magnitude*(v: Vector2): float =
-  result = sqrt(v.x * v.x + v.y * v.y)
-
-proc magnitude*(v: Vector3): float =
-  result = sqrt(v.x * v.x + v.y * v.y + v.z * v.z)
-
-proc magnitude*(v: Vector4): float =
-  result = sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w)
-
-# Length
-# 
-proc length*(v: Vector1): float = magnitude(v)
-proc length*(v: Vector2): float = magnitude(v)
-proc length*(v: Vector3): float = magnitude(v)
-proc length*(v: Vector4): float = magnitude(v)
-
-# Normalize
-proc normalizeSelf*(v: var Vector1, m: float = 1.0): var Vector1 {.noinit.} =
-  let magnitude = magnitude(v)
-  if (magnitude > 0):
-    result = multiplySelf(v, m / magnitude)
-  else:
-    result = v
-
-proc normalizeNew*(v: Vector1, m: float = 1.0): Vector1 =
-  let magnitude = magnitude(v)
-  if (magnitude > 0):
-    result = multiplyNew(v, m / magnitude)
-  else:
-    result = copy(v)
-
-proc normalizeSelf*(v: var Vector2, m: float = 1.0): var Vector2 {.noinit.} =
-  let magnitude = magnitude(v)
-  if (magnitude > 0):
-    result = multiplySelf(v, m / magnitude)
-  else:
-    result = v
-
-proc normalizeNew*(v: Vector2, m: float = 1.0): Vector2 =
-  let magnitude = magnitude(v)
-  if (magnitude > 0):
-    result = multiplyNew(v, m / magnitude)
-  else:
-    result = copy(v)
-
-proc normalizeSelf*(v: var Vector3, m: float = 1.0): var Vector3 {.noinit.} =
-  let magnitude = magnitude(v)
-  if (magnitude > 0):
-    result = multiplySelf(v, m / magnitude)
-  else:
-    result = v
-
-proc normalizeNew*(v: Vector3, m: float = 1.0): Vector3 =
-  let magnitude = magnitude(v)
-  if (magnitude > 0):
-    result = multiplyNew(v, m / magnitude)
-  else:
-    result = copy(v)
-
-proc normalizeSelf*(v: var Vector4, m: float = 1.0): var Vector4 {.noinit.} =
-  let magnitude = magnitude(v)
-  if (magnitude > 0):
-    result = multiplySelf(v, m / magnitude)
-  else:
-    result = v
-
-proc normalizeNew*(v: Vector4, m: float = 1.0): Vector4 =
-  let magnitude = magnitude(v)
-  if (magnitude > 0):
-    result = multiplyNew(v, m / magnitude)
-  else:
-    result = copy(v)
-
-proc normalize*(v: var Vector1, m: float = 1.0): var Vector1 = normalizeSelf(v, m)
-proc normalize*(v: var Vector2, m: float = 1.0): var Vector2 = normalizeSelf(v, m)
-proc normalize*(v: var Vector3, m: float = 1.0): var Vector3 = normalizeSelf(v, m)
-proc normalize*(v: var Vector4, m: float = 1.0): var Vector4 = normalizeSelf(v, m)
 
 # Angle Between
 proc angleBetween*(v1, v2: Vector1): float =

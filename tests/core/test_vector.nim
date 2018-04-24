@@ -3,6 +3,7 @@ import unittest
 
 from system import abs
 from math import pow, PI
+from sequtils import zip
 
 const
   ETA = pow(10.0, -6)
@@ -24,6 +25,13 @@ proc compareVectorToValue(vector: Vector, value: float): bool =
   result = true
   for v in a:
     if v != value:
+      result = false
+
+proc compareVectorsWithEta(v1, v2: Vector): bool =
+  let s = zip(v1.toArray(), v2.toArray())
+  result = true
+  for v in s:
+    if v[0] - v[1] >= ETA:
       result = false
 
 suite "Testing Vector equality and inequality":
@@ -521,3 +529,48 @@ suite "Calculating the heading of a Vector":
       headingYZ(v2) == FORTY_FIVE_F
       abs(headingYW(v2) - SIXTY_F) < ETA
       abs(headingZW(v2) - SIXTY_F) < ETA
+
+suite "Calculating the reflection of a Vector":
+  proc testReflectVector(v, n, expected: Vector) =
+    block:
+      let
+        v1 = reflectNew(v, n)
+        v2 = reflect(v, n)
+      check:
+        compareVectorsWithEta(v1, expected)
+        compareVectorsWithEta(v2, expected)
+        v1 == v2
+    block:
+      var
+        v1 = v.copy()
+      let
+        v2 = reflectSelf(v1, n)
+      check:
+        compareVectorsWithEta(v1, expected)
+        v1 == v2
+  test "Calculating the reflection of a Vector1":
+    testReflectVector(
+      vector1(TWO_F),
+      normalizeNew(vector1(NEGATIVE_ONE_F)),
+      vector1(NEGATIVE_ONE_F * TWO_F))
+  test "Calculating the reflection of a Vector2":
+    testReflectVector(
+      vector2(TWO_F, TWO_F),
+      normalizeNew(vector2(NEGATIVE_ONE_F, NEGATIVE_ONE_F)),
+      vector2(NEGATIVE_ONE_F * TWO_F, NEGATIVE_ONE_F * TWO_F))
+  test "Calculating the reflection of a Vector3":
+    testReflectVector(
+      vector2(TWO_F, TWO_F),
+      normalizeNew(vector2(NEGATIVE_ONE_F, NEGATIVE_ONE_F)),
+      vector2(NEGATIVE_ONE_F * TWO_F, NEGATIVE_ONE_F * TWO_F))
+  test "Calculating the reflection of a Vector4":
+    testReflectVector(
+      vector4(TWO_F, TWO_F, TWO_F, TWO_F),
+      normalizeNew(vector4(NEGATIVE_ONE_F, 
+                           NEGATIVE_ONE_F, 
+                           NEGATIVE_ONE_F, 
+                           NEGATIVE_ONE_F)),
+      vector4(NEGATIVE_ONE_F * TWO_F, 
+              NEGATIVE_ONE_F * TWO_F,
+              NEGATIVE_ONE_F * TWO_F,
+              NEGATIVE_ONE_F * TWO_F))

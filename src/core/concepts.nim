@@ -54,11 +54,8 @@ type
 
   Transform* {.explain.} = concept a, type T
     a.rotate(float) is T
-    a.rotate(int) is T
     a.scale(float) is T
-    a.scale(int) is T
     a.scale(float, float, float) is T
-    a.scale(int, int, int) is T
     a.translate(Vector) is T
     a.transform(Matrix) is T
 
