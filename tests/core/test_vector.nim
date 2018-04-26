@@ -17,6 +17,7 @@ const
   TWO_F: float = 2.0
   THREE_F: float = 3.0
   FOUR_F: float = 4.0
+  FIVE_F: float = 5.0
   SIX_F: float = 6.0
 
 # Vector testing utilities
@@ -196,9 +197,11 @@ suite "Adding a float to a Vector":
       let
         v2 = addNew(v1, TWO_F)
         v3 = v1 + TWO_F
+        v4 = TWO_F + v1
       check:
         compareVectorToValue(v2, THREE_F)
         compareVectorToValue(v3, THREE_F)
+        compareVectorToValue(v4, THREE_F)
     block:
       var
         v2 = v1.copy()
@@ -264,9 +267,11 @@ suite "Subtacting a float from a Vector":
       let
         v2 = subtractNew(v1, ONE_F)
         v3 = v1 - ONE_F
+        v4 = FIVE_F - v1
       check:
         compareVectorToValue(v2, TWO_F)
         compareVectorToValue(v3, TWO_F)
+        compareVectorToValue(v4, TWO_F)
     block:
       var
         v2 = v1.copy()
@@ -298,9 +303,11 @@ suite "Multiplying a Vector by a float":
       let
         v2 = multiplyNew(v1, TWO_F)
         v3 = v1 * TWO_F
+        v4 = TWO_F * v1
       check:
         compareVectorToValue(v2, SIX_F)
         compareVectorToValue(v3, SIX_F)
+        compareVectorToValue(v4, SIX_F)
     block:
       var
         v2 = v1.copy()
@@ -332,9 +339,11 @@ suite "Dividing a Vector by a float":
       let
         v2 = divideNew(v1, TWO_F)
         v3 = v1 / TWO_F
+        v4 = TWO_F / v1
       check:
         compareVectorToValue(v2, THREE_F)
         compareVectorToValue(v3, THREE_F)
+        compareVectorToValue(v4, ONE_F / THREE_F)
     block:
       var
         v2 = v1.copy()
@@ -451,10 +460,12 @@ suite "Calculating the inverse of a Vector":
       let
         v2 = inverseNew(v1)
         v3 = inverse(v1)
+        v4 = reverse(v1)
       check:
         compareVectorToValue(v1, NEGATIVE_ONE_F * expected)
         compareVectorToValue(v2, expected)
         compareVectorToValue(v3, expected)
+        compareVectorToValue(v4, expected)
     block:
       var
         v2 = v1.copy()
@@ -472,6 +483,34 @@ suite "Calculating the inverse of a Vector":
     testInverseVector(vector3(TWO_F), NEGATIVE_ONE_F * TWO_F)
   test "Calculating the inverse of a Vector4":
     testInverseVector(vector4(TWO_F), NEGATIVE_ONE_F * TWO_F)
+
+suite "Calculating an inverted Vector":
+  proc testInverseVector(v1: Vector, expected: float) =
+    block:
+      let
+        v2 = invertNew(v1)
+        v3 = invert(v1)
+      check:
+        compareVectorToValue(v1, ONE_F / expected)
+        compareVectorToValue(v2, expected)
+        compareVectorToValue(v3, expected)
+    block:
+      var
+        v2 = v1.copy()
+      let
+        v3 = invertSelf(v2)
+      check:
+        compareVectorToValue(v2, expected)
+        compareVectorToValue(v3, expected)
+        v2 == v3
+  test "Calculating an inverted Vector1":
+    testInverseVector(vector1(TWO_F), ONE_F / TWO_F)
+  test "Calculating an inverted Vector2":
+    testInverseVector(vector2(TWO_F), ONE_F / TWO_F)
+  test "Calculating an inverted Vector3":
+    testInverseVector(vector3(TWO_F), ONE_F / TWO_F)
+  test "Calculating an inverted Vector4":
+    testInverseVector(vector4(TWO_F), ONE_F / TWO_F)
 
 suite "Calculating the heading of a Vector":
   const
