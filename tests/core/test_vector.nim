@@ -594,31 +594,35 @@ suite "Calculating the magnitude and length of a Vector":
     testVectorMagnitudeAndLength(vector4(TWO_F), FOUR_F)
 
 suite "Normalizing a Vector":
-  proc testNormalizeVector(v1, expected: Vector) =
+  proc testNormalizeVector(v1, expected: Vector, value: float = ONE_F) =
     block:
       var
         v2 = v1.copy()
         v4 = v1.copy()
       let
-        v3 = normalizeSelf(v2)
-        v5 = normalize(v4)
+        v3 = normalizeSelf(v2, value)
+        v5 = normalize(v4, value)
       check:
         v3 == expected
         v5 == expected
         v3 == v5
     block:
       let
-        v2 = normalizeNew(v1)
+        v2 = normalizeNew(v1, value)
       check:
         v2 == expected
   test "Normalizing a Vector1":
     testNormalizeVector(vector1(TWO_F), vector1(ONE_F))
+    testNormalizeVector(vector1(TWO_F), vector1(TWO_F), TWO_F)
   test "Normalizing a Vector2":
     testNormalizeVector(vector2(TWO_F), vector2(ONE_F / sqrt(TWO_F)))
+    testNormalizeVector(vector2(TWO_F), vector2(TWO_F), TWO_F * sqrt(TWO_F))
   test "Normalizing a Vector3":
     testNormalizeVector(vector3(TWO_F), vector3(ONE_F / sqrt(THREE_F)))
+    testNormalizeVector(vector3(TWO_F), vector3(TWO_F), TWO_F * sqrt(THREE_F))
   test "Normalizing a Vector4":
     testNormalizeVector(vector4(TWO_F), vector4(ONE_F / TWO_F))
+    testNormalizeVector(vector4(TWO_F), vector4(TWO_F), FOUR_F)
 
 suite "Calculating the reflection of a Vector":
   proc testReflectVector(v, n, expected: Vector) =
