@@ -31,6 +31,14 @@ proc compareVectorToValue(vector: Vector, value: float): bool =
     checkpoint("vector was " & $vector)
     checkpoint("value was " & $value)
 
+proc compareValuesWithinEta(a, b: float): bool =
+  if abs(a - b) >= ETA:
+    result = false
+    checkpoint("a was " & $a)
+    checkpoint("b was " & $b)
+  else:
+    result = true
+
 proc compareVectorsWithinEta(v1, v2: Vector): bool =
   let s = zip(v1.toArray(), v2.toArray())
   result = true
@@ -66,6 +74,32 @@ suite "Testing Vector equality and inequality":
       Vector4(x: ZERO_F, y: ONE_F, z: TWO_F, w: THREE_F),
       Vector4(x: ZERO_F, y: ONE_F, z: TWO_F, w: THREE_F ),
       Vector4(x: ONE_F, y: TWO_F, z: THREE_F, w: ZERO_F))
+
+suite "Comparing Vectors":
+  proc testCompareVectors(small, big: Vector) =
+    let
+      otherSmall = small.copy()
+    check:
+      not (small < otherSmall)
+      not (big < small)
+      small < big
+      not (big <= small)
+      small <= otherSmall
+      small <= big
+      not (small > otherSmall)
+      not (small > big)
+      big > small
+      not (small >= big)
+      small >= otherSmall
+      big >= small
+  test "Comparing Vector1s":
+    testCompareVectors(vector1(ONE_F), vector1(TWO_F))
+  test "Comparing Vector2s":
+    testCompareVectors(vector2(ONE_F), vector2(TWO_F))
+  test "Comparing Vector3s":
+    testCompareVectors(vector3(ONE_F), vector3(TWO_F))
+  test "Comparing Vector4s":
+    testCompareVectors(vector4(ONE_F), vector4(TWO_F))
 
 suite "Creating a new Vector with default constructor":
   proc testCreateVectorDefaultConstructor(v1, v2: Vector) =
@@ -716,3 +750,59 @@ suite "Calculating the refraction of a Vector":
                                 NEGATIVE_ONE_F, 
                                 NEGATIVE_ONE_F))
     testRefractVector(v1, v2, ONE_F, v1)
+
+suite "Calculating the angle between Vectors":
+  proc testAngleBetweenVectors(v1, v2: Vector, expected: float) =
+    let
+      a = angleBetween(v1, v2)
+    check:
+      compareValuesWithinEta(a, expected)
+  test "Calculating the angle between Vector1s":
+    testAngleBetweenVectors(vector1(TWO_F), vector1(TWO_F), ZERO_F)
+  test "Calculating the angle between Vector2s":
+    testAngleBetweenVectors(vector2(TWO_F), vector2(TWO_F), ZERO_F)
+    testAngleBetweenVectors(vector2(TWO_F,
+                                    ZERO_F),
+                            vector2(ZERO_F, TWO_F), PI / TWO_F)
+  test "Calculating the angle between Vector3s":
+    testAngleBetweenVectors(vector3(TWO_F), vector3(TWO_F), ZERO_F)
+    testAngleBetweenVectors(vector3(TWO_F,
+                                    ZERO_F,
+                                    ZERO_F), 
+                            vector3(ZERO_F, TWO_F, ZERO_F), PI / TWO_F)
+  test "Calculating the angle between Vector4s":
+    testAngleBetweenVectors(vector4(TWO_F), vector4(TWO_F), ZERO_F)
+    testAngleBetweenVectors(vector4(TWO_F,
+                                    ZERO_F,
+                                    ZERO_F,
+                                    ZERO_F),
+                            vector4(ZERO_F, TWO_F, ZERO_F, ZERO_F), PI / TWO_F)
+
+suite "Getting Vector dimension":
+  proc testVectorDimension(v1: Vector, expected: int) =
+    check:
+      dimension(v1) == expected
+  test "Getting Vector1 dimension":
+    testVectorDimension(vector1(ONE_F), 1)
+  test "Getting Vector2 dimension":
+    testVectorDimension(vector2(ONE_F), 2)
+  test "Getting Vector3 dimension":
+    testVectorDimension(vector3(ONE_F), 3)
+  test "Getting Vector4 dimension":
+    testVectorDimension(vector4(ONE_F), 4)
+
+suite "Hashing Vector":
+  proc testHashVector(v1, v2: Vector) =
+    let
+      v3 = v1.copy()
+    check:
+      hash(v1) != hash(v2)
+      hash(v1) == hash(v3)
+  test "Hashing Vector1":
+    testHashVector(vector1(ONE_F), vector1(TWO_F))
+  test "Hashing Vector2":
+    testHashVector(vector2(ONE_F), vector2(TWO_F))
+  test "Hashing Vector3":
+    testHashVector(vector3(ONE_F), vector3(TWO_F))
+  test "Hashing Vector4":
+    testHashVector(vector4(ONE_F), vector4(TWO_F))
