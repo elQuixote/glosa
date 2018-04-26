@@ -2,7 +2,7 @@ import ../../src/core/vector
 import unittest
 
 from system import abs
-from math import pow, PI
+from math import pow, sqrt, PI
 from sequtils import zip
 
 const
@@ -574,6 +574,51 @@ suite "Calculating the heading of a Vector":
       headingYZ(v2) == FORTY_FIVE_F
       abs(headingYW(v2) - SIXTY_F) < ETA
       abs(headingZW(v2) - SIXTY_F) < ETA
+
+suite "Calculating the magnitude and length of a Vector":
+  proc testVectorMagnitudeAndLength(v1: Vector, expected: float) =
+    let
+      m = magnitude(v1)
+      l = length(v1)
+    check:
+      m == expected
+      l == expected
+      m == l
+  test "Calculating the magnitude and length of a Vector1":
+    testVectorMagnitudeAndLength(vector1(TWO_F), TWO_F)
+  test "Calculating the magnitude and length of a Vector2":
+    testVectorMagnitudeAndLength(vector2(TWO_F), TWO_F * sqrt(TWO_F))
+  test "Calculating the magnitude and length of a Vector3":
+    testVectorMagnitudeAndLength(vector3(TWO_F), TWO_F * sqrt(THREE_F))
+  test "Calculating the magnitude and length of a Vector4":
+    testVectorMagnitudeAndLength(vector4(TWO_F), FOUR_F)
+
+suite "Normalizing a Vector":
+  proc testNormalizeVector(v1, expected: Vector) =
+    block:
+      var
+        v2 = v1.copy()
+        v4 = v1.copy()
+      let
+        v3 = normalizeSelf(v2)
+        v5 = normalize(v4)
+      check:
+        v3 == expected
+        v5 == expected
+        v3 == v5
+    block:
+      let
+        v2 = normalizeNew(v1)
+      check:
+        v2 == expected
+  test "Normalizing a Vector1":
+    testNormalizeVector(vector1(TWO_F), vector1(ONE_F))
+  test "Normalizing a Vector2":
+    testNormalizeVector(vector2(TWO_F), vector2(ONE_F / sqrt(TWO_F)))
+  test "Normalizing a Vector3":
+    testNormalizeVector(vector3(TWO_F), vector3(ONE_F / sqrt(THREE_F)))
+  test "Normalizing a Vector4":
+    testNormalizeVector(vector4(TWO_F), vector4(ONE_F / TWO_F))
 
 suite "Calculating the reflection of a Vector":
   proc testReflectVector(v, n, expected: Vector) =
