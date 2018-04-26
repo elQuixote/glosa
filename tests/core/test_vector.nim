@@ -26,13 +26,19 @@ proc compareVectorToValue(vector: Vector, value: float): bool =
   for v in a:
     if v != value:
       result = false
+  if not result:
+    checkpoint("vector was " & $vector)
+    checkpoint("value was " & $value)
 
-proc compareVectorsWithEta(v1, v2: Vector): bool =
+proc compareVectorsWithinEta(v1, v2: Vector): bool =
   let s = zip(v1.toArray(), v2.toArray())
   result = true
   for v in s:
-    if v[0] - v[1] >= ETA:
+    if abs(v[0] - v[1]) >= ETA:
       result = false
+  if not result:
+    checkpoint("v1 was " & $v1)
+    checkpoint("v2 was " & $v2)
 
 suite "Testing Vector equality and inequality":
   proc testVectorEquality(v1, v2, v3: Vector) =
@@ -537,8 +543,8 @@ suite "Calculating the reflection of a Vector":
         v1 = reflectNew(v, n)
         v2 = reflect(v, n)
       check:
-        compareVectorsWithEta(v1, expected)
-        compareVectorsWithEta(v2, expected)
+        compareVectorsWithinEta(v1, expected)
+        compareVectorsWithinEta(v2, expected)
         v1 == v2
     block:
       var
@@ -546,31 +552,79 @@ suite "Calculating the reflection of a Vector":
       let
         v2 = reflectSelf(v1, n)
       check:
-        compareVectorsWithEta(v1, expected)
+        compareVectorsWithinEta(v1, expected)
         v1 == v2
   test "Calculating the reflection of a Vector1":
     testReflectVector(
-      vector1(TWO_F),
+      normalizeNew(vector1(TWO_F)),
       normalizeNew(vector1(NEGATIVE_ONE_F)),
-      vector1(NEGATIVE_ONE_F * TWO_F))
+      normalizeNew(vector1(NEGATIVE_ONE_F * TWO_F)))
   test "Calculating the reflection of a Vector2":
     testReflectVector(
-      vector2(TWO_F, TWO_F),
+      normalizeNew(vector2(TWO_F, TWO_F)),
       normalizeNew(vector2(NEGATIVE_ONE_F, NEGATIVE_ONE_F)),
-      vector2(NEGATIVE_ONE_F * TWO_F, NEGATIVE_ONE_F * TWO_F))
+      normalizeNew(vector2(NEGATIVE_ONE_F * TWO_F, NEGATIVE_ONE_F * TWO_F)))
   test "Calculating the reflection of a Vector3":
     testReflectVector(
-      vector2(TWO_F, TWO_F),
+      normalizeNew(vector2(TWO_F, TWO_F)),
       normalizeNew(vector2(NEGATIVE_ONE_F, NEGATIVE_ONE_F)),
-      vector2(NEGATIVE_ONE_F * TWO_F, NEGATIVE_ONE_F * TWO_F))
+      normalizeNew(vector2(NEGATIVE_ONE_F * TWO_F, NEGATIVE_ONE_F * TWO_F)))
   test "Calculating the reflection of a Vector4":
     testReflectVector(
-      vector4(TWO_F, TWO_F, TWO_F, TWO_F),
+      normalizeNew(vector4(TWO_F, TWO_F, TWO_F, TWO_F)),
       normalizeNew(vector4(NEGATIVE_ONE_F, 
                            NEGATIVE_ONE_F, 
                            NEGATIVE_ONE_F, 
                            NEGATIVE_ONE_F)),
-      vector4(NEGATIVE_ONE_F * TWO_F, 
+      normalizeNew(vector4(NEGATIVE_ONE_F * TWO_F, 
               NEGATIVE_ONE_F * TWO_F,
               NEGATIVE_ONE_F * TWO_F,
-              NEGATIVE_ONE_F * TWO_F))
+              NEGATIVE_ONE_F * TWO_F)))
+
+# NOTE: More tests need to be added
+suite "Calculating the refraction of a Vector":
+  proc testRefractVector(v, n: Vector, eta: float, expected: Vector) =
+    block:
+      let
+        v1 = refractNew(v, n, eta)
+        v2 = refract(v, n, eta)
+      if not compareVectorsWithinEta(v1, expected):
+        checkpoint("eta is " & $eta)
+      check:
+        compareVectorsWithinEta(v1, expected)
+        compareVectorsWithinEta(v2, expected)
+        v1 == v2
+    block:
+      var
+        v1 = v.copy()
+      let
+        v2 = refractSelf(v1, n, eta)
+      check:
+        compareVectorsWithinEta(v1, expected)
+        v1 == v2
+  test "Calculating the refraction of a Vector1":
+    let
+      v1 = normalizeNew(vector1(TWO_F))
+      v2 = normalizeNew(vector1(NEGATIVE_ONE_F))
+    testRefractVector(v1, v2, ONE_F, v1)
+  test "Calculating the refraction of a Vector2":
+    let
+      v1 = normalizeNew(vector2(TWO_F, TWO_F))
+      v2 = normalizeNew(vector2(NEGATIVE_ONE_F, 
+                                NEGATIVE_ONE_F))
+    testRefractVector(v1, v2, ONE_F, v1)
+  test "Calculating the refraction of a Vector3":
+    let
+      v1 = normalizeNew(vector3(TWO_F, TWO_F, TWO_F))
+      v2 = normalizeNew(vector3(NEGATIVE_ONE_F, 
+                                NEGATIVE_ONE_F, 
+                                NEGATIVE_ONE_F))
+    testRefractVector(v1, v2, ONE_F, v1)
+  test "Calculating the refraction of a Vector4":
+    let
+      v1 = normalizeNew(vector4(TWO_F, TWO_F, TWO_F, TWO_F))
+      v2 = normalizeNew(vector4(NEGATIVE_ONE_F, 
+                                NEGATIVE_ONE_F, 
+                                NEGATIVE_ONE_F, 
+                                NEGATIVE_ONE_F))
+    testRefractVector(v1, v2, ONE_F, v1)

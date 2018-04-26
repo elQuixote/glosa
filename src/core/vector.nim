@@ -120,6 +120,108 @@ proc clear*(v: var Vector2): var Vector2 = set(v, 0.0)
 proc clear*(v: var Vector3): var Vector3 = set(v, 0.0)
 proc clear*(v: var Vector4): var Vector4 = set(v, 0.0)
 
+# Inverse
+
+# NOTE: Changed/Added from design doc
+proc inverseSelf*(v: var Vector1): var Vector1 {.noinit.} =
+  v.x = -v.x
+  result = v
+
+proc inverseNew*(v: Vector1): Vector1 =
+  result.x = -v.x
+
+proc inverseSelf*(v: var Vector2): var Vector2 {.noinit.} =
+  v.x = -v.x
+  v.y = -v.y
+  result = v
+
+proc inverseNew*(v: Vector2): Vector2 =
+  result.x = -v.x
+  result.y = -v.y
+
+proc inverseSelf*(v: var Vector3): var Vector3 {.noinit.} =
+  v.x = -v.x
+  v.y = -v.y
+  v.z = -v.z
+  result = v
+
+proc inverseNew*(v: Vector3): Vector3 =
+  result.x = -v.x
+  result.y = -v.y
+  result.z = -v.z
+
+proc inverseSelf*(v: var Vector4): var Vector4 {.noinit.} =
+  v.x = -v.x
+  v.y = -v.y
+  v.z = -v.z
+  v.w = -v.w
+  result = v
+
+proc inverseNew*(v: Vector4): Vector4 =
+  result.x = -v.x
+  result.y = -v.y
+  result.z = -v.z
+  result.w = -v.w
+
+proc inverse*(v: Vector1): Vector1 = inverseNew(v)
+proc inverse*(v: Vector2): Vector2 = inverseNew(v)
+proc inverse*(v: Vector3): Vector3 = inverseNew(v)
+proc inverse*(v: Vector4): Vector4 = inverseNew(v)
+
+proc reverse*(v: Vector1): Vector1 = inverseNew(v)
+proc reverse*(v: Vector2): Vector2 = inverseNew(v)
+proc reverse*(v: Vector3): Vector3 = inverseNew(v)
+proc reverse*(v: Vector4): Vector4 = inverseNew(v)
+
+# Invert
+# NOTE: Should be made private?
+
+# NOTE: Added from design doc
+proc invertSelf*(v: var Vector1): var Vector1 {.noinit.} =
+  v.x = 1 / v.x
+  result = v
+
+proc invertNew*(v: Vector1): Vector1 =
+  result.x = 1 / v.x
+
+proc invertSelf*(v: var Vector2): var Vector2 {.noinit.} =
+  v.x = 1 / v.x
+  v.y = 1 / v.y
+  result = v
+
+proc invertNew*(v: Vector2): Vector2 =
+  result.x = 1 / v.x
+  result.y = 1 / v.y
+
+proc invertSelf*(v: var Vector3): var Vector3 {.noinit.} =
+  v.x = 1 / v.x
+  v.y = 1 / v.y
+  v.z = 1 / v.z
+  result = v
+
+proc invertNew*(v: Vector3): Vector3 =
+  result.x = 1 / v.x
+  result.y = 1 / v.y
+  result.z = 1 / v.z
+
+proc invertSelf*(v: var Vector4): var Vector4 {.noinit.} =
+  v.x = 1 / v.x
+  v.y = 1 / v.y
+  v.z = 1 / v.z
+  v.w = 1 / v.w
+  result = v
+
+proc invertNew*(v: Vector4): Vector4 =
+  result.x = 1 / v.x
+  result.y = 1 / v.y
+  result.z = 1 / v.z
+  result.w = 1 / v.w
+
+proc invert*(v: Vector1): Vector1 = invertNew(v)
+proc invert*(v: Vector2): Vector2 = invertNew(v)
+proc invert*(v: Vector3): Vector3 = invertNew(v)
+proc invert*(v: Vector4): Vector4 = invertNew(v)
+
 # Addition
 # NOTE: Added Scalar addition to all vectors
 proc addSelf*(v: var Vector1, f: float): var Vector1 {.noinit.} =
@@ -212,6 +314,11 @@ proc `+`*(v1: Vector1, f: float): Vector1 = addNew(v1, f)
 proc `+`*(v1: Vector2, f: float): Vector2 = addNew(v1, f)
 proc `+`*(v1: Vector3, f: float): Vector3 = addNew(v1, f)
 proc `+`*(v1: Vector4, f: float): Vector4 = addNew(v1, f)
+
+proc `+`*(f: float, v1: Vector1): Vector1 = addNew(v1, f)
+proc `+`*(f: float, v1: Vector2): Vector2 = addNew(v1, f)
+proc `+`*(f: float, v1: Vector3): Vector3 = addNew(v1, f)
+proc `+`*(f: float, v1: Vector4): Vector4 = addNew(v1, f)
 
 # NOTE: This is added from design doc
 proc `+=`*(v1: var Vector1, v2: Vector1) = discard addSelf(v1, v2)
@@ -318,6 +425,11 @@ proc `-`*(v1: Vector2, f: float): Vector2 = subtractNew(v1, f)
 proc `-`*(v1: Vector3, f: float): Vector3 = subtractNew(v1, f)
 proc `-`*(v1: Vector4, f: float): Vector4 = subtractNew(v1, f)
 
+proc `-`*(f: float, v1: Vector1): Vector1 = addNew(inverse(v1), f)
+proc `-`*(f: float, v1: Vector2): Vector2 = addNew(inverse(v1), f)
+proc `-`*(f: float, v1: Vector3): Vector3 = addNew(inverse(v1), f)
+proc `-`*(f: float, v1: Vector4): Vector4 = addNew(inverse(v1), f)
+
 # NOTE: This is added from design doc
 proc `-=`*(v1: var Vector1, v2: Vector1) = discard subtractSelf(v1, v2)
 proc `-=`*(v1: var Vector2, v2: Vector2) = discard subtractSelf(v1, v2)
@@ -376,6 +488,11 @@ proc `*`*(v: Vector2, f: float): Vector2 = multiplyNew(v, f)
 proc `*`*(v: Vector3, f: float): Vector3 = multiplyNew(v, f)
 proc `*`*(v: Vector4, f: float): Vector4 = multiplyNew(v, f)
 
+proc `*`*(f: float, v: Vector1): Vector1 = multiplyNew(v, f)
+proc `*`*(f: float, v: Vector2): Vector2 = multiplyNew(v, f)
+proc `*`*(f: float, v: Vector3): Vector3 = multiplyNew(v, f)
+proc `*`*(f: float, v: Vector4): Vector4 = multiplyNew(v, f)
+
 # NOTE: This is added from design doc
 proc `*=`*(v: var Vector1, f: float) = discard multiplySelf(v, f)
 proc `*=`*(v: var Vector2, f: float) = discard multiplySelf(v, f)
@@ -429,6 +546,11 @@ proc `/`*(v: Vector2, f: float): Vector2 = divideNew(v, f)
 proc `/`*(v: Vector3, f: float): Vector3 = divideNew(v, f)
 proc `/`*(v: Vector4, f: float): Vector4 = divideNew(v, f)
 
+proc `/`*(f: float, v: Vector1): Vector1 = multiplyNew(invert(v), f)
+proc `/`*(f: float, v: Vector2): Vector2 = multiplyNew(invert(v), f)
+proc `/`*(f: float, v: Vector3): Vector3 = multiplyNew(invert(v), f)
+proc `/`*(f: float, v: Vector4): Vector4 = multiplyNew(invert(v), f)
+
 # NOTE: This is added from design doc
 proc `/=`*(v: var Vector1, f: float) = discard divideSelf(v, f)
 proc `/=`*(v: var Vector2, f: float) = discard divideSelf(v, f)
@@ -462,56 +584,6 @@ proc cross*(v1, v2: Vector3): Vector3 =
   result.x = v1.y * v2.z - v1.z * v2.y
   result.y = v1.z * v2.x - v1.x * v2.z
   result.z = v1.x * v2.y - v1.y * v2.x
-
-# NOTE: No 4D cross product
-
-# Inverse
-
-# NOTE: Changed/Added from design doc
-proc inverseSelf*(v: var Vector1): var Vector1 {.noinit.} =
-  v.x = -v.x
-  result = v
-
-proc inverseNew*(v: Vector1): Vector1 =
-  result.x = -v.x
-
-proc inverseSelf*(v: var Vector2): var Vector2 {.noinit.} =
-  v.x = -v.x
-  v.y = -v.y
-  result = v
-
-proc inverseNew*(v: Vector2): Vector2 =
-  result.x = -v.x
-  result.y = -v.y
-
-proc inverseSelf*(v: var Vector3): var Vector3 {.noinit.} =
-  v.x = -v.x
-  v.y = -v.y
-  v.z = -v.z
-  result = v
-
-proc inverseNew*(v: Vector3): Vector3 =
-  result.x = -v.x
-  result.y = -v.y
-  result.z = -v.z
-
-proc inverseSelf*(v: var Vector4): var Vector4 {.noinit.} =
-  v.x = -v.x
-  v.y = -v.y
-  v.z = -v.z
-  v.w = -v.w
-  result = v
-
-proc inverseNew*(v: Vector4): Vector4 =
-  result.x = -v.x
-  result.y = -v.y
-  result.z = -v.z
-  result.w = -v.w
-
-proc inverse*(v: Vector1): Vector1 = inverseNew(v)
-proc inverse*(v: Vector2): Vector2 = inverseNew(v)
-proc inverse*(v: Vector3): Vector3 = inverseNew(v)
-proc inverse*(v: Vector4): Vector4 = inverseNew(v)
 
 # Heading
 # NOTE: Additional heading procs
@@ -552,7 +624,7 @@ proc heading*(v: Vector4): float = headingXY(v)
 
 # Magnitude
 proc magnitude*(v: Vector1): float =
-  result = v.x
+  result = abs(v.x)
 
 proc magnitude*(v: Vector2): float =
   result = sqrt(v.x * v.x + v.y * v.y)
@@ -633,7 +705,7 @@ proc normalize*(v: var Vector4, m: float = 1.0): var Vector4 = normalizeSelf(v, 
 
 # Reflect
 # NOTE: Changed from design doc
-# NOTE: n (normal vector) must be normalized
+# NOTE: Vectors must be normalized
 proc reflectSelf*(v: var Vector1, n: Vector1): var Vector1 {.noinit.} =
   v = subtractSelf(v, multiplyNew(n, 2 * dot(v, n)))
   result = v
@@ -670,6 +742,7 @@ proc reflect*(v, n: Vector4): Vector4 = reflectNew(v, n)
 
 # Refract
 # NOTE: Changed from design doc
+# NOTE: Vectors must be normalized
 proc refractSelf*(v: var Vector1, n: Vector1, eta: float): var Vector1 {.noinit.} =
   let 
     d = dot(n, v)
@@ -677,7 +750,7 @@ proc refractSelf*(v: var Vector1, n: Vector1, eta: float): var Vector1 {.noinit.
   if (k < 0):
     result = set(v, 0.0)
   else:
-    result = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d * sqrt(k)))
+    result = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d + sqrt(k)))
 
 proc refractNew*(v, n: Vector1, eta: float): Vector1 =
   let
@@ -687,7 +760,7 @@ proc refractNew*(v, n: Vector1, eta: float): Vector1 =
     result = set(result, 0.0)
   else:
     # NOTE: Should this be refactored?
-    result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d * sqrt(k)))
+    result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d + sqrt(k)))
 
 proc refractSelf*(v: var Vector2, n: Vector2, eta: float): var Vector2 {.noinit.} =
   let 
@@ -696,7 +769,7 @@ proc refractSelf*(v: var Vector2, n: Vector2, eta: float): var Vector2 {.noinit.
   if (k < 0):
     result = set(v, 0.0)
   else:
-    result = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d * sqrt(k)))
+    result = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d + sqrt(k)))
 
 proc refractNew*(v, n: Vector2, eta: float): Vector2 =
   let
@@ -706,7 +779,7 @@ proc refractNew*(v, n: Vector2, eta: float): Vector2 =
     result = set(result, 0.0)
   else:
     # NOTE: Should this be refactored?
-    result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d * sqrt(k)))
+    result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d + sqrt(k)))
 
 proc refractSelf*(v: var Vector3, n: Vector3, eta: float): var Vector3 {.noinit.} =
   let 
@@ -715,7 +788,7 @@ proc refractSelf*(v: var Vector3, n: Vector3, eta: float): var Vector3 {.noinit.
   if (k < 0):
     result = set(v, 0.0)
   else:
-    result = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d * sqrt(k)))
+    result = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d + sqrt(k)))
 
 proc refractNew*(v, n: Vector3, eta: float): Vector3 =
   let
@@ -725,7 +798,7 @@ proc refractNew*(v, n: Vector3, eta: float): Vector3 =
     result = set(result, 0.0)
   else:
     # NOTE: Should this be refactored?
-    result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d * sqrt(k)))
+    result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d + sqrt(k)))
 
 proc refractSelf*(v: var Vector4, n: Vector4, eta: float): var Vector4 {.noinit.} =
   let 
@@ -734,7 +807,7 @@ proc refractSelf*(v: var Vector4, n: Vector4, eta: float): var Vector4 {.noinit.
   if (k < 0):
     result = set(v, 0.0)
   else:
-    result = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d * sqrt(k)))
+    result = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d + sqrt(k)))
 
 proc refractNew*(v, n: Vector4, eta: float): Vector4 =
   let
@@ -744,7 +817,7 @@ proc refractNew*(v, n: Vector4, eta: float): Vector4 =
     result = set(result, 0.0)
   else:
     # NOTE: Should this be refactored?
-    result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d * sqrt(k)))
+    result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d + sqrt(k)))
 
 proc refract*(v, n: Vector1, eta: float): Vector1 = refractNew(v, n, eta)
 proc refract*(v, n: Vector2, eta: float): Vector2 = refractNew(v, n, eta)
