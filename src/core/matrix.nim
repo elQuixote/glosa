@@ -1,9 +1,28 @@
-import ./concepts
+from ./concepts import
+  Matrix,
+  Compare,
+  Equals,
+  Hash,
+  Clear,
+  Copy,
+  String
+
+export
+  Matrix,
+  Compare,
+  Equals,
+  Hash,
+  Clear,
+  Copy,
+  String
+
+from ./quaternion import
+  Quaternion
 
 from strformat import `&`
 from math import sin, cos
 
-import hashes, quaternion
+import hashes
 
 type 
   Matrix32* = object
