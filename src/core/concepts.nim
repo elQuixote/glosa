@@ -1,7 +1,7 @@
-{.hint[XDeclaredButNotUsed]: off.}
 # NOTE: Added Set
 import hashes
 
+{.hint[XDeclaredButNotUsed]: off.}
 type
   Vector* {.explain.} = concept a, b, var va, type T
     `+`(a, b) is T
