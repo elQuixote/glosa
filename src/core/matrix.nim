@@ -16,9 +16,6 @@ export
   Copy,
   String
 
-from ./quaternion import
-  Quaternion
-
 from strformat import `&`
 from math import sin, cos
 
@@ -38,6 +35,9 @@ type
     ## [ cx(2,0) cy(2,1) cz(2,2) cw(2,3) ]
     ## [ tx(3,0) ty(3,1) tz(3,2) tw(3,3) ]
     matrix*: array[4, array[4, float]]
+
+from ./quaternion import
+  Quaternion
 
 # Constructors
 proc matrix32*(

@@ -1,15 +1,30 @@
-import ./concepts
+from ./concepts import
+  Compare,
+  Equals,
+  Hash,
+  Clear,
+  Copy,
+  String
+
+export
+  Compare,
+  Equals,
+  Hash,
+  Clear,
+  Copy,
+  String
 
 from strformat import `&`
 from math import arctan2, arccos, sqrt
-import hashes
 
-import matrix 
-import vector
+import hashes
 
 type 
   Quaternion* = object
-    x*,y*,z*,w* : float 
+    x*, y*, z*, w*: float
+
+from ./matrix import Matrix44
+from ./vector import Vector3
 
 #Constructor
 proc quaternion*(x, y, z, w: float): Quaternion =
@@ -29,7 +44,7 @@ proc copy*(q: Quaternion): Quaternion =
   result = Quaternion(x: q.x, y: q.y, z: q.z, w: q.w)
 
 #Set
-#NOTE : This is Added, not in design doc
+#NOTE: This is Added, not in design doc
 proc set*(q: var Quaternion, x,y,z,w: float): var Quaternion {.noinit.} = 
   result.x = x
   result.y = y
@@ -287,7 +302,7 @@ proc fromMatrix(m: Matrix44): Quaternion =
   ## Press 1992).
   var 
     s = 0.0
-    q : array[4,float]
+    q: array[4,float]
     t = m.matrix[0][0] + m.matrix[1][1] + m.matrix[2][2]
   if t > 0:
     s = 0.5 / sqrt(t + 1.0)
