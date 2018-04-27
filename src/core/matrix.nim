@@ -375,7 +375,7 @@ proc invert*(m: Matrix44): Matrix44 {.noInit.} =
   # this computation comes from optimize(invert(m)) in maxima CAS
   let det = m.determinant
   if det == 0.0:
-    raise newException(DivByZeroError, "Cannot normalize zero length vector")
+    raise newException(DivByZeroError, "Cannot invert a zero determinant matrix")
   let
     r0 = m.matrix[2][1] * m.matrix[3][3] - m.matrix[2][3] * m.matrix[3][1]
     r1 = m.matrix[2][2] * m.matrix[3][3] - m.matrix[2][3] * m.matrix[3][2]
