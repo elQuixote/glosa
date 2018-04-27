@@ -938,7 +938,49 @@ proc dimension*(v: Vector3): int =
 proc dimension*(v: Vector4): int =
   result = 4
 
+# Iterators
+# NOTE: Added from design doc
+# NOTE: Using Nim paradigm (items, fields, pairs, etc)
+iterator elements*(v: Vector1): float =
+  yield v.x
+
+iterator elements*(v: Vector2): float =
+  yield v.x
+  yield v.y
+
+iterator elements*(v: Vector3): float =
+  yield v.x
+  yield v.y
+  yield v.z
+
+iterator elements*(v: Vector4): float =
+  yield v.x
+  yield v.y
+  yield v.z
+  yield v.w
+
+# NOTE: Added from design doc
+# NOTE: Using Nim paradigm (items, fields, pairs, etc)
+iterator pairs*(v: Vector1): tuple[key: int, value: float] =
+  yield (0, v.x)
+
+iterator pairs*(v: Vector2): tuple[key: int, value: float] =
+  yield (0, v.x)
+  yield (1, v.y)
+
+iterator pairs*(v: Vector3): tuple[key: int, value: float] =
+  yield (0, v.x)
+  yield (1, v.y)
+  yield (2, v.z)
+
+iterator pairs*(v: Vector4): tuple[key: int, value: float] =
+  yield (0, v.x)
+  yield (1, v.y)
+  yield (2, v.z)
+  yield (3, v.w)
+
 # Converters
+# NOTE: Added from design doc
 proc toArray*(v: Vector1): array[1, float] =
   result = [v.x]
 

@@ -820,17 +820,39 @@ suite "Getting array from Vector":
   test "Getting array from Vector4":
     testVectorToArray(vector4(1.0))
 
+suite "Iterating over a Vector":
+  proc testVectorIterate(v1: Vector) =
+    let
+      a = v1.toArray()
+    var
+      i = 0
+    for e in elements(v1):
+      check:
+        a[i] == e
+      i += 1
+    for j, e in pairs(v1):
+      check:
+        a[j] == e
+  test "Iterating over a Vector1":
+    testVectorIterate(vector1(1.0))
+  test "Iterating over a Vector2":
+    testVectorIterate(vector2(1.0, 2.0))
+  test "Iterating over a Vector3":
+    testVectorIterate(vector3(1.0, 2.0, 3.0))
+  test "Iterating over a Vector4":
+    testVectorIterate(vector4(1.0, 2.0, 3.0, 4.0))
+
 suite "Getting string from Vector":
-  proc testVectorToArray(v1: Vector, expected: string) =
+  proc testVectorToString(v1: Vector, expected: string) =
     let
       s = $v1
     check:
       s == expected
-  test "Getting array from Vector1":
-    testVectorToArray(vector1(1.0), "[1.0]")
-  test "Getting array from Vector2":
-    testVectorToArray(vector2(1.0, 2.0), "[1.0, 2.0]")
-  test "Getting array from Vector3":
-    testVectorToArray(vector3(1.0, 2.0, 3.0), "[1.0, 2.0, 3.0]")
-  test "Getting array from Vector4":
-    testVectorToArray(vector4(1.0, 2.0, 3.0, 4.0), "[1.0, 2.0, 3.0, 4.0]")
+  test "Getting string from Vector1":
+    testVectorToString(vector1(1.0), "[1.0]")
+  test "Getting string from Vector2":
+    testVectorToString(vector2(1.0, 2.0), "[1.0, 2.0]")
+  test "Getting string from Vector3":
+    testVectorToString(vector3(1.0, 2.0, 3.0), "[1.0, 2.0, 3.0]")
+  test "Getting string from Vector4":
+    testVectorToString(vector4(1.0, 2.0, 3.0, 4.0), "[1.0, 2.0, 3.0, 4.0]")
