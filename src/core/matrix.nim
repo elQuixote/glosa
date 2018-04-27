@@ -91,15 +91,14 @@ proc matrix44*(
 # NOTE: This is Added, not in design doc
 const 
   IDMATRIX32*: Matrix32 = matrix32(
-    1.0,0.0, 
-    0.0,0.0, 
-    1.0,0.0)
+    1.0, 0.0, 0.0,
+    0.0, 1.0, 0.0)
     ## Quick access to an identity matrix
   IDMATRIX44*: Matrix44 = matrix44(    
-    1.0,0.0,0.0,0.0,
-    0.0,1.0,0.0,0.0,
-    0.0,0.0,1.0,0.0,
-    0.0,0.0,0.0,1.0)
+    1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0, 
+    0.0, 0.0, 0.0, 1.0)
     ## Quick access to an identity matrix
 
 # Accessors 
@@ -196,8 +195,8 @@ proc copy*(m: Matrix44): Matrix44 =
   result = Matrix44(matrix: m.matrix)
 
 # Clear
-template clear*(m: var Matrix32): var Matrix32 = set(m, 0.0)
-template clear*(m: var Matrix44): var Matrix44 = set(m, 0.0)
+proc clear*(m: var Matrix32): var Matrix32 = set(m, 0.0)
+proc clear*(m: var Matrix44): var Matrix44 = set(m, 0.0)
 
 # Equals
 proc `==`*(m1, m2: Matrix32): bool = 
@@ -304,8 +303,8 @@ proc transposeNew*(m: Matrix44): Matrix44 =
   result.matrix[3][2] = m.matrix[2][3]
   result.matrix[3][3] = m.matrix[3][3]
 
-template transpose*(m: Matrix32): Matrix32 = transposeNew*(m)
-template transpose*(m: Matrix44): Matrix44 = transposeNew*(m)
+proc transpose*(m: Matrix32): Matrix32 = transposeNew(m)
+proc transpose*(m: Matrix44): Matrix44 = transposeNew(m)
 
 # Determinant
 proc determinants*(m: Matrix44): float = 
@@ -349,7 +348,6 @@ proc determinant*(m: Matrix44): float =
     r3 = m.matrix[2][2] * m.matrix[3][3] - m.matrix[2][3] * m.matrix[3][2]
     r4 = m.matrix[2][0] * m.matrix[3][2] - m.matrix[2][2] * m.matrix[3][0]
     r5 = m.matrix[2][2] * m.matrix[3][2] - m.matrix[2][2] * m.matrix[3][1]
-  
   return (r0 * m.matrix[0][1] - r1 * m.matrix[0][0] - r2 * m.matrix[0][3]) * m.matrix[1][2] +
          (-r0 * m.matrix[0][2] + r3 * m.matrix[0][0] + r4 * m.matrix[0][3]) * m.matrix[1][1] +
          (r1 * m.matrix[0][2] - r3 * m.matrix[0][1] - r5 * m.matrix[0][3]) * m.matrix[1][0] +
@@ -360,14 +358,14 @@ proc invert*(m: Matrix32): Matrix32 {.noInit.} =
   ## Returns a new matrix, which is the inverse of the matrix
   ## If the matrix is not invertible (determinant=0), an EDivByZero
   ## will be raised.
-  let d = m.determinant
-  if d == 0.0:
+  let det = m.determinant
+  if det == 0.0:
     raise newException(DivByZeroError,"Cannot invert a zero determinant matrix")
   result.set(
-    m.matrix[1][1] / d, - m.matrix[0][1] / d,
-    -m.matrix[1][0] / d,m.matrix[0][0] / d,
-    (m.matrix[1][0] * m.matrix[2][1] - m.matrix[1][1] * m.matrix[2][0]) / d,
-    (m.matrix[0][1] * m.matrix[2][0] - m.matrix[0][0] * m.matrix[2][1]) / d)
+    m.matrix[1][1] / det, - m.matrix[0][1] / det,
+    -m.matrix[1][0] / det, m.matrix[0][0] / det,
+    (m.matrix[1][0] * m.matrix[2][1] - m.matrix[1][1] * m.matrix[2][0]) / det,
+    (m.matrix[0][1] * m.matrix[2][0] - m.matrix[0][0] * m.matrix[2][1]) / det)
 
 proc invert*(m: Matrix44): Matrix44 {.noInit.} =
   ## Computes the inverse of matrix `m`. If the matrix
@@ -375,8 +373,7 @@ proc invert*(m: Matrix44): Matrix44 {.noInit.} =
   ## will be raised.
 
   # this computation comes from optimize(invert(m)) in maxima CAS
-  let
-    det = m.determinant
+  let det = m.determinant
   if det == 0.0:
     raise newException(DivByZeroError,"Cannot normalize zero length vector")
   let

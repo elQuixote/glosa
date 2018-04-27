@@ -15,7 +15,7 @@ export
   String
 
 from strformat import `&`
-from math import arctan2, arccos, sqrt
+from math import sin, cos, arctan2, arccos, sqrt
 
 import hashes
 
@@ -24,9 +24,9 @@ type
     x*, y*, z*, w*: float
 
 from ./matrix import Matrix44
-from ./vector import Vector3
+from ./vector import Vector3, normalize
 
-#Constructor
+# Constructor
 proc quaternion*(x, y, z, w: float): Quaternion =
   result.x = x
   result.y = y
@@ -39,55 +39,229 @@ proc quaternion(w: float, v: Vector3): Quaternion =
   result.y = v.y
   result.z = v.z
 
-#Copy
+# Copy
 proc copy*(q: Quaternion): Quaternion = 
   result = Quaternion(x: q.x, y: q.y, z: q.z, w: q.w)
 
-#Set
-#NOTE: This is Added, not in design doc
-proc set*(q: var Quaternion, x,y,z,w: float): var Quaternion {.noinit.} = 
-  result.x = x
-  result.y = y
-  result.z = z
-  result.w = w
-
+# Set
 proc set*(q: var Quaternion, n: float): var Quaternion {.noinit.} =
-  result.x = x
-  result.y = y
-  result.z = z
-  result.w = w
+  result.x = n
+  result.y = n
+  result.z = n
+  result.w = n
 
-#Clear
-template clear*(q: var Quaternion): var Quaternion = set(q, 0.0)
+# Clear
+proc clear*(q: var Quaternion): var Quaternion = set(q, 0.0)
 
-#Equals
-proc `==`*(q1, q1: Quaternion): bool =
+# Inverse
+proc inverseNew*(q: Quaternion): Quaternion = 
+  ## Computes the inverse and returns a new quaternion
+  result.x = -q.x
+  result.y = -q.y
+  result.z = -q.z
+  result.w = -q.w
+
+proc inverseSelf*(q: var Quaternion): var Quaternion {.noinit.} = 
+  ## Computes the inverse of a quaternion and returns itself
+  q.x = -q.x
+  q.y = -q.y
+  q.z = -q.z
+  q.w = -q.w
+  result = q
+
+proc inverse*(q: Quaternion): Quaternion = inverseNew(q)
+
+# Invert
+# NOTE: Added from design doc
+proc invertSelf*(q: var Quaternion): var Quaternion {.noinit.} =
+  q.x = 1 / q.x
+  q.y = 1 / q.y
+  q.z = 1 / q.z
+  q.w = 1 / q.w
+  result = q
+
+proc invertNew*(q: Quaternion): Quaternion =
+  result.x = 1 / q.x
+  result.y = 1 / q.y
+  result.z = 1 / q.z
+  result.w = 1 / q.w
+
+proc invert*(q: Quaternion): Quaternion = invertNew(q)
+
+# Equals
+proc `==`*(q1, q2: Quaternion): bool =
   result = q1.x == q2.x and q1.y == q2.y and q1.z == q2.z and q1.w == q2.w 
 
-#Hash
+# Hash
 proc hash*(q: Quaternion): hashes.Hash =
   result = !$(result !& hash(q.x) !& hash(q.y) !& hash(q.z) !& hash(q.w))
 
-#String
+# String
 proc `$`*(q: Quaternion): string = 
   result = &"[{q.x}, {q.y}, {q.z}, {q.w}]"
 
-#Magnitude
+# Magnitude
 proc magnitude*(q: Quaternion): float = 
   ## Gets the magnitude of the quaternion
   result = sqrt(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w)
 
-#Length
-template length*(q: Quaternion): float = magnitude(q)
+# Length
+proc length*(q: Quaternion): float = magnitude(q)
 
-#Normalize
+# Addition
+proc addNew*(q: Quaternion, f: float): Quaternion =
+  ## Add quaternion q by f and returns new quaternion
+  result.x = q.x + f 
+  result.y = q.y + f 
+  result.z = q.z + f 
+  result.w = q.w + f 
+
+proc addNew*(q1, q2: Quaternion): Quaternion = 
+  ## Adds quaternion q1 and q2 and returns new quaternion
+  result.x = q1.x + q2.x
+  result.y = q1.y + q2.y
+  result.z = q1.z + q2.z
+  result.w = q1.w + q2.w
+
+proc addSelf*(q: var Quaternion, f: float): var Quaternion {.noinit.} = 
+  ## Adds quaternion q1 by f and overrides coordinates with results
+  q.x += f 
+  q.y += f
+  q.z += f
+  q.w += f
+  result = q
+
+proc addSelf*(q1: var Quaternion, q2: Quaternion): var Quaternion {.noinit} = 
+  ## Adds quaternion q1 by q2 and overrides coordinates of q1 with results
+  q1.x += q2.x 
+  q1.y += q2.y 
+  q1.z += q2.z 
+  q1.w += q2.w 
+  result = q1
+
+proc `+`*(q1, q2: Quaternion): Quaternion = addNew(q1, q2)
+proc `+`*(q: Quaternion, f: float): Quaternion = addNew(q, f)
+proc `+`*(f: float, q: Quaternion): Quaternion = addNew(q, f)
+proc `+=`*(q1: var Quaternion, q2: Quaternion): var Quaternion = addSelf(q1, q2)
+proc `+=`*(q: var Quaternion, f: float): var Quaternion = addSelf(q, f)
+
+# Subtraction
+proc subtractNew*(q: Quaternion, f: float): Quaternion =
+  ## Subtracts quaternion q by f and returns new quaternion
+  result.x = q.x - f 
+  result.y = q.y - f 
+  result.z = q.z - f 
+  result.w = q.w - f 
+
+proc subtractNew*(q1, q2: Quaternion): Quaternion = 
+  ## Subtracts quaternion q1 and q2 and returns new quaternion
+  result.x = q1.x - q2.x
+  result.y = q1.y - q2.y
+  result.z = q1.z - q2.z
+  result.w = q1.w - q2.w
+
+proc subtractSelf*(q: var Quaternion, f: float): var Quaternion {.noinit.} = 
+  ## Subtracts quaternion q1 by f and overrides coordinates with results
+  q.x -= f 
+  q.y -= f
+  q.z -= f
+  q.w -= f
+  result = q
+
+proc subtractSelf*(q1: var Quaternion, q2: Quaternion): var Quaternion {.noinit} = 
+  ## Subtracts quaternion q1 by q2 and overrides coordinates of q1 with results
+  q1.x -= q2.x 
+  q1.y -= q2.y 
+  q1.z -= q2.z 
+  q1.w -= q2.w 
+  result = q1
+
+proc `-`*(q1, q2: Quaternion): Quaternion = subtractNew(q1, q2)
+proc `-`*(q: Quaternion, f: float): Quaternion = subtractNew(q, f)
+proc `-`*(f: float, q: Quaternion): Quaternion = addNew(inverse(q), f)
+proc `-=`*(q1: var Quaternion, q2: Quaternion): var Quaternion = subtractSelf(q1, q2)
+proc `-=`*(q: var Quaternion, f: float): var Quaternion = subtractSelf(q, f)
+
+# Multiply
+proc multiplyNew*(q: Quaternion, f: float): Quaternion = 
+  ## Multiplies quaternion q by f and returns new quaternion
+  result.x = q.x * f
+  result.y = q.y * f
+  result.z = q.y * f
+  result.w = q.w * f
+
+proc multiplyNew*(q1, q2: Quaternion): Quaternion =
+  ## Multiplies quaternion q1 and q2 and returns new quaternion
+  result.x = q1.x * q2.x 
+  result.y = q1.y * q2.y
+  result.z = q1.z * q2.z
+  result.w = q1.w * q2.w
+
+proc multiplySelf*(q: var Quaternion, f: float): var Quaternion {.noinit.} = 
+  ## Multiplies quaternion q1 by f and overrides coordinates with results
+  q.x *= f
+  q.y *= f 
+  q.z *= f
+  q.w *= f 
+  result = q
+
+proc multiplySelf*(q1: var Quaternion, q2: Quaternion): var Quaternion {.noinit.} =
+  ## Multiplies quaternion q1 by q2 and overrides coordinates of q1 with results
+  q1.x *= q2.x
+  q1.y *= q2.y
+  q1.z *= q2.z
+  q1.w *= q2.w 
+  result = q1
+
+proc `*`*(q: Quaternion, f: float): Quaternion = multiplyNew(q, f)
+proc `*`*(f: float, q: Quaternion): Quaternion = multiplyNew(q, f)
+proc `*=`*(q: var Quaternion, f: float): var Quaternion = multiplySelf(q, f)
+
+# Divide
+proc divideNew*(q: Quaternion, f: float): Quaternion =
+  ## Divides quaternion q by f and returns new quaternion
+  result.x = q.x / f 
+  result.y = q.y / f 
+  result.z = q.z / f 
+  result.w = q.w / f 
+
+proc divideNew*(q1, q2: Quaternion): Quaternion = 
+  ## Divides quaternion q1 and q2 and returns new quaternion
+  result.x = q1.x / q2.x
+  result.y = q1.y / q2.y
+  result.z = q1.z / q2.z
+  result.w = q1.w / q2.w
+
+proc divideSelf*(q: var Quaternion, f: float): var Quaternion {.noinit.} = 
+  ## Divides quaternion q1 by f and overrides coordinates with results
+  q.x /= f 
+  q.y /= f
+  q.z /= f
+  q.w /= f
+  result = q
+
+proc divideSelf*(q1: var Quaternion, q2: Quaternion): var Quaternion {.noinit} = 
+  ## Divides quaternion q1 by q2 and overrides coordinates of q1 with results
+  q1.x /= q2.x 
+  q1.y /= q2.y 
+  q1.z /= q2.z 
+  q1.w /= q2.w 
+  result = q1
+
+proc `/`*(q1,q2: Quaternion): Quaternion = divideNew(q1, q2)
+proc `/`*(q: Quaternion, f: float): Quaternion = divideNew(q, f)
+proc `/`*(f: float, q: Quaternion): Quaternion = multiplyNew(invert(q), f)
+proc `/=`*(q1: var Quaternion, q2: Quaternion): var Quaternion = divideSelf(q1, q2)
+proc `/=`*(q: var Quaternion, f: float): var Quaternion = divideSelf(q, f)
+
+# Normalize
 proc normalizeSelf*(q: var Quaternion, m: float = 1.0): var Quaternion {.noinit.} =
   ## Normalizes a quaternion by a value and overrides coordinates with results
   let magnitude = magnitude(q)
   if(magnitude > 0):
     result = multiplySelf(q, m / magnitude)
   else:
-    result = copy(q)
+    result = q
 
 proc normalizeNew*(q: Quaternion, m: float = 1.0): Quaternion =
   ## Normalizes a quaternion by a value and returns a new quaternion
@@ -97,206 +271,37 @@ proc normalizeNew*(q: Quaternion, m: float = 1.0): Quaternion =
   else:
     result = copy(q)
 
-template normalize*(q: var Quaternion, m: float = 1.0): var Quaternion = normalizeSelf(q, m)
+proc normalize*(q: var Quaternion, m: float = 1.0): var Quaternion = normalizeSelf(q, m)
 
-#Multiply
-proc multiplyNew(q: Quaternion, f: float): Quaternion = 
-  ## Multiplies quaternion q by f and returns new quaternion
-  result.x = q.x * f
-  result.y = q.y * f
-  result.z = q.y * f
-  result.w = q.w * f
-
-proc multiplyNew(q1,q2: Quaternion): Quaternion =
-  ## Multiplies quaternion q1 and q2 and returns new quaternion
-  result.x = q1.x * q2.x 
-  result.y = q1.y * q2.y
-  result.z = q1.z * q2.z
-  result.w = q1.w * q2.w
-
-proc multiplySelf(q: var Quaternion, f: float) var Quaternion {.noinit.} = 
-  ## Multiplies quaternion q1 by f and overrides coordinates with results
-  q.x *= f
-  q.y *= f 
-  q.z *= f
-  q.w *= f 
-  result = q
-
-proc multiplySelf(q1: var Quaternion, q2: Quaternion): var Quaternion {.noinit.} =
-  ## Multiplies quaternion q1 by q2 and overrides coordinates of q1 with results
-  q1.x *= q2.x
-  q2.y *= q2.y
-  q1.z *= q2.z
-  q1.w *= q2.w 
-  result = q1
-
-template `*`*(q: Quaternion, f: float): Quaternion = multiplyNew(q,f)
-template `*=`*(q: var Quaternion, f: float): var Quaternion = multiplySelf(q,f)
-
-#Addition
-proc addNew(q: Quaternion, f: float): Quaternion =
-  ## Add quaternion q by f and returns new quaternion
-  result.x = q.x + f 
-  result.y = q.y + f 
-  result.z = q.z + f 
-  result.w = q.w + f 
-
-proc addNew(q1, q2: Quaternion): Quaternion = 
-  ## Adds quaternion q1 and q2 and returns new quaternion
-  result.x = q1.x + q2.x
-  result.y = q1.y + q2.y
-  result.z = q1.z + q2.z
-  result.w = q1.w + q2.w
-
-proc addSelf(q: var Quaternion, f: float): var Quaternion {.noinit.} = 
-  ## Adds quaternion q1 by f and overrides coordinates with results
-  q.x += f 
-  q.y += f
-  q.z += f
-  q.w += f
-  result = q
-
-proc addSelf(q1: var Quaternion, q2: Quaternion): var Quaternion {.noinit} = 
-  ## Adds quaternion q1 by q2 and overrides coordinates of q1 with results
-  q1.x += q2.x 
-  q1.y += q2.y 
-  q1.z += q2.z 
-  q1.w += q2.w 
-  result = q1
-
-template `+`*(q1,q2: Quaternion): Quaternion = addNew(q1, q2)
-template `+`*(q: Quaternion, f: float): Quaternion = addNew(q, f)
-template `+=`*(q1: var Quaternion, q2: Quaternion): var Quaternion = addSelf(q1, q2)
-template `+=`*(q: var Quaternion, f: float): var Quaternion = addSelf(q, f)
-
-#Subtract
-proc subtractNew(q: Quaternion, f: float): Quaternion =
-  ## Subtracts quaternion q by f and returns new quaternion
-  result.x = q.x - f 
-  result.y = q.y - f 
-  result.z = q.z - f 
-  result.w = q.w - f 
-
-proc subtractNew(q1, q2: Quaternion): Quaternion = 
-  ## Subtracts quaternion q1 and q2 and returns new quaternion
-  result.x = q1.x - q2.x
-  result.y = q1.y - q2.y
-  result.z = q1.z - q2.z
-  result.w = q1.w - q2.w
-
-proc subtractSelf(q: var Quaternion, f: float): var Quaternion {.noinit.} = 
-  ## Subtracts quaternion q1 by f and overrides coordinates with results
-  q.x -= f 
-  q.y -= f
-  q.z -= f
-  q.w -= f
-  result = q
-
-proc subtractSelf(q1: var Quaternion, q2: Quaternion): var Quaternion {.noinit} = 
-  ## Subtracts quaternion q1 by q2 and overrides coordinates of q1 with results
-  q1.x -= q2.x 
-  q1.y -= q2.y 
-  q1.z -= q2.z 
-  q1.w -= q2.w 
-  result = q1
-
-template `-`*(q1,q2: Quaternion): Quaternion = subtractNew(q1, q2)
-template `-`*(q: Quaternion, f: float): Quaternion = subtractNew(q, f)
-template `-=`*(q1: var Quaternion, q2: Quaternion): var Quaternion = subtractSelf(q1, q2)
-template `-=`*(q: var Quaternion, f: float): var Quaternion = subtractSelf(q, f)
-
-#Divide
-proc divideNew(q: Quaternion, f: float): Quaternion =
-  ## Divides quaternion q by f and returns new quaternion
-  if f == 0.0:
-    raise newException(DivByZeroError,"Cannot divide by zero")
-  result.x = q.x / f 
-  result.y = q.y / f 
-  result.z = q.z / f 
-  result.w = q.w / f 
-
-proc divideNew(q1, q2: Quaternion): Quaternion = 
-  ## Divides quaternion q1 and q2 and returns new quaternion
-  if q2.x == 0.0 or q2.y == 0.0 or q2.z == 0.0 or q2.w == 0.0:
-    raise newException(DivByZeroError,"Cannot divide by zero")
-  result.x = q1.x / q2.x
-  result.y = q1.y / q2.y
-  result.z = q1.z / q2.z
-  result.w = q1.w / q2.w
-
-proc divideSelf(q: var Quaternion, f: float): var Quaternion {.noinit.} = 
-  ## Divides quaternion q1 by f and overrides coordinates with results
-  if f == 0.0:
-    raise newException(DivByZeroError,"Cannot divide by zero")
-  q.x /= f 
-  q.y /= f
-  q.z /= f
-  q.w /= f
-  result = q
-
-proc divideSelf(q1: var Quaternion, q2: Quaternion): var Quaternion {.noinit} = 
-  ## Divides quaternion q1 by q2 and overrides coordinates of q1 with results
-  if q2.x == 0.0 or q2.y == 0.0 or q2.z == 0.0 or q2.w == 0.0:
-    raise newException(DivByZeroError,"Cannot divide by zero")
-  q1.x /= q2.x 
-  q1.y /= q2.y 
-  q1.z /= q2.z 
-  q1.w /= q2.w 
-  result = q1
-
-template `/`*(q1,q2: Quaternion): Quaternion = divideNew(q1, q2)
-template `/`*(q: Quaternion, f: float): Quaternion = divideNew(q, f)
-template `/=`*(q1: var Quaternion, q2: Quaternion): var Quaternion = divideSelf(q1, q2)
-template `/=`*(q: var Quaternion, f: float): var Quaternion = divideSelf(q, f)
-
-#Dot
+# Dot
 proc dot*(q1, q2: Quaternion): float =
   ## Computes the dot product of a given quaternion
   result = q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w
 
-#Invert
-proc invertNew(q: Quaternion): Quaternion = 
-  ## Computes the inverse and returns a new quaternion
-  result.x = -q.x
-  result.y = -q.y
-  result.z = -q.z
-  result.w = -q.w
-
-proc invertSelf(q: var Quaternion): var Quaternion {.noinit.} = 
-  ## Computes the inverse of a quaternion and returns itself
-  q.x = -q.x
-  q.y = -q.y
-  q.z = -q.z
-  q.w = -q.w
-  result = q
-
-template inverse*(q: Quaternion): Quaternion = invertNew(q)
-template inverse*(q: var Quaternion): var Quaternion = invertSelf(q)
-
-#Conjugate
+# Conjugate
 proc conjugateNew(q: Quaternion): Quaternion {.noinit.} = 
-  ##Computes a quaternion's conjugate, defined as the same w around the
-  ##inverted axis, returns new quaternion
+  ## Computes a quaternion's conjugate, defined as the same w around the
+  ## inverted axis, returns new quaternion
   result.x = -q.x
   result.y = -q.y
   result.z = -q.z
   result.w = q.w
 
 proc conjugateSelf(q: var Quaternion): var Quaternion {.noinit.} = 
-  ##Computes this quaternion's conjugate, defined as the same w around the
-  ##inverted axis.
+  ## Computes this quaternion's conjugate, defined as the same w around the
+  ## inverted axis.
   q.x = -q.x
   q.y = -q.y
   q.z = -q.z
   q.w = q.w
   result = q
 
-template conjugate*(q: Quaternion): Quaternion = conjugateNew(q)
-template conjugate*(q: var Quaternion): var Quaternion = conjugateSelf(q)
+proc conjugate*(q: Quaternion): Quaternion = conjugateNew(q)
+proc conjugate*(q: var Quaternion): var Quaternion = conjugateSelf(q)
 
-#Module Level Procs (Constructors)
-#FromMatrix44
-proc fromMatrix(m: Matrix44): Quaternion =
+# Module Level Procs (Constructors)
+# FromMatrix44
+proc fromMatrix*(m: Matrix44): Quaternion =
   ## Creates a quaternion from a rotation matrix. The algorithm used is from
   ## Allan and Mark Watt's "Advanced Animation and Rendering Techniques" (ACM
   ## Press 1992).
@@ -310,8 +315,8 @@ proc fromMatrix(m: Matrix44): Quaternion =
       (m.matrix[1][0] - m.matrix[0][1]) * s, 0.25 / s]
   else:
     var 
-      n = [1,2,0]
-      i,j,k = 0
+      n = [1, 2, 0]
+      i, j, k = 0
     if m.matrix[1][1] > m.matrix[0][0]:
       i = 1
     if m.matrix[2][2] > m.matrix[i][i]:
@@ -329,8 +334,8 @@ proc fromMatrix(m: Matrix44): Quaternion =
   result.z = q[2]
   result.w = q[3]
 
-#FromAxisAngle
-proc fromAxisAngle(v: var Vector3, a: float): Quaternion = 
+# FromAxisAngle
+proc fromAxisAngle*(v: var Vector3, a: float): Quaternion = 
   ## Creates a Quaternion from a axis and a angle.
   var 
     s = sin(a * 0.5)

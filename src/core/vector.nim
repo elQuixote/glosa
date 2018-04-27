@@ -121,7 +121,6 @@ proc clear*(v: var Vector3): var Vector3 = set(v, 0.0)
 proc clear*(v: var Vector4): var Vector4 = set(v, 0.0)
 
 # Inverse
-
 # NOTE: Changed/Added from design doc
 proc inverseSelf*(v: var Vector1): var Vector1 {.noinit.} =
   v.x = -v.x
@@ -174,8 +173,6 @@ proc reverse*(v: Vector3): Vector3 = inverseNew(v)
 proc reverse*(v: Vector4): Vector4 = inverseNew(v)
 
 # Invert
-# NOTE: Should be made private?
-
 # NOTE: Added from design doc
 proc invertSelf*(v: var Vector1): var Vector1 {.noinit.} =
   v.x = 1 / v.x
@@ -333,7 +330,6 @@ proc `+=`*(v1: var Vector4, f: float) = discard addSelf(v1, f)
 
 # Subtraction
 # NOTE: Added scalar subtraction to all vectors
-
 proc subtractSelf*(v: var Vector1, f: float): var Vector1 {.noinit.} =
   v.x -= f
   result = v
@@ -441,7 +437,7 @@ proc `-=`*(v1: var Vector2, f: float) = discard subtractSelf(v1, f)
 proc `-=`*(v1: var Vector3, f: float) = discard subtractSelf(v1, f)
 proc `-=`*(v1: var Vector4, f: float) = discard subtractSelf(v1, f)
 
-# Multiply
+# Multiplication
 proc multiplySelf*(v: var Vector1, f: float): var Vector1 {.noinit.} =
   v.x *= f
   result = v
@@ -571,7 +567,6 @@ proc dot*(v1, v2: Vector4): float =
   result = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w
 
 # Cross
-
 # NOTE: Discuss output (Vector1 or float)
 proc cross*(v1, v2: Vector1): float =
   result = v1.x * v2.x
