@@ -642,61 +642,45 @@ proc length*(v: Vector3): float = magnitude(v)
 proc length*(v: Vector4): float = magnitude(v)
 
 # Normalize
-proc normalizeSelf*(v: var Vector1, m: float = 1.0): var Vector1 {.noinit.} =
+# Private generic in place normalize
+proc gNormalizeSelf[T](v: var T, m: float = 1.0): var T {.noinit.} =
   let magnitude = magnitude(v)
   if (magnitude > 0):
     result = multiplySelf(v, m / magnitude)
   else:
     result = v
+
+# Private generic new normalize
+proc gNormalizeNew[T](v: T, m: float = 1.0): T =
+  let magnitude = magnitude(v)
+  if (magnitude > 0):
+    result = multiplyNew(v, m / magnitude)
+  else:
+    result = copy(v)
+
+proc normalizeSelf*(v: var Vector1, m: float = 1.0): var Vector1 {.noinit.} =
+  result = gNormalizeSelf(v, m)
 
 proc normalizeNew*(v: Vector1, m: float = 1.0): Vector1 =
-  let magnitude = magnitude(v)
-  if (magnitude > 0):
-    result = multiplyNew(v, m / magnitude)
-  else:
-    result = copy(v)
+  result = gNormalizeNew(v, m)
 
 proc normalizeSelf*(v: var Vector2, m: float = 1.0): var Vector2 {.noinit.} =
-  let magnitude = magnitude(v)
-  if (magnitude > 0):
-    result = multiplySelf(v, m / magnitude)
-  else:
-    result = v
+  result = gNormalizeSelf(v, m)
 
 proc normalizeNew*(v: Vector2, m: float = 1.0): Vector2 =
-  let magnitude = magnitude(v)
-  if (magnitude > 0):
-    result = multiplyNew(v, m / magnitude)
-  else:
-    result = copy(v)
+  result = gNormalizeNew(v, m)
 
 proc normalizeSelf*(v: var Vector3, m: float = 1.0): var Vector3 {.noinit.} =
-  let magnitude = magnitude(v)
-  if (magnitude > 0):
-    result = multiplySelf(v, m / magnitude)
-  else:
-    result = v
+  result = gNormalizeSelf(v, m)
 
 proc normalizeNew*(v: Vector3, m: float = 1.0): Vector3 =
-  let magnitude = magnitude(v)
-  if (magnitude > 0):
-    result = multiplyNew(v, m / magnitude)
-  else:
-    result = copy(v)
+  result = gNormalizeNew(v, m)
 
 proc normalizeSelf*(v: var Vector4, m: float = 1.0): var Vector4 {.noinit.} =
-  let magnitude = magnitude(v)
-  if (magnitude > 0):
-    result = multiplySelf(v, m / magnitude)
-  else:
-    result = v
+  result = gNormalizeSelf(v, m)
 
 proc normalizeNew*(v: Vector4, m: float = 1.0): Vector4 =
-  let magnitude = magnitude(v)
-  if (magnitude > 0):
-    result = multiplyNew(v, m / magnitude)
-  else:
-    result = copy(v)
+  result = gNormalizeNew(v, m)
 
 proc normalize*(v: var Vector1, m: float = 1.0): var Vector1 = normalizeSelf(v, m)
 proc normalize*(v: var Vector2, m: float = 1.0): var Vector2 = normalizeSelf(v, m)
@@ -706,33 +690,38 @@ proc normalize*(v: var Vector4, m: float = 1.0): var Vector4 = normalizeSelf(v, 
 # Reflect
 # NOTE: Changed from design doc
 # NOTE: Vectors must be normalized
-proc reflectSelf*(v: var Vector1, n: Vector1): var Vector1 {.noinit.} =
+# Private generic in place reflect
+proc gReflectSelf[T](v: var T, n: T): var T {.noinit.} =
   v = subtractSelf(v, multiplyNew(n, 2 * dot(v, n)))
   result = v
+
+# Private generic new reflect
+proc gReflectNew[T](v, n: T): T =
+  result = subtractNew(v, multiplyNew(n, 2 * dot(v, n)))
+
+proc reflectSelf*(v: var Vector1, n: Vector1): var Vector1 {.noinit.} =
+  result = gReflectSelf(v, n)
 
 proc reflectNew*(v, n: Vector1): Vector1 =
-  result = subtractNew(v, multiplyNew(n, 2 * dot(v, n)))
+  result = gReflectNew(v, n)
 
 proc reflectSelf*(v: var Vector2, n: Vector2): var Vector2 {.noinit.} =
-  v = subtractSelf(v, multiplyNew(n, 2 * dot(v, n)))
-  result = v
+  result = gReflectSelf(v, n)
 
 proc reflectNew*(v, n: Vector2): Vector2 =
-  result = subtractNew(v, multiplyNew(n, 2 * dot(v, n)))
+  result = gReflectNew(v, n)
 
 proc reflectSelf*(v: var Vector3, n: Vector3): var Vector3 {.noinit.} =
-  v = subtractSelf(v, multiplyNew(n, 2 * dot(v, n)))
-  result = v
+  result = gReflectSelf(v, n)
 
 proc reflectNew*(v, n: Vector3): Vector3 =
-  result = subtractNew(v, multiplyNew(n, 2 * dot(v, n)))
+  result = gReflectNew(v, n)
 
 proc reflectSelf*(v: var Vector4, n: Vector4): var Vector4 {.noinit.} =
-  v = subtractSelf(v, multiplyNew(n, 2 * dot(v, n)))
-  result = v
+  result = gReflectSelf(v, n)
 
 proc reflectNew*(v, n: Vector4): Vector4 =
-  result = subtractNew(v, multiplyNew(n, 2 * dot(v, n)))
+  result = gReflectNew(v, n)
 
 # NOTE: Discuss self or new
 proc reflect*(v, n: Vector1): Vector1 = reflectNew(v, n)
@@ -743,7 +732,8 @@ proc reflect*(v, n: Vector4): Vector4 = reflectNew(v, n)
 # Refract
 # NOTE: Changed from design doc
 # NOTE: Vectors must be normalized
-proc refractSelf*(v: var Vector1, n: Vector1, eta: float): var Vector1 {.noinit.} =
+# Private generic in place refract
+proc gRefractSelf[T](v: var T, n: T, eta: float): var T {.noinit.} =
   let 
     d = dot(n, v)
     k = 1.0 - eta * eta * (1.0 - d * d)
@@ -751,73 +741,41 @@ proc refractSelf*(v: var Vector1, n: Vector1, eta: float): var Vector1 {.noinit.
     result = set(v, 0.0)
   else:
     result = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d + sqrt(k)))
+
+# Private generic new refract
+proc gRefractNew[T](v, n: T, eta: float): T =
+  let
+    d = dot(n, v)
+    k = 1.0 - eta * eta * (1.0 - d * d)
+  if (k < 0):
+    result = set(result, 0.0)
+  else:
+    # NOTE: Should this be refactored?
+    result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d + sqrt(k)))
+
+proc refractSelf*(v: var Vector1, n: Vector1, eta: float): var Vector1 {.noinit.} =
+  result = gRefractSelf(v, n, eta)
 
 proc refractNew*(v, n: Vector1, eta: float): Vector1 =
-  let
-    d = dot(n, v)
-    k = 1.0 - eta * eta * (1.0 - d * d)
-  if (k < 0):
-    result = set(result, 0.0)
-  else:
-    # NOTE: Should this be refactored?
-    result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d + sqrt(k)))
+  result = gRefractNew(v, n, eta)
 
 proc refractSelf*(v: var Vector2, n: Vector2, eta: float): var Vector2 {.noinit.} =
-  let 
-    d = dot(n, v)
-    k = 1.0 - eta * eta * (1.0 - d * d)
-  if (k < 0):
-    result = set(v, 0.0)
-  else:
-    result = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d + sqrt(k)))
+  result = gRefractSelf(v, n, eta)
 
 proc refractNew*(v, n: Vector2, eta: float): Vector2 =
-  let
-    d = dot(n, v)
-    k = 1.0 - eta * eta * (1.0 - d * d)
-  if (k < 0):
-    result = set(result, 0.0)
-  else:
-    # NOTE: Should this be refactored?
-    result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d + sqrt(k)))
+ result = gRefractNew(v, n, eta)
 
 proc refractSelf*(v: var Vector3, n: Vector3, eta: float): var Vector3 {.noinit.} =
-  let 
-    d = dot(n, v)
-    k = 1.0 - eta * eta * (1.0 - d * d)
-  if (k < 0):
-    result = set(v, 0.0)
-  else:
-    result = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d + sqrt(k)))
+  result = gRefractSelf(v, n, eta)
 
 proc refractNew*(v, n: Vector3, eta: float): Vector3 =
-  let
-    d = dot(n, v)
-    k = 1.0 - eta * eta * (1.0 - d * d)
-  if (k < 0):
-    result = set(result, 0.0)
-  else:
-    # NOTE: Should this be refactored?
-    result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d + sqrt(k)))
+ result = gRefractNew(v, n, eta)
 
 proc refractSelf*(v: var Vector4, n: Vector4, eta: float): var Vector4 {.noinit.} =
-  let 
-    d = dot(n, v)
-    k = 1.0 - eta * eta * (1.0 - d * d)
-  if (k < 0):
-    result = set(v, 0.0)
-  else:
-    result = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d + sqrt(k)))
+  result = gRefractSelf(v, n, eta)
 
 proc refractNew*(v, n: Vector4, eta: float): Vector4 =
-  let
-    d = dot(n, v)
-    k = 1.0 - eta * eta * (1.0 - d * d)
-  if (k < 0):
-    result = set(result, 0.0)
-  else:
-    # NOTE: Should this be refactored?
-    result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d + sqrt(k)))
+ result = gRefractNew(v, n, eta)
 
 proc refract*(v, n: Vector1, eta: float): Vector1 = refractNew(v, n, eta)
 proc refract*(v, n: Vector2, eta: float): Vector2 = refractNew(v, n, eta)
