@@ -1,7 +1,7 @@
 import ../../src/core/vector
 import unittest
 
-from system import abs
+from system import `@`, abs
 from math import pow, sqrt, PI
 from sequtils import zip, toSeq
 
@@ -805,17 +805,32 @@ suite "Hashing Vector":
   test "Hashing Vector4":
     testHashVector(vector4(1.0), vector4(2.0))
 
-# suite "Getting array from Vector":
-#   proc testVectorToArray(v1: Vector) =
-#     let
-#       a = v1.toArray()
-#     check:
-#       compareVectorToValues(v1, newSeq(a))
-#   test "Getting array from Vector1":
-#     testVectorToArray(vector1(1.0))
-#   test "Getting array from Vector2":
-#     testVectorToArray(vector2(1.0))
-#   test "Getting array from Vector3":
-#     testVectorToArray(vector3(1.0))
-#   test "Getting array from Vector4":
-#     testVectorToArray(vector4(1.0))
+suite "Getting array from Vector":
+  proc testVectorToArray(v1: Vector) =
+    let
+      a = v1.toArray()
+    check:
+      compareVectorToValues(v1, @(a))
+  test "Getting array from Vector1":
+    testVectorToArray(vector1(1.0))
+  test "Getting array from Vector2":
+    testVectorToArray(vector2(1.0))
+  test "Getting array from Vector3":
+    testVectorToArray(vector3(1.0))
+  test "Getting array from Vector4":
+    testVectorToArray(vector4(1.0))
+
+suite "Getting string from Vector":
+  proc testVectorToArray(v1: Vector, expected: string) =
+    let
+      s = $v1
+    check:
+      s == expected
+  test "Getting array from Vector1":
+    testVectorToArray(vector1(1.0), "[1.0]")
+  test "Getting array from Vector2":
+    testVectorToArray(vector2(1.0, 2.0), "[1.0, 2.0]")
+  test "Getting array from Vector3":
+    testVectorToArray(vector3(1.0, 2.0, 3.0), "[1.0, 2.0, 3.0]")
+  test "Getting array from Vector4":
+    testVectorToArray(vector4(1.0, 2.0, 3.0, 4.0), "[1.0, 2.0, 3.0, 4.0]")
