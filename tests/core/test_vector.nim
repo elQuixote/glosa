@@ -173,7 +173,7 @@ suite "Setting a Vector to a single value":
 
 suite "Clearing a Vector":
   proc testClearVector(v1: Vector) =
-    var 
+    var
       v2 = v1.copy()
       v3 = v2.clear()
     check:
@@ -222,7 +222,7 @@ suite "Adding Vectors":
     testAddingVectors(vector3(1.0), vector3(2.0))
   test "Adding Vector4s":
     testAddingVectors(vector4(1.0), vector4(2.0))
-  
+
 suite "Adding a float to a Vector":
   proc testAddingVectorAndFloat(v1: Vector) =
     block:
@@ -292,7 +292,7 @@ suite "Subtracting Vectors":
     testSubtactingVectors(vector3(1.0), vector3(3.0))
   test "Subtracting Vector4s":
     testSubtactingVectors(vector4(1.0), vector4(3.0))
-  
+
 suite "Subtacting a float from a Vector":
   proc testSubtactingVectorAndFloat(v1: Vector) =
     block:
@@ -692,11 +692,11 @@ suite "Calculating the reflection of a Vector":
   test "Calculating the reflection of a Vector4":
     testReflectVector(
       normalizeNew(vector4(2.0, 2.0, 2.0, 2.0)),
-      normalizeNew(vector4(-1.0, 
-                           -1.0, 
-                           -1.0, 
+      normalizeNew(vector4(-1.0,
+                           -1.0,
+                           -1.0,
                            -1.0)),
-      normalizeNew(vector4(-1.0 * 2.0, 
+      normalizeNew(vector4(-1.0 * 2.0,
               -1.0 * 2.0,
               -1.0 * 2.0,
               -1.0 * 2.0)))
@@ -730,22 +730,22 @@ suite "Calculating the refraction of a Vector":
   test "Calculating the refraction of a Vector2":
     let
       v1 = normalizeNew(vector2(2.0, 2.0))
-      v2 = normalizeNew(vector2(-1.0, 
+      v2 = normalizeNew(vector2(-1.0,
                                 -1.0))
     testRefractVector(v1, v2, 1.0, v1)
   test "Calculating the refraction of a Vector3":
     let
       v1 = normalizeNew(vector3(2.0, 2.0, 2.0))
-      v2 = normalizeNew(vector3(-1.0, 
-                                -1.0, 
+      v2 = normalizeNew(vector3(-1.0,
+                                -1.0,
                                 -1.0))
     testRefractVector(v1, v2, 1.0, v1)
   test "Calculating the refraction of a Vector4":
     let
       v1 = normalizeNew(vector4(2.0, 2.0, 2.0, 2.0))
-      v2 = normalizeNew(vector4(-1.0, 
-                                -1.0, 
-                                -1.0, 
+      v2 = normalizeNew(vector4(-1.0,
+                                -1.0,
+                                -1.0,
                                 -1.0))
     testRefractVector(v1, v2, 1.0, v1)
 
@@ -766,7 +766,7 @@ suite "Calculating the angle between Vectors":
     testAngleBetweenVectors(vector3(2.0), vector3(2.0), 0.0)
     testAngleBetweenVectors(vector3(2.0,
                                     0.0,
-                                    0.0), 
+                                    0.0),
                             vector3(0.0, 2.0, 0.0), PI / 2.0)
   test "Calculating the angle between Vector4s":
     testAngleBetweenVectors(vector4(2.0), vector4(2.0), 0.0)

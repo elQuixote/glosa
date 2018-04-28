@@ -1,6 +1,6 @@
-from ./concepts import 
-  Vector, 
-  Compare, 
+from ./concepts import
+  Vector,
+  Compare,
   Equals,
   Hash,
   Transform,
@@ -11,9 +11,9 @@ from ./concepts import
   Copy,
   String
 
-export 
-  Vector, 
-  Compare, 
+export
+  Vector,
+  Compare,
   Equals,
   Hash,
   Transform,
@@ -77,7 +77,7 @@ proc vector4*(v: float): Vector4 =
 # From vector(s)
 # From array
 # From sequence
- 
+
 # Copy
 proc copy*(v: Vector1): Vector1 =
   result = Vector1(x: v.x)
@@ -599,7 +599,7 @@ proc headingXY*(v: Vector4): float =
 
 proc headingXZ*(v: Vector4): float =
   result = arctan2(v.z, v.x)
-  
+
 proc headingXW*(v: Vector4): float =
   result = arctan2(v.w, v.x)
 
@@ -729,7 +729,7 @@ proc reflect*(v, n: Vector4): Vector4 = reflectNew(v, n)
 # NOTE: Vectors must be normalized
 # Private generic in place refract
 proc gRefractSelf[T](v: var T, n: T, eta: float): var T {.noinit.} =
-  let 
+  let
     d = dot(n, v)
     k = 1.0 - eta * eta * (1.0 - d * d)
   if (k < 0):
