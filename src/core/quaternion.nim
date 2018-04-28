@@ -24,7 +24,7 @@ type
     x*, y*, z*, w*: float
 
 from ./matrix import Matrix44
-from ./vector import Vector3, normalize
+from ./vector import Vector3, normalizeNew
 
 # Constructor
 proc quaternion*(x, y, z, w: float): Quaternion =
@@ -307,7 +307,7 @@ proc fromMatrix*(m: Matrix44): Quaternion =
   ## Press 1992).
   var
     s = 0.0
-    q: array[4,float]
+    q: array[4, float]
     t = m.matrix[0][0] + m.matrix[1][1] + m.matrix[2][2]
   if t > 0:
     s = 0.5 / sqrt(t + 1.0)
@@ -324,7 +324,7 @@ proc fromMatrix*(m: Matrix44): Quaternion =
     j = n[i]
     k = n[j]
     s = 2 * sqrt((m.matrix[i][i] - m.matrix[j][j] - m.matrix[k][k]) + 1.0)
-    var ss = 1.0 / s
+    let ss = 1.0 / s
     q[i] = s * 0.25
     q[j] = (m.matrix[j][i] + m.matrix[i][j]) * ss
     q[k] = (m.matrix[k][i] + m.matrix[i][k]) * ss
@@ -335,10 +335,10 @@ proc fromMatrix*(m: Matrix44): Quaternion =
   result.w = q[3]
 
 # FromAxisAngle
-proc fromAxisAngle*(v: var Vector3, a: float): Quaternion =
+proc fromAxisAngle*(v: Vector3, a: float): Quaternion =
   ## Creates a Quaternion from a axis and a angle.
-  var
+  let
     s = sin(a * 0.5)
     c = cos(a * 0.5)
-  result = quaternion(c, normalize(v, s))
+  result = quaternion(c, normalizeNew(v, s))
 
