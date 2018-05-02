@@ -38,6 +38,9 @@ type
   Vector4* = object
     x*, y*, z*, w*: float
 
+type
+  InvalidCrossProductError* = object of Exception
+
 # Constructors
 # From parameters
 proc vector1*(x: float): Vector1 =
@@ -579,6 +582,10 @@ proc cross*(v1, v2: Vector3): Vector3 =
   result.x = v1.y * v2.z - v1.z * v2.y
   result.y = v1.z * v2.x - v1.x * v2.z
   result.z = v1.x * v2.y - v1.y * v2.x
+
+proc cross*(v1, v2: Vector4): Vector4 =
+  raise newException(InvalidCrossProductError,
+    "Cannot calculate cross product of 4D Vectors")
 
 # Heading
 # NOTE: Additional heading procs
