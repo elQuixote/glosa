@@ -585,7 +585,7 @@ proc cross*(v1, v2: Vector3): Vector3 =
 
 proc cross*(v1, v2: Vector4): Vector4 =
   raise newException(InvalidCrossProductError,
-    "Cannot calculate cross product of 4D Vectors")
+    "Cannot calculate cross product of Vector4s")
 
 # Heading
 # NOTE: Additional heading procs
