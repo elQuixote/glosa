@@ -583,7 +583,7 @@ proc cross*(v1, v2: Vector3): Vector3 =
   result.y = v1.z * v2.x - v1.x * v2.z
   result.z = v1.x * v2.y - v1.y * v2.x
 
-proc cross*(v1, v2: Vector4): Vector4 =
+proc cross*(v1, v2: Vector4) =
   raise newException(InvalidCrossProductError,
     "Cannot calculate cross product of Vector4s")
 

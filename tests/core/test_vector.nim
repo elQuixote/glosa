@@ -484,7 +484,10 @@ suite "Calculating cross product of Vectors":
         y: 1.0 * 3.0 - 2.0 * 0.0,
         z: 2.0 * 1.0 - 4.0 * 3.0
       ))
-  # No Vector4 cross product
+  test "Calculating cross product of Vector4s (Error)":
+    expect InvalidCrossProductError:
+      cross(Vector4(x: 1.0, y: 1.0, z: 1.0, w: 1.0),
+            Vector4(x: 1.0, y: 1.0, z: 1.0, w: 1.0))
 
 suite "Calculating the inverse of a Vector":
   proc testInverseVector(v1: Vector, expected: float) =
