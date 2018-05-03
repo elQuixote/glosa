@@ -24,6 +24,7 @@ proc refractSelf_v2*(v: var Vector2, n: Vector2, eta: float): Vector2 {.cdecl, e
 proc normalizeNew_v2*(v: Vector2, m: float = 1.0): Vector2 {.cdecl, exportc, dynlib.} = normalizeNew(v, m)
 proc normalizeSelf_v2*(v: var Vector2, m: float = 1.0): Vector2 {.cdecl, exportc, noinit, dynlib.} = normalizeSelf(v, m)
 proc angleBetween_v2*(v1, v2: Vector2): float {.cdecl, exportc, dynlib.} = angleBetween(v1,v2)
+proc dimension_v2*(v: Vector2): int {.cdecl, exportc, dynlib.} = dimension(v)
 
 # Vector3 Proc Wraps
 proc copy_v3*(v1: Vector3): Vector3 {.cdecl, exportc, dynlib.} = copy(v1)
@@ -49,4 +50,4 @@ proc refractSelf_v3*(v: var Vector3, n: Vector3, eta: float): Vector3 {.cdecl, e
 proc normalizeNew_v3*(v: Vector3, m: float = 1.0): Vector3 {.cdecl, exportc, dynlib.} = normalizeNew(v, m)
 proc normalizeSelf_v3*(v: var Vector3, m: float = 1.0): Vector3 {.cdecl, exportc, noinit, dynlib.} = normalizeSelf(v, m)
 proc angleBetween_v3*(v1, v2: Vector3): float {.cdecl, exportc, dynlib.} = angleBetween(v1,v2)
-
+proc dimension_v3*(v: Vector3): int {.cdecl, exportc, dynlib.} = dimension(v)
