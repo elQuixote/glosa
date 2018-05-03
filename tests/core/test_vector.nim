@@ -171,6 +171,27 @@ suite "Setting a Vector to a single value":
   test "Setting a Vector4":
     testSetVector(vector4(0.0))
 
+suite "Setting a Vector to multiple values":
+  # Setting a Vector1 same as single value
+  test "Setting a Vector2":
+    var
+      v = vector2(0.0)
+    v = v.set(1.0, 2.0)
+    check:
+      v == vector2(1.0, 2.0)
+  test "Setting a Vector3":
+    var
+      v = vector3(0.0)
+    v = v.set(1.0, 2.0, 3.0)
+    check:
+      v == vector3(1.0, 2.0, 3.0)
+  test "Setting a Vector4":
+    var
+      v = vector4(0.0)
+    v = v.set(1.0, 2.0, 3.0, 4.0)
+    check:
+      v == vector4(1.0, 2.0, 3.0, 4.0)
+
 suite "Clearing a Vector":
   proc testClearVector(v1: Vector) =
     var

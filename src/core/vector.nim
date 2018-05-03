@@ -95,8 +95,13 @@ proc copy*(v: Vector4): Vector4 =
   result = Vector4(x: v.x, y: v.y, z: v.z, w: v.w)
 
 # Set
-proc set*(v: var Vector1, n: float): var Vector1 {.noinit.} =
-  v.x = n
+proc set*(v: var Vector1, x: float): var Vector1 {.noinit.} =
+  v.x = x
+  result = v
+
+proc set*(v: var Vector2, x, y: float): var Vector2 {.noinit.} =
+  v.x = x
+  v.y = y
   result = v
 
 proc set*(v: var Vector2, n: float): var Vector2 {.noinit.} =
@@ -104,10 +109,23 @@ proc set*(v: var Vector2, n: float): var Vector2 {.noinit.} =
   v.y = n
   result = v
 
+proc set*(v: var Vector3, x, y, z: float): var Vector3 {.noinit.} =
+  v.x = x
+  v.y = y
+  v.z = z
+  result = v
+
 proc set*(v: var Vector3, n: float): var Vector3 {.noinit.} =
   v.x = n
   v.y = n
   v.z = n
+  result = v
+
+proc set*(v: var Vector4, x, y, z, w: float): var Vector4 {.noinit.} =
+  v.x = x
+  v.y = y
+  v.z = z
+  v.w = w
   result = v
 
 proc set*(v: var Vector4, n: float): var Vector4 {.noinit.} =
