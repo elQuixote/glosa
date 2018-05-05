@@ -37,7 +37,7 @@ proc subtractSelf_v3*(v1: var Vector3, v2: Vector3): Vector3 {.cdecl, exportc, n
 proc divideNew_v3*(v: Vector3, f: float): Vector3 {.cdecl, exportc, dynlib.} = divideNew(v, f)
 proc divideSelf_v3*(v: var Vector3, f: float): Vector3 {.cdecl, exportc, noinit, dynlib.} = divideSelf(v, f)
 proc multiplyNew_v3*(v: Vector3, f: float): Vector3 {.cdecl, exportc, dynlib.} = multiplyNew(v, f)
-proc mulitplySelf_v3*(v: var Vector3, f: float): Vector3 {.cdecl, exportc, noinit, dynlib.} = multiplySelf(v, f)
+proc multiplySelf_v3*(v: var Vector3, f: float): Vector3 {.cdecl, exportc, noinit, dynlib.} = multiplySelf(v, f)
 proc dot_v3*(v1, v2: Vector3): float {.cdecl, exportc, dynlib.} = dot(v1, v2)
 proc cross_v3*(v1, v2: Vector3): Vector3 {.cdecl, exportc, dynlib.} = cross(v1, v2)
 proc inverseNew_v3*(v: Vector3): Vector3 {.cdecl, exportc, dynlib.} = inverseNew(v)
