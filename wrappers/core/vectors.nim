@@ -69,3 +69,4 @@ proc lessThanEqual_v3*(v1, v2: Vector3): bool {.cdecl, exportc, dynlib.} = v1 <=
 proc equals_v3*(v1, v2: Vector3): bool {.cdecl, exportc, dynlib.} = v1 == v2
 proc notEqual_v3*(v1, v2: Vector3): bool {.cdecl, exportc, dynlib.} = v1 != v2
 proc hash_v3(v: Vector3): int {.cdecl, exportc, dynlib.} = hash(v)
+#proc toArray_v3(v: Vector3): array[3, cdouble] {.cdecl, exportc, dynlib.} = toArray(v)
