@@ -26,6 +26,12 @@ proc normalizeSelf_v2*(v: var Vector2, m: cdouble = 1.0): Vector2 {.cdecl, expor
 proc angleBetween_v2*(v1, v2: Vector2): cdouble {.cdecl, exportc, dynlib.} = angleBetween(v1,v2)
 proc dimension_v2*(v: Vector2): int {.cdecl, exportc, dynlib.} = dimension(v)
 proc magnitude_v2*(v: Vector2): cdouble {.cdecl, exportc, dynlib.} = length(v)
+proc greaterThan_v2*(v1, v2: Vector2): bool {.cdecl, exportc, dynlib.} = v1 > v2
+proc greaterThanEqual_v2*(v1, v2: Vector2): bool {.cdecl, exportc, dynlib.} = v1 >= v2
+proc lessThan_v2*(v1, v2: Vector2): bool {.cdecl, exportc, dynlib.} = v1 < v2
+proc lessThanEqual_v2*(v1, v2: Vector2): bool {.cdecl, exportc, dynlib.} = v1 <= v2
+proc equals_v2*(v1, v2: Vector2): bool {.cdecl, exportc, dynlib.} = v1 == v2
+proc notEqual_v2*(v1, v2: Vector2): bool {.cdecl, exportc, dynlib.} = v1 != v2
 
 # Vector3 Proc Wraps
 proc copy_v3*(v1: Vector3): Vector3 {.cdecl, exportc, dynlib.} = copy(v1)
@@ -55,4 +61,9 @@ proc normalizeSelf_v3*(v: var Vector3, m: cdouble = 1.0): Vector3 {.cdecl, expor
 proc angleBetween_v3*(v1, v2: Vector3): cdouble {.cdecl, exportc, dynlib.} = angleBetween(v1,v2)
 proc dimension_v3*(v: Vector3): int {.cdecl, exportc, dynlib.} = dimension(v)
 proc magnitude_v3*(v: Vector3): cdouble {.cdecl, exportc, dynlib.} = length(v)
-
+proc greaterThan_v3*(v1, v2: Vector3): bool {.cdecl, exportc, dynlib.} = v1 > v2
+proc greaterThanEqual_v3*(v1, v2: Vector3): bool {.cdecl, exportc, dynlib.} = v1 >= v2
+proc lessThan_v3*(v1, v2: Vector3): bool {.cdecl, exportc, dynlib.} = v1 < v2
+proc lessThanEqual_v3*(v1, v2: Vector3): bool {.cdecl, exportc, dynlib.} = v1 <= v2
+proc equals_v3*(v1, v2: Vector3): bool {.cdecl, exportc, dynlib.} = v1 == v2
+proc notEqual_v3*(v1, v2: Vector3): bool {.cdecl, exportc, dynlib.} = v1 != v2
