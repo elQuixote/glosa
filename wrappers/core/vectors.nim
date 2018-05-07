@@ -25,6 +25,7 @@ proc normalizeNew_v2*(v: Vector2, m: cdouble = 1.0): Vector2 {.cdecl, exportc, d
 proc normalizeSelf_v2*(v: var Vector2, m: cdouble = 1.0): Vector2 {.cdecl, exportc, noinit, dynlib.} = normalizeSelf(v, m)
 proc angleBetween_v2*(v1, v2: Vector2): cdouble {.cdecl, exportc, dynlib.} = angleBetween(v1,v2)
 proc dimension_v2*(v: Vector2): int {.cdecl, exportc, dynlib.} = dimension(v)
+proc stringify_v2*(v: Vector2): string {.cdecl, exportc, dynlib.} = $(v)
 
 # Vector3 Proc Wraps
 proc copy_v3*(v1: Vector3): Vector3 {.cdecl, exportc, dynlib.} = copy(v1)
@@ -53,3 +54,4 @@ proc normalizeNew_v3*(v: Vector3, m: cdouble = 1.0): Vector3 {.cdecl, exportc, d
 proc normalizeSelf_v3*(v: var Vector3, m: cdouble = 1.0): Vector3 {.cdecl, exportc, noinit, dynlib.} = normalizeSelf(v, m)
 proc angleBetween_v3*(v1, v2: Vector3): cdouble {.cdecl, exportc, dynlib.} = angleBetween(v1,v2)
 proc dimension_v3*(v: Vector3): int {.cdecl, exportc, dynlib.} = dimension(v)
+proc stringify_v3*(v: Vector3): string {.cdecl, exportc, dynlib.} = $(v)
