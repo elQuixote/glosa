@@ -878,6 +878,13 @@ proc `!=`*(v1, v2: Vector4): bool =
 
 # CompareTo
 # NOTE: LQ Addition for .NET Comparisons
+proc compareTo*(v1, v2: Vector1): int = 
+  if v1.x < v2.x:
+    return -1
+  if v1.x > v2.x:
+    return 1
+  return 0
+
 proc compareTo*(v1, v2: Vector2): int = 
   if v1.x < v2.x:
     return -1
@@ -901,6 +908,25 @@ proc compareTo*(v1, v2: Vector3): int =
   if v1.z < v2.z:
     return -1
   if v1.z > v2.z:
+    return 1
+  return 0
+
+proc compareTo*(v1, v2: Vector4): int = 
+  if v1.x < v2.x:
+    return -1
+  if v1.x > v2.x:
+    return 1
+  if v1.y < v2.y:
+    return -1
+  if v1.y > v2.y:
+    return 1
+  if v1.z < v2.z:
+    return -1
+  if v1.z > v2.z:
+    return 1
+  if v1.w < v2.w:
+    return -1
+  if v1.w > v2.w:
     return 1
   return 0
 
