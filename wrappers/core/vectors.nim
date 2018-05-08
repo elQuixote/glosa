@@ -33,6 +33,10 @@ proc lessThanEqual_v2*(v1, v2: Vector2): bool {.cdecl, exportc, dynlib.} = v1 <=
 proc equals_v2*(v1, v2: Vector2): bool {.cdecl, exportc, dynlib.} = v1 == v2
 proc notEqual_v2*(v1, v2: Vector2): bool {.cdecl, exportc, dynlib.} = v1 != v2
 proc hash_v2(v: Vector2): int {.cdecl, exportc, dynlib.} = hash(v)
+proc toArray_v2(v: Vector2, a: var array[2, cdouble]): void {.cdecl, exportc, dynlib.} = 
+    let a2 = toArray(v)
+    a[0] = a2[0]
+    a[1] = a2[1]
 
 # Vector3 Proc Wraps
 proc copy_v3*(v1: Vector3): Vector3 {.cdecl, exportc, dynlib.} = copy(v1)
@@ -69,4 +73,8 @@ proc lessThanEqual_v3*(v1, v2: Vector3): bool {.cdecl, exportc, dynlib.} = v1 <=
 proc equals_v3*(v1, v2: Vector3): bool {.cdecl, exportc, dynlib.} = v1 == v2
 proc notEqual_v3*(v1, v2: Vector3): bool {.cdecl, exportc, dynlib.} = v1 != v2
 proc hash_v3(v: Vector3): int {.cdecl, exportc, dynlib.} = hash(v)
-#proc toArray_v3(v: Vector3): array[3, cdouble] {.cdecl, exportc, dynlib.} = toArray(v)
+proc toArray_v3(v: Vector3, a: var array[3, cdouble]): void {.cdecl, exportc, dynlib.} = 
+    let a2 = toArray(v)
+    a[0] = a2[0]
+    a[1] = a2[1]
+    a[2] = a2[2]
