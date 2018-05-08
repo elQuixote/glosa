@@ -44,6 +44,7 @@ type
     a < b is bool
     a >= b is bool
     a <= b is bool
+    a.compareTo(b) is int
 
   Equals* {.explain.} = concept a, b
     a == b is bool
