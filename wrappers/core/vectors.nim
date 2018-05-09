@@ -39,6 +39,9 @@ proc toArray_v2*(v: Vector2, a: var array[2, cdouble]): void {.cdecl, exportc, d
     a[0] = a2[0]
     a[1] = a2[1]
 proc compareTo_v2*(v1, v2: Vector2): int {.cdecl, exportc, dynlib.} = compareTo(v1, v2)
+proc stringify_v2*(v: Vector2): cstring {.cdecl, exportc, dynlib.} =
+    setupForeignThreadGc() 
+    $v
 
 # Vector3 Proc Wraps
 proc copy_v3*(v1: Vector3): Vector3 {.cdecl, exportc, dynlib.} = copy(v1)
