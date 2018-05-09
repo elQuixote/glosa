@@ -78,3 +78,6 @@ type
   String* {.explain.} = concept a
     # NOTE: This changed from design doc
     a.`$`() is string
+
+  Centroid* {.explain.} = concept a
+    a.centroid() is Vector
