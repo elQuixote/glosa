@@ -23,86 +23,24 @@ import hashes
 
 type
   Matrix32* = object
-    ## Implements a row major 2D matrix
-    ## ax ay az
-    ## bx by bz
+    ## Implements a 2D matrix
+    ## [ ax(0,0) ay(0,1) az(0,2) ]
+    ## [ bx(1,0) by(1,1) bz(1,2) ]
     matrix*: array[2, array[3, float]]
 
   Matrix44* = object
-    ## Implements a row major 3D matrix
+    ## Implements a 3D matrix
     ## [ ax(0,0) ay(0,1) az(0,2) aw(0,3) ]
     ## [ bx(1,0) by(1,1) bz(1,2) bw(1,3) ]
     ## [ cx(2,0) cy(2,1) cz(2,2) cw(2,3) ]
     ## [ tx(3,0) ty(3,1) tz(3,2) tw(3,3) ]
     matrix*: array[4, array[4, float]]
 
-from ./quaternion import
-  Quaternion
-
-# Constructors
-proc matrix32*(
-    m00, m01, m02,
-    m10, m11, m12: float
-  ): Matrix32 =
-  ## Creates a new 2x3 2D transformation matrix.
-  ## `ax`,`ay` is the local x axis
-  ## `bx`,`by` is the local y axis
-  ## `tx`,`ty` is the translation
-  var mx: array[2,array[3,float]]
-  mx[0][0] = m00
-  mx[0][1] = m01
-  mx[0][2] = m02
-  mx[1][0] = m10
-  mx[1][1] = m11
-  mx[1][2] = m12
-  result.matrix = mx
-
-proc matrix44*(
-    m00, m01, m02, m03,
-    m10, m11, m12, m13,
-    m20, m21, m22, m23,
-    m30, m31, m32, m33: float
-  ): Matrix44 =
-  ## Creates a new 4x4 3d transformation matrix.
-  ## `ax` , `ay` , `az` is the local x axis.
-  ## `bx` , `by` , `bz` is the local y axis.
-  ## `cx` , `cy` , `cz` is the local z axis.
-  ## `tx` , `ty` , `tz` is the translation.
-  var mx: array[4, array[4, float]]
-  mx[0][0] = m00
-  mx[0][1] = m01
-  mx[0][2] = m02
-  mx[0][3] = m03
-  mx[1][0] = m10
-  mx[1][1] = m11
-  mx[1][2] = m12
-  mx[1][3] = m13
-  mx[2][0] = m20
-  mx[2][1] = m21
-  mx[2][2] = m22
-  mx[2][3] = m23
-  mx[3][0] = m30
-  mx[3][1] = m31
-  mx[3][2] = m32
-  mx[3][3] = m33
-  result.matrix = mx
-
-# Identity
-# NOTE: This is Added, not in design doc
-const
-  IDMATRIX32*: Matrix32 = matrix32(
-    1.0, 0.0, 0.0,
-    0.0, 1.0, 0.0)
-    ## Quick access to an identity matrix
-  IDMATRIX44*: Matrix44 = matrix44(
-    1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0,
-    0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0)
-    ## Quick access to an identity matrix
-
 # Accessors
 # NOTE: This is Added, not in design doc
+proc `[]`*(m: Matrix32, i: int): array[3, float] = m.matrix[i]
+proc `[]`*(m: Matrix44, i: int): array[4, float] = m.matrix[i]
+
 proc ax*(m: Matrix32): float = m.matrix[0][0]
 proc ay*(m: Matrix32): float = m.matrix[0][1]
 proc az*(m: Matrix32): float = m.matrix[0][2]
@@ -116,6 +54,9 @@ proc `az=`*(m: var Matrix32, v: float) = m.matrix[0][2] = v
 proc `bx=`*(m: var Matrix32, v: float) = m.matrix[1][0] = v
 proc `by=`*(m: var Matrix32, v: float) = m.matrix[1][1] = v
 proc `bz=`*(m: var Matrix32, v: float) = m.matrix[1][2] = v
+
+var s = Matrix32(matrix: [[0.0,0.0,0.0], [1.0,1.0,1.0]])
+s.ax = 10.0
 
 proc ax*(m: Matrix44): float = m.matrix[0][0]
 proc ay*(m: Matrix44): float = m.matrix[0][1]
@@ -150,6 +91,96 @@ proc `tx=`*(m: var Matrix44, v: float) = m.matrix[3][0] = v
 proc `ty=`*(m: var Matrix44, v: float) = m.matrix[3][1] = v
 proc `tz=`*(m: var Matrix44, v: float) = m.matrix[3][2] = v
 proc `tw=`*(m: var Matrix44, v: float) = m.matrix[3][3] = v
+
+from ./quaternion import
+  Quaternion
+
+from ./vector import
+  Vector2,
+  Vector4
+
+# Constructors
+proc matrix32*(
+    m00, m01, m02,
+    m10, m11, m12: float
+  ): Matrix32 =
+  var mx: array[2, array[3, float]]
+  mx[0][0] = m00
+  mx[0][1] = m01
+  mx[0][2] = m02
+  mx[1][0] = m10
+  mx[1][1] = m11
+  mx[1][2] = m12
+  result.matrix = mx
+
+proc matrix44*(
+    m00, m01, m02, m03,
+    m10, m11, m12, m13,
+    m20, m21, m22, m23,
+    m30, m31, m32, m33: float
+  ): Matrix44 =
+  var mx: array[4, array[4, float]]
+  mx[0][0] = m00
+  mx[0][1] = m01
+  mx[0][2] = m02
+  mx[0][3] = m03
+  mx[1][0] = m10
+  mx[1][1] = m11
+  mx[1][2] = m12
+  mx[1][3] = m13
+  mx[2][0] = m20
+  mx[2][1] = m21
+  mx[2][2] = m22
+  mx[2][3] = m23
+  mx[3][0] = m30
+  mx[3][1] = m31
+  mx[3][2] = m32
+  mx[3][3] = m33
+  result.matrix = mx
+
+proc matrix32*(v1, v2, v3: Vector2): Matrix44 =
+  var mx: array[4, array[4, float]]
+  mx[0][0] = v1.x
+  mx[0][1] = v2.x
+  mx[0][2] = v3.x
+  mx[1][0] = v1.y
+  mx[1][1] = v2.y
+  mx[1][2] = v3.y
+  result.matrix = mx
+
+proc matrix44*(v1, v2, v3, v4: Vector4): Matrix44 =
+  var mx: array[4, array[4, float]]
+  mx[0][0] = v1.x
+  mx[0][1] = v2.x
+  mx[0][2] = v3.x
+  mx[0][3] = v4.x
+  mx[1][0] = v1.y
+  mx[1][1] = v2.y
+  mx[1][2] = v3.y
+  mx[1][3] = v4.y
+  mx[2][0] = v1.z
+  mx[2][1] = v2.z
+  mx[2][2] = v3.z
+  mx[2][3] = v4.z
+  mx[3][0] = v1.w
+  mx[3][1] = v2.w
+  mx[3][2] = v3.w
+  mx[3][3] = v4.w
+  result.matrix = mx
+
+# Identity
+# NOTE: This is Added, not in design doc
+const
+  IDMATRIX32*: Matrix32 = matrix32(
+    1.0, 0.0, 0.0,
+    0.0, 1.0, 0.0)
+    ## Quick access to an identity matrix
+  IDMATRIX44*: Matrix44 = matrix44(
+    1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0)
+    ## Quick access to an identity matrix
 
 # Set
 # NOTE: This is Added, not in design doc

@@ -24,7 +24,7 @@ export
   Copy,
   String
 
-from math import arctan2, arccos, sqrt
+from math import sin, cos, arctan2, arccos, sqrt
 from strformat import `&`
 import hashes
 
@@ -663,44 +663,40 @@ proc length*(v: Vector4): float = magnitude(v)
 
 # Normalize
 # Private generic in place normalize
-proc gNormalizeSelf[T](v: var T, m: float = 1.0): var T {.noinit.} =
+proc calculateNormalize[T](v: var T, m: float = 1.0): var T {.noinit.} =
   let magnitude = magnitude(v)
   if (magnitude > 0):
     result = multiplySelf(v, m / magnitude)
   else:
     result = v
 
-# Private generic new normalize
-proc gNormalizeNew[T](v: T, m: float = 1.0): T =
-  let magnitude = magnitude(v)
-  if (magnitude > 0):
-    result = multiplyNew(v, m / magnitude)
-  else:
-    result = copy(v)
-
 proc normalizeSelf*(v: var Vector1, m: float = 1.0): var Vector1 {.noinit.} =
-  result = gNormalizeSelf(v, m)
+  result = calculateNormalize(v, m)
 
 proc normalizeNew*(v: Vector1, m: float = 1.0): Vector1 =
-  result = gNormalizeNew(v, m)
+  var w = v.copy()
+  result = calculateNormalize(w, m)
 
 proc normalizeSelf*(v: var Vector2, m: float = 1.0): var Vector2 {.noinit.} =
-  result = gNormalizeSelf(v, m)
+  result = calculateNormalize(v, m)
 
 proc normalizeNew*(v: Vector2, m: float = 1.0): Vector2 =
-  result = gNormalizeNew(v, m)
+  var w = v.copy()
+  result = calculateNormalize(w, m)
 
 proc normalizeSelf*(v: var Vector3, m: float = 1.0): var Vector3 {.noinit.} =
-  result = gNormalizeSelf(v, m)
+  result = calculateNormalize(v, m)
 
 proc normalizeNew*(v: Vector3, m: float = 1.0): Vector3 =
-  result = gNormalizeNew(v, m)
+  var w = v.copy()
+  result = calculateNormalize(w, m)
 
 proc normalizeSelf*(v: var Vector4, m: float = 1.0): var Vector4 {.noinit.} =
-  result = gNormalizeSelf(v, m)
+  result = calculateNormalize(v, m)
 
 proc normalizeNew*(v: Vector4, m: float = 1.0): Vector4 =
-  result = gNormalizeNew(v, m)
+  var w = v.copy()
+  result = calculateNormalize(w, m)
 
 proc normalize*(v: var Vector1, m: float = 1.0): var Vector1 = normalizeSelf(v, m)
 proc normalize*(v: var Vector2, m: float = 1.0): var Vector2 = normalizeSelf(v, m)
@@ -711,37 +707,37 @@ proc normalize*(v: var Vector4, m: float = 1.0): var Vector4 = normalizeSelf(v, 
 # NOTE: Changed from design doc
 # NOTE: Vectors must be normalized
 # Private generic in place reflect
-proc gReflectSelf[T](v: var T, n: T): var T {.noinit.} =
+proc calculateReflect[T](v: var T, n: T): var T {.noinit.} =
   v = subtractSelf(v, multiplyNew(n, 2 * dot(v, n)))
   result = v
 
-# Private generic new reflect
-proc gReflectNew[T](v, n: T): T =
-  result = subtractNew(v, multiplyNew(n, 2 * dot(v, n)))
-
 proc reflectSelf*(v: var Vector1, n: Vector1): var Vector1 {.noinit.} =
-  result = gReflectSelf(v, n)
+  result = calculateReflect(v, n)
 
 proc reflectNew*(v, n: Vector1): Vector1 =
-  result = gReflectNew(v, n)
+  var w = v.copy()
+  result = calculateReflect(w, n)
 
 proc reflectSelf*(v: var Vector2, n: Vector2): var Vector2 {.noinit.} =
-  result = gReflectSelf(v, n)
+  result = calculateReflect(v, n)
 
 proc reflectNew*(v, n: Vector2): Vector2 =
-  result = gReflectNew(v, n)
+  var w = v.copy()
+  result = calculateReflect(w, n)
 
 proc reflectSelf*(v: var Vector3, n: Vector3): var Vector3 {.noinit.} =
-  result = gReflectSelf(v, n)
+  result = calculateReflect(v, n)
 
 proc reflectNew*(v, n: Vector3): Vector3 =
-  result = gReflectNew(v, n)
+  var w = v.copy()
+  result = calculateReflect(w, n)
 
 proc reflectSelf*(v: var Vector4, n: Vector4): var Vector4 {.noinit.} =
-  result = gReflectSelf(v, n)
+  result = calculateReflect(v, n)
 
 proc reflectNew*(v, n: Vector4): Vector4 =
-  result = gReflectNew(v, n)
+  var w = v.copy()
+  result = calculateReflect(w, n)
 
 # NOTE: Discuss self or new
 proc reflect*(v, n: Vector1): Vector1 = reflectNew(v, n)
@@ -753,7 +749,7 @@ proc reflect*(v, n: Vector4): Vector4 = reflectNew(v, n)
 # NOTE: Changed from design doc
 # NOTE: Vectors must be normalized
 # Private generic in place refract
-proc gRefractSelf[T](v: var T, n: T, eta: float): var T {.noinit.} =
+proc calculateRefract[T](v: var T, n: T, eta: float): var T {.noinit.} =
   let
     d = dot(n, v)
     k = 1.0 - eta * eta * (1.0 - d * d)
@@ -762,40 +758,33 @@ proc gRefractSelf[T](v: var T, n: T, eta: float): var T {.noinit.} =
   else:
     result = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d + sqrt(k)))
 
-# Private generic new refract
-proc gRefractNew[T](v, n: T, eta: float): T =
-  let
-    d = dot(n, v)
-    k = 1.0 - eta * eta * (1.0 - d * d)
-  if (k < 0):
-    result = set(result, 0.0)
-  else:
-    # NOTE: Should this be refactored?
-    result = subtractNew(multiplyNew(v, eta), multiplyNew(n, eta * d + sqrt(k)))
-
 proc refractSelf*(v: var Vector1, n: Vector1, eta: float): var Vector1 {.noinit.} =
-  result = gRefractSelf(v, n, eta)
+  result = calculateRefract(v, n, eta)
 
 proc refractNew*(v, n: Vector1, eta: float): Vector1 =
-  result = gRefractNew(v, n, eta)
+  var w = v.copy()
+  result = calculateRefract(w, n, eta)
 
 proc refractSelf*(v: var Vector2, n: Vector2, eta: float): var Vector2 {.noinit.} =
-  result = gRefractSelf(v, n, eta)
+  result = calculateRefract(v, n, eta)
 
 proc refractNew*(v, n: Vector2, eta: float): Vector2 =
- result = gRefractNew(v, n, eta)
+  var w = v.copy()
+  result = calculateRefract(w, n, eta)
 
 proc refractSelf*(v: var Vector3, n: Vector3, eta: float): var Vector3 {.noinit.} =
-  result = gRefractSelf(v, n, eta)
+  result = calculateRefract(v, n, eta)
 
 proc refractNew*(v, n: Vector3, eta: float): Vector3 =
- result = gRefractNew(v, n, eta)
+  var w = v.copy()
+  result = calculateRefract(w, n, eta)
 
 proc refractSelf*(v: var Vector4, n: Vector4, eta: float): var Vector4 {.noinit.} =
-  result = gRefractSelf(v, n, eta)
+  result = calculateRefract(v, n, eta)
 
 proc refractNew*(v, n: Vector4, eta: float): Vector4 =
- result = gRefractNew(v, n, eta)
+  var w = v.copy()
+  result = calculateRefract(w, n, eta)
 
 proc refract*(v, n: Vector1, eta: float): Vector1 = refractNew(v, n, eta)
 proc refract*(v, n: Vector2, eta: float): Vector2 = refractNew(v, n, eta)
@@ -915,6 +904,267 @@ proc dimension*(v: Vector3): int =
 
 proc dimension*(v: Vector4): int =
   result = 4
+
+# Transformations
+
+from ./matrix import
+  Matrix32,
+  Matrix44,
+  matrix32,
+  matrix44,
+  invert,
+  `[]`
+
+# Transform
+proc transformSelf*(v: var Vector1, m: Matrix32): var Vector1 {.noinit.} =
+  v.x *= m[0][0]
+  result = v
+
+proc transformNew*(v: Vector1, m: Matrix32): Vector1 =
+  result.x = m[0][0] * v.x
+
+proc transformSelf*(v: var Vector2, m: Matrix32): var Vector2 {.noinit.} =
+  v.x = m[0][0] * v.x + m[0][1] * v.y
+  v.y = m[1][0] * v.x + m[1][1] * v.y
+  result = v
+
+proc transformNew*(v: Vector2, m: Matrix32): Vector2 =
+  result.x = m[0][0] * v.x + m[0][1] * v.y
+  result.y = m[1][0] * v.x + m[1][1] * v.y
+
+proc transformSelf*(v: var Vector3, m: Matrix44): var Vector3 {.noinit.} =
+  v.x = m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z
+  v.y = m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z
+  v.z = m[2][0] * v.z + m[2][1] * v.y + m[2][2] * v.z
+  result = v
+
+proc transformNew*(v: Vector3, m: Matrix44): Vector3 =
+  result.x = m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z
+  result.y = m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z
+  result.z = m[2][0] * v.z + m[2][1] * v.y + m[2][2] * v.z
+
+proc transformSelf*(v: var Vector4, m: Matrix44): var Vector4 {.noinit.} =
+  v.x = m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z + m[0][3] * v.w
+  v.y = m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z + m[1][3] * v.w
+  v.z = m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z + m[2][3] * v.w
+  v.w = m[3][0] * v.x + m[3][1] * v.y + m[3][2] * v.z + m[3][3] * v.w
+  result = v
+
+proc transformNew*(v: Vector4, m: Matrix44): Vector4 =
+  result.x = m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z + m[0][3] * v.w
+  result.y = m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z + m[1][3] * v.w
+  result.z = m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z + m[2][3] * v.w
+  result.w = m[3][0] * v.x + m[3][1] * v.y + m[3][2] * v.z + m[3][3] * v.w
+
+proc transform*(v: var Vector1, m: Matrix32): var Vector1 {.noinit.} = transformSelf(v, m)
+proc transform*(v: var Vector2, m: Matrix32): var Vector2 {.noinit.} = transformSelf(v, m)
+proc transform*(v: var Vector3, m: Matrix44): var Vector3 {.noinit.} = transformSelf(v, m)
+proc transform*(v: var Vector4, m: Matrix44): var Vector4 {.noinit.} = transformSelf(v, m)
+
+# Rotate
+# Private calculate new rotation coordinates
+proc calculateRotate(a, b, theta: float): tuple[a, b: float] =
+  let
+    s = sin(theta)
+    c = cos(theta)
+  result = (a: a * c - b * s, b: b * c + a * s)
+
+proc rotateSelf*(v: var Vector1, theta: float): var Vector1 {.noinit.} =
+  result = v
+
+proc rotateNew*(v: Vector1, theta: float): Vector1 =
+  result = v.copy()
+
+proc rotateSelf*(v: var Vector2, theta: float): var Vector2 {.noinit.} =
+  let r = calculateRotate(v.x, v.y, theta)
+  result = v.set(r.a, r.b)
+
+proc rotateNew*(v: Vector2, theta: float): Vector2 =
+  let r = calculateRotate(v.x, v.y, theta)
+  result = vector2(r.a, r.b)
+
+proc rotateXSelf*(v: var Vector3, theta: float): var Vector3 {.noinit.} =
+  let r = calculateRotate(v.y, v.z, theta)
+  result = v.set(v.x, r.a, r.b)
+
+proc rotateXNew*(v: Vector3, theta: float): Vector3 =
+  let r = calculateRotate(v.y, v.z, theta)
+  result = vector3(v.x, r.a, r.b)
+
+proc rotateYSelf*(v: var Vector3, theta: float): var Vector3 {.noinit.} =
+  let r = calculateRotate(v.x, v.z, theta)
+  result = v.set(r.a, v.y, r.b)
+
+proc rotateYNew*(v: Vector3, theta: float): Vector3 =
+  let r = calculateRotate(v.x, v.z, theta)
+  result = vector3(r.a, v.y, r.b)
+
+proc rotateZSelf*(v: var Vector3, theta: float): var Vector3 {.noinit.} =
+  let r = calculateRotate(v.x, v.y, theta)
+  result = v.set(r.a, r.b, v.z)
+
+proc rotateZNew*(v: Vector3, theta: float): Vector3 =
+  let r = calculateRotate(v.x, v.y, theta)
+  result = vector3(r.a, r.b, v.z)
+
+proc rotateXYSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
+  let r = calculateRotate(v.z, v.w, theta)
+  result = v.set(v.x, v.y, r.a, r.b)
+
+proc rotateXYNew*(v: Vector4, theta: float): Vector4 =
+  let r = calculateRotate(v.z, v.w, theta)
+  result = vector4(v.x, v.y, r.a, r.b)
+
+proc rotateXZSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
+  let r = calculateRotate(v.y, v.w, theta)
+  result = v.set(v.x, r.a, v.z, r.b)
+
+proc rotateXZNew*(v: Vector4, theta: float): Vector4 =
+  let r = calculateRotate(v.y, v.w, theta)
+  result = vector4(v.x, r.a, v.z, r.b)
+
+proc rotateXWSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
+  let r = calculateRotate(v.y, v.z, theta)
+  result = v.set(v.x, r.a, r.b, v.w)
+
+proc rotateXWNew*(v: Vector4, theta: float): Vector4 =
+  let r = calculateRotate(v.y, v.z, theta)
+  result = vector4(v.x, r.a, r.b, v.w)
+
+proc rotateYZSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
+  let r = calculateRotate(v.x, v.w, theta)
+  result = v.set(r.a, v.y, v.z, r.b)
+
+proc rotateYZNew*(v: Vector4, theta: float): Vector4 =
+  let r = calculateRotate(v.x, v.w, theta)
+  result = vector4(r.a, v.y, v.z, r.b)
+
+proc rotateYWSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
+  let r = calculateRotate(v.x, v.z, theta)
+  result = v.set(r.a, v.y, r.b, v.w)
+
+proc rotateYWNew*(v: Vector4, theta: float): Vector4 =
+  let r = calculateRotate(v.x, v.y, theta)
+  result = vector4(r.a, v.y, r.b, v.w)
+
+proc rotateZWSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
+  let r = calculateRotate(v.x, v.y, theta)
+  result = v.set(r.a, r.b, v.z, v.w)
+
+proc rotateZWNew*(v: Vector4, theta: float): Vector4 =
+  let r = calculateRotate(v.x, v.y, theta)
+  result = vector4(r.a, r.b, v.z, v.w)
+
+proc rotate*(v: var Vector1, theta:float): var Vector1 {.noinit.} = rotateSelf(v, theta)
+proc rotate*(v: var Vector2, theta:float): var Vector2 {.noinit.} = rotateSelf(v, theta)
+# NOTE: Axis must be normalized
+proc rotate*(v: var Vector3, axis: Vector3, theta: float): var Vector3 {.noinit.} =
+  let
+    s = sin(theta)
+    c = cos(theta)
+    oc = 1.0 - c
+    t = (axis.x * v.x + axis.y * v.y + axis.z * v.z) * oc
+  v = set(v, axis.x * t + v.x * c + (axis.y * v.z - axis.z * v.y) * s,
+             axis.y * t + v.y * c + (axis.z * v.x - axis.x * v.z) * s,
+             axis.z * t + v.z * c + (axis.x * v.y - axis.y * v.x) * s)
+  result = v
+# NOTE: The planes defined by (b1, b2) and (b3, b4) must be orthagonal
+proc rotate*(v: var Vector4, b1, b2: Vector4, theta: float, b3, b4: Vector4, phi: float): var Vector4 {.noinit.} =
+  let m = matrix44(b1, b2, b3, b4)
+  v = transform(v, invert(m))
+  v = rotateXYSelf(v, theta)
+  v = rotateZWSelf(v, phi)
+  v = transform(v, m)
+  result = v
+
+# Scale
+proc scaleSelf*(v: var Vector1, s: float): var Vector1 {.noinit.} =
+  v.x *= s
+  result = v
+
+proc scaleNew*(v: Vector1, s: float): Vector1 =
+  result.x = v.x * s
+
+proc scaleSelf*(v: var Vector2, s: float): var Vector2 {.noinit.} =
+  v.x *= s
+  v.y *= s
+  result = v
+
+proc scaleNew*(v: Vector2, s: float): Vector2 =
+  result.x = v.x * s
+  result.y = v.y * s
+
+proc scaleSelf*(v: var Vector2, sx, sy: float): var Vector2 {.noinit.} =
+  v.x *= sx
+  v.y *= sy
+  result = v
+
+proc scaleNew*(v: Vector2, sx, sy: float): Vector2 =
+  result.x = v.x * sx
+  result.y = v.y * sy
+
+proc scaleSelf*(v: var Vector3, s: float): var Vector3 {.noinit.} =
+  v.x *= s
+  v.y *= s
+  v.z *= s
+  result = v
+
+proc scaleNew*(v: Vector3, s: float): Vector3 =
+  result.x = v.x * s
+  result.y = v.y * s
+  result.z = v.z * s
+
+proc scaleSelf*(v: var Vector3, sx, sy, sz: float): var Vector3 {.noinit.} =
+  v.x *= sx
+  v.y *= sy
+  v.z *= sz
+  result = v
+
+proc scaleNew*(v: Vector3, sx, sy, sz: float): Vector3 =
+  result.x = v.x * sx
+  result.y = v.y * sy
+  result.z = v.z * sz
+
+proc scaleSelf*(v: var Vector4, s: float): var Vector4 {.noinit.} =
+  v.x *= s
+  v.y *= s
+  v.z *= s
+  v.w *= s
+  result = v
+
+proc scaleNew*(v: Vector4, s: float): Vector4 =
+  result.x = v.x * s
+  result.y = v.y * s
+  result.z = v.z * s
+  result.w = v.w * s
+
+proc scaleSelf*(v: var Vector4, sx, sy, sz, sw: float): var Vector4 {.noinit.} =
+  v.x *= sx
+  v.y *= sy
+  v.z *= sz
+  v.w *= sw
+  result = v
+
+proc scaleNew*(v: Vector4, sx, sy, sz, sw: float): Vector4 =
+  result.x = v.x * sx
+  result.y = v.y * sy
+  result.z = v.z * sz
+  result.w = v.w * sw
+
+proc scale*(v: var Vector1, s: float): var Vector1 = scaleSelf(v, s)
+proc scale*(v: var Vector2, s: float): var Vector2 = scaleSelf(v, s)
+proc scale*(v: var Vector3, s: float): var Vector3 = scaleSelf(v, s)
+proc scale*(v: var Vector4, s: float): var Vector4 = scaleSelf(v, s)
+
+proc scale*(v: var Vector2, sx, sy: float): var Vector2 = scaleSelf(v, sx, sy)
+proc scale*(v: var Vector3, sx, sy, sz: float): var Vector3 = scaleSelf(v, sx, sy, sz)
+proc scale*(v: var Vector4, sx, sy, sz, sw: float): var Vector4 = scaleSelf(v, sx, sy, sz, sw)
+
+# Translate
+proc translate*(v1: var Vector1, v2: Vector1): var Vector1 = addSelf(v1, v2)
+proc translate*(v1: var Vector2, v2: Vector2): var Vector2 = addSelf(v1, v2)
+proc translate*(v1: var Vector3, v2: Vector3): var Vector3 = addSelf(v1, v2)
+proc translate*(v1: var Vector4, v2: Vector4): var Vector4 = addSelf(v1, v2)
 
 # Iterators
 # NOTE: Added from design doc
