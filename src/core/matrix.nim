@@ -26,7 +26,7 @@ type
     ## Implements a 2D matrix
     ## [ ax(0,0) ay(0,1) az(0,2) ]
     ## [ bx(1,0) by(1,1) bz(1,2) ]
-    matrix: array[2, array[3, float]]
+    matrix*: array[2, array[3, float]]
 
   Matrix44* = object
     ## Implements a 3D matrix
@@ -34,7 +34,7 @@ type
     ## [ bx(1,0) by(1,1) bz(1,2) bw(1,3) ]
     ## [ cx(2,0) cy(2,1) cz(2,2) cw(2,3) ]
     ## [ tx(3,0) ty(3,1) tz(3,2) tw(3,3) ]
-    matrix: array[4, array[4, float]]
+    matrix*: array[4, array[4, float]]
 
 # Accessors
 # NOTE: This is Added, not in design doc
