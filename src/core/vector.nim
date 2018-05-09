@@ -131,6 +131,117 @@ proc clear*(v: var Vector2): var Vector2 = set(v, 0.0)
 proc clear*(v: var Vector3): var Vector3 = set(v, 0.0)
 proc clear*(v: var Vector4): var Vector4 = set(v, 0.0)
 
+# Transforms
+# Rotate
+proc rotate*(v: var Vector1): var Vector1 = 
+result = v
+
+proc rotate*(v: var Vector2, rad: float): var Vector2 =
+let
+  s = sin(rad)
+  c = cos(rad)
+  result = v.set(c*v.x-s*v.y, c*v.y+s*v.x)
+
+proc rotate*(v: var Vector3, rad: float, axis: Vector3): var Vector3 =
+var normax = axis
+if not normax.tryNormalize:
+  raise newException(DivByZeroError,"Cannot rotate around zero length axis")
+let
+  c = cos(rad)
+  s = sin(rad)
+  omc = 1.0-cs
+  u = normax.x
+  t = normax.y
+  w = normax.z
+  x = vec.x
+  y = vec.y
+  z = vec.z
+  uxyzomc = (u*x+t*y+w*z)*omc
+result = v.set(u*uxyzomc+x*c+(t*z-w*y)*s, t*uxyzomc+y*c+(w*x-u*z)*s, w*uxyzomc+z*c+(u*y-t*x)*s)
+
+proc rotate*(v: var Vector4, rad: float, axis: Vector4): var Vector3 = 
+var rotated = rotate(v, rad, vector3(axis.x, axis.y, axis.z))
+result = v.set(rotated.x, rotate.y, rotate.z, v.w)
+
+# Scale
+proc scale*(v: var Vector1, s: float): var Vector1 = 
+result = v.multiplySelf(s)
+
+proc scale*(v: var Vector1, sx, sy, sz, sw: float = 1.0) = 
+v.x *= sx
+result = v 
+
+proc scale*(v: var Vector2, s: float): var Vector2 =
+result = v.multiplySelf(s)
+
+proc scale*(v: var Vector2, sx, sy, sz, sw: float = 1.0) = 
+v.x *= sx
+v.y *= sy
+result = v 
+
+proc scale*(v: var Vector3, s: float): var Vector3 =
+result = v.multiplySelf(s)
+
+proc scale*(v: var Vector3, sx, sy, sz, sw: float = 1.0) = 
+v.x *= sx
+v.y *= sy
+v.z *= sz
+result = v 
+
+proc scale*(v: var Vector4, s: float): var Vector4 =
+result = v.multiplySelf(s)
+
+proc scale*(v: var Vector4, sx, sy, sz, sw: float = 1.0) = 
+v.x *= sx
+v.y *= sy
+v.z *= sz
+v.w *= sw
+result = v 
+
+#Translate
+proc translate*(v1: var Vector1, v2: Vector1): var Vector1 =
+result = v1.addSelf(v2)
+
+proc translate*(v1: var Vector2, v2: Vector2): var Vector2 =
+result = v1.addSelf(v2)
+
+proc translate*(v1: var Vector3, v2: Vector3): var Vector3 =
+result = v1.addSelf(v2)
+
+proc translate*(v1: var Vector4, v2: Vector4): var Vector4 =
+result = v1.addSelf(v2)
+
+#Transform
+proc transform(v: var Vector1, m: Matrix32): var Vector1 =
+  var
+    x: float
+  x = m.matrix[0][0] * v.x 
+  result = v.set(x)
+
+proc transform(v: var Vector2, m: Matrix32): var Vector2 =
+  var
+    x,y: float
+  x = m.matrix[0][0] * v.x + m.matrix[0][1] * v.y 
+  y = m.matrix[1][0] * v.x + m.matrix[1][1] * v.y 
+  result = v.set(x,y)
+
+proc transform(v: var Vector3, m: Matrix44): var Vector3 =
+  var
+    x,y,z: float
+  x = m.matrix[0][0] * v.x + m.matrix[0][1] * v.y + m.matrix[0][2] * v.z
+  y = m.matrix[1][0] * v.x + m.matrix[1][1] * v.y + m.matrix[1][2] * v.z 
+  z = m.matrix[2][0] * v.x + m.matrix[2][1] * v.y + m.matrix[2][2] * v.z 
+  result = v.set(x,y,z)
+
+proc transform(v: var Vector4, m: Matrix44): var Vector4 =
+  var
+    x,y,z,w: float
+  x = m.matrix[0][0] * v.x + m.matrix[0][1] * v.y + m.matrix[0][2] * v.z + m.matrix[0][3] * v.w
+  y = m.matrix[1][0] * v.x + m.matrix[1][1] * v.y + m.matrix[1][2] * v.z + m.matrix[1][3] * v.w
+  z = m.matrix[2][0] * v.x + m.matrix[2][1] * v.y + m.matrix[2][2] * v.z + m.matrix[2][3] * v.w
+  w = m.matrix[3][0] * v.x + m.matrix[3][1] * v.y + m.matrix[3][2] * v.z + m.matrix[3][3] * v.w
+  result = v.set(x,y,z,w)
+
 # Inverse
 # NOTE: Changed/Added from design doc
 proc inverseSelf*(v: var Vector1): var Vector1 {.noinit.} =
