@@ -32,7 +32,7 @@ from math import arctan2, arccos, sqrt
 from strformat import `&`
 import hashes
 
-from ./Vector import Vector2,Vector3
+from ./Vector import Vector2
 
 type
   Circle* = object
@@ -43,5 +43,10 @@ type
   Sphere* = object
     center*: Vector2
     radius*: float
-    
-    
+
+# Polygon
+# Constuctors
+proc polygon*(points: seq[Vector2]): Polygon =
+  result.vertices = @[]
+  result.vertices = points
+
