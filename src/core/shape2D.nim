@@ -1,5 +1,4 @@
 from ./concepts import
-Compare,
 Equals,
 Hash,
 Transform,
@@ -14,7 +13,6 @@ Closest,
 Vertices
 
 export
-Compare,
 Equals,
 Hash,
 Transform,
@@ -39,14 +37,16 @@ type
     center*: Vector2
     radius*: float
   Polygon* = object
-    vertices*: seq[Vector2]
+    vertices*: seq[Vector]
   Sphere* = object
     center*: Vector2
     radius*: float
 
 # Polygon
 # Constuctors
-proc polygon*(points: seq[Vector2]): Polygon =
+proc polygon*(points: seq[Vector]): Polygon =
   result.vertices = @[]
   result.vertices = points
 
+proc polygon*(): Polygon =
+  result.vertices = @[]
