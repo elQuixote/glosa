@@ -88,7 +88,3 @@ proc compareTo_v3*(v1, v2: Vector3): int {.cdecl, exportc, dynlib.} = compareTo(
 proc stringify_v3*(v: Vector3): cstring {.cdecl, exportc, dynlib.} =
     setupForeignThreadGc() 
     $v
-proc stringify_v3_2*(v: Vector3, s: var string): void {.cdecl, exportc, dynlib.} =
-    setupForeignThreadGc()
-    let st = $v
-    s = st
