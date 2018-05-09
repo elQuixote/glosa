@@ -910,51 +910,50 @@ proc dimension*(v: Vector4): int =
 from ./matrix import
   Matrix32,
   Matrix44,
-  matrix32,
   matrix44,
   invert,
   `[]`
 
 # Transform
 proc transformSelf*(v: var Vector1, m: Matrix32): var Vector1 {.noinit.} =
-  v.x *= m[0][0]
+  v.x *= m[0, 0]
   result = v
 
 proc transformNew*(v: Vector1, m: Matrix32): Vector1 =
-  result.x = m[0][0] * v.x
+  result.x = m[0, 0] * v.x
 
 proc transformSelf*(v: var Vector2, m: Matrix32): var Vector2 {.noinit.} =
-  v.x = m[0][0] * v.x + m[0][1] * v.y
-  v.y = m[1][0] * v.x + m[1][1] * v.y
+  v.x = m[0, 0] * v.x + m[0, 1] * v.y
+  v.y = m[1, 0] * v.x + m[1, 1] * v.y
   result = v
 
 proc transformNew*(v: Vector2, m: Matrix32): Vector2 =
-  result.x = m[0][0] * v.x + m[0][1] * v.y
-  result.y = m[1][0] * v.x + m[1][1] * v.y
+  result.x = m[0, 0] * v.x + m[0, 1] * v.y
+  result.y = m[1, 0] * v.x + m[1, 1] * v.y
 
 proc transformSelf*(v: var Vector3, m: Matrix44): var Vector3 {.noinit.} =
-  v.x = m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z
-  v.y = m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z
-  v.z = m[2][0] * v.z + m[2][1] * v.y + m[2][2] * v.z
+  v.x = m[0, 0] * v.x + m[0, 1] * v.y + m[0, 2] * v.z
+  v.y = m[1, 0] * v.x + m[1, 1] * v.y + m[1, 2] * v.z
+  v.z = m[2, 0] * v.z + m[2, 1] * v.y + m[2, 2] * v.z
   result = v
 
 proc transformNew*(v: Vector3, m: Matrix44): Vector3 =
-  result.x = m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z
-  result.y = m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z
-  result.z = m[2][0] * v.z + m[2][1] * v.y + m[2][2] * v.z
+  result.x = m[0, 0] * v.x + m[0, 1] * v.y + m[0, 2] * v.z
+  result.y = m[1, 0] * v.x + m[1, 1] * v.y + m[1, 2] * v.z
+  result.z = m[2, 0] * v.z + m[2, 1] * v.y + m[2, 2] * v.z
 
 proc transformSelf*(v: var Vector4, m: Matrix44): var Vector4 {.noinit.} =
-  v.x = m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z + m[0][3] * v.w
-  v.y = m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z + m[1][3] * v.w
-  v.z = m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z + m[2][3] * v.w
-  v.w = m[3][0] * v.x + m[3][1] * v.y + m[3][2] * v.z + m[3][3] * v.w
+  v.x = m[0, 0] * v.x + m[0, 1] * v.y + m[0, 2] * v.z + m[0, 3] * v.w
+  v.y = m[1, 0] * v.x + m[1, 1] * v.y + m[1, 2] * v.z + m[1, 3] * v.w
+  v.z = m[2, 0] * v.x + m[2, 1] * v.y + m[2, 2] * v.z + m[2, 3] * v.w
+  v.w = m[3, 0] * v.x + m[3, 1] * v.y + m[3, 2] * v.z + m[3, 3] * v.w
   result = v
 
 proc transformNew*(v: Vector4, m: Matrix44): Vector4 =
-  result.x = m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z + m[0][3] * v.w
-  result.y = m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z + m[1][3] * v.w
-  result.z = m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z + m[2][3] * v.w
-  result.w = m[3][0] * v.x + m[3][1] * v.y + m[3][2] * v.z + m[3][3] * v.w
+  result.x = m[0, 0] * v.x + m[0, 1] * v.y + m[0, 2] * v.z + m[0, 3] * v.w
+  result.y = m[1, 0] * v.x + m[1, 1] * v.y + m[1, 2] * v.z + m[1, 3] * v.w
+  result.z = m[2, 0] * v.x + m[2, 1] * v.y + m[2, 2] * v.z + m[2, 3] * v.w
+  result.w = m[3, 0] * v.x + m[3, 1] * v.y + m[3, 2] * v.z + m[3, 3] * v.w
 
 proc transform*(v: var Vector1, m: Matrix32): var Vector1 {.noinit.} = transformSelf(v, m)
 proc transform*(v: var Vector2, m: Matrix32): var Vector2 {.noinit.} = transformSelf(v, m)
