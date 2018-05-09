@@ -82,3 +82,12 @@ proc toArray_v3*(v: Vector3, a: var array[3, cdouble]): void {.cdecl, exportc, d
     a[1] = a2[1]
     a[2] = a2[2]
 proc compareTo_v3*(v1, v2: Vector3): int {.cdecl, exportc, dynlib.} = compareTo(v1, v2)
+proc stringify_v3*(v: Vector3): cstring {.cdecl, exportc, dynlib.} =
+    setupForeignThreadGc() 
+    $v
+#[
+proc stringify*(v: Vector3, s: var string): void {.cdecl, exportc, dynlib.} =
+    setupForeignThreadGc()
+    let st = $v
+    s = st
+]#
