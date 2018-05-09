@@ -85,3 +85,6 @@ type
   Shape2* {.explain.} = concept a
     a.perimeter() is float
     a.area() is float
+
+  Closest* {.explain.} = concept a
+    a.closestPoint(Vector) is Vector
