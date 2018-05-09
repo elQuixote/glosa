@@ -101,21 +101,10 @@ proc set*(v: var Vector2, n: float): var Vector2 {.noinit.} =
   v.y = n
   result = v
 
-proc set*(v: var Vector2, x,y: float): var Vector2 {.noinit.} =
-  v.x = x
-  v.y = y
-  result = v
-
 proc set*(v: var Vector3, n: float): var Vector3 {.noinit.} =
   v.x = n
   v.y = n
   v.z = n
-  result = v
-
-proc set*(v: var Vector3, x,y,z: float): var Vector3 {.noinit.} = 
-  v.x = x
-  v.y = y
-  v.z = z
   result = v
 
 proc set*(v: var Vector4, n: float): var Vector4 {.noinit.} =
