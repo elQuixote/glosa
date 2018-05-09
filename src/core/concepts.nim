@@ -81,3 +81,7 @@ type
 
   Centroid* {.explain.} = concept a
     a.centroid() is Vector
+
+  Shape2* {.explain.} = concept a
+    a.perimeter() is float
+    a.area() is float
