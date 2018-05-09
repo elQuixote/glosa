@@ -38,7 +38,6 @@ proc toArray_v2*(v: Vector2, a: var array[2, cdouble]): void {.cdecl, exportc, d
     let a2 = toArray(v)
     a[0] = a2[0]
     a[1] = a2[1]
-proc compareTo_v2*(v1, v2: Vector2): int {.cdecl, exportc, dynlib.} = compareTo(v1, v2)
 proc stringify_v2*(v: Vector2): cstring {.cdecl, exportc, dynlib.} =
     setupForeignThreadGc() 
     $v
@@ -84,7 +83,6 @@ proc toArray_v3*(v: Vector3, a: var array[3, cdouble]): void {.cdecl, exportc, d
     a[0] = a2[0]
     a[1] = a2[1]
     a[2] = a2[2]
-proc compareTo_v3*(v1, v2: Vector3): int {.cdecl, exportc, dynlib.} = compareTo(v1, v2)
 proc stringify_v3*(v: Vector3): cstring {.cdecl, exportc, dynlib.} =
     setupForeignThreadGc() 
     $v
