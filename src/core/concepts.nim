@@ -88,3 +88,8 @@ type
 
   Closest* {.explain.} = concept a
     a.closestPoint(Vector) is Vector
+
+  Vertices* {.explain.} = concept a, type T
+    a.toPolyline() is T
+    a.toPolygon() is T
+    a.closestVertex(Vector) is Vector
