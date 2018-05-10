@@ -58,15 +58,21 @@ proc polygon*(): Polygon =
 # ***************************************
 # NOTE: This is added from design doc
 proc addVertex*(polygon: var Polygon, x, y: float): Polygon = 
-  polygon.vertices.add(vector2(x, y))
+  if not poly.contains(vector2(x,y)):
+    polygon.vertices.add(vector2(x, y))
+  else: raise newException(AccessViolationError, "Attempting to add a vertex which alreaday exists")
   result = polygon
 
 proc addVertex*(polygon: var Polygon, x, y, z: float): Polygon = 
-  polygon.vertices.add(vector3(x, y, z))
+  if not poly.contains(vector3(x,y,z)):
+    polygon.vertices.add(vector3(x, y, z))
+  else: raise newException(AccessViolationError, "Attempting to add a vertex which alreaday exists")
   result = polygon
 
 proc addVertex*(polygon: var Polygon, v: Vector): Polygon =
-  polygon.vertices.add(v)
+  if not poly.contains(v):
+    polygon.vertices.add(v)
+  else: raise newException(AccessViolationError, "Attempting to add a vertex which alreaday exists")
   result = polygon
 
 # NOTE: This is added from design doc
