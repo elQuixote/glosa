@@ -581,6 +581,24 @@ proc `/=`*(v: var Vector2, f: float) = discard divideSelf(v, f)
 proc `/=`*(v: var Vector3, f: float) = discard divideSelf(v, f)
 proc `/=`*(v: var Vector4, f: float) = discard divideSelf(v, f)
 
+# NOTE: This is added from design doc
+# Distance To
+proc distanceTo*(v1, v2: Vector1): float =
+  var sub = v1.subtractNew(v2)
+  result = sub.length()
+
+proc distanceTo*(v1, v2: Vector2): float =
+  var sub = v1.subtractNew(v2)
+  result = sub.length()
+
+proc distanceTo*(v1, v2: Vector3): float =
+  var sub = v1.subtractNew(v2)
+  result = sub.length()
+
+proc distanceTo*(v1, v2: Vector4): float =
+  var sub = v1.subtractNew(v2)
+  result = sub.length()
+
 # Dot
 proc dot*(v1, v2: Vector1): float =
   result = v1.x * v2.x
