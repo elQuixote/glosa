@@ -108,5 +108,10 @@ proc clear*(p: var Polygon): var Polygon =
   p.vertices = @[]
   result = p
 
+# Dimension
+proc dimension*(p: Polygon): int =
+  if len(p.vertices) == 0: raise newException(AccessViolationError, "Polygon has no vertices")
+  result = p.vertices.dimension()
+
 
   
