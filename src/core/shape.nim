@@ -1,32 +1,32 @@
 from ./concepts import
-  Vector,
-  Equals,
-  Hash,
-  Transform,
-  Dimension,
-  Set,
-  Clear,
-  Copy,
-  String,
-  Centroid,
-  Shape2,
-  Closest,
-  Vertices
+Vector,
+Equals,
+Hash,
+Transform,
+Dimension,
+Set,
+Clear,
+Copy,
+String,
+Centroid,
+Shape2,
+Closest,
+Vertices
 
 export
-  Vector,
-  Equals,
-  Hash,
-  Transform,
-  Dimension,
-  Set,
-  Clear,
-  Copy,
-  String,
-  Centroid,
-  Shape2,
-  Closest,
-  Vertices
+Vector,
+Equals,
+Hash,
+Transform,
+Dimension,
+Set,
+Clear,
+Copy,
+String,
+Centroid,
+Shape2,
+Closest,
+Vertices
 
 from math import arctan2, arccos, sqrt
 from strformat import `&`
@@ -138,9 +138,8 @@ proc area*(p: Polygon): float =
   result *= 0.5
 
 proc perimeter*(p: Polygon): float =
-  var a = vector2(1,1)
   for i in 0..p.pointCount()-1:
     result += p.vertices[i].distanceTo(p.vertices[(i + 1) mod p.pointCount()])
-
+  
 
   
