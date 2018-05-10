@@ -671,21 +671,17 @@ proc length*(v: Vector4): float = magnitude(v)
 # NOTE: This is added from design doc
 # Distance To
 proc distanceTo*(v1, v2: Vector1): float =
-  var sub = v1.subtractNew(v2)
-  result = sub.length()
+  result = v1.subtractNew(v2).length()
 
 proc distanceTo*(v1, v2: Vector2): float =
-  var sub = v1.subtractNew(v2)
-  result = sub.length()
+  result = v1.subtractNew(v2).length()
 
 proc distanceTo*(v1, v2: Vector3): float =
-  var sub = v1.subtractNew(v2)
-  result = sub.length()
+  result = v1.subtractNew(v2).length()
 
 proc distanceTo*(v1, v2: Vector4): float =
-  var sub = v1.subtractNew(v2)
-  result = sub.length()
-  
+  result = v1.subtractNew(v2).length()
+
 # Normalize
 # Private generic in place normalize
 proc calculateNormalize[T](v: var T, m: float = 1.0): var T {.noinit.} =
