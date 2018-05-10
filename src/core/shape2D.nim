@@ -121,5 +121,10 @@ proc dimension*(p: Polygon): int =
 proc copy*(p: Polygon): Polygon = 
   result = Polygon(vertices: p.vertices)
 
+# String
+proc `$`*(p: Polygon): string =
+  result = ""
+  for vert in p.vertices:
+    result.add($vert & ",")
 
   
