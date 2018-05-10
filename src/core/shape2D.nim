@@ -127,4 +127,14 @@ proc `$`*(p: Polygon): string =
   for vert in p.vertices:
     result.add($vert & ",")
 
+# Shape2 Concept
+# Area
+proc area*(p: Polygon): float =
+  for i in 0..p.pointCount()-1:
+    var a = p.vertices[i]
+    var b = p.vertices[(i + 1) mod p.pointCount()]
+    result += (a.x * b.y)
+    result -= (a.y * b.x)
+  result *= 0.5
+
   
