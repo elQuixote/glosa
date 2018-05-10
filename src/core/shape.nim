@@ -116,7 +116,7 @@ proc clear*[Vector](p: var Polygon[Vector]): var Polygon[Vector] =
 # Dimension
 proc dimension*[Vector](p: Polygon[Vector]): int =
   if p.pointCount() == 0: raise newException(AccessViolationError, "Polygon has no vertices")
-  result = p.vertices.dimension()
+  result = p.vertices[0].dimension()
 
 # Copy
 proc copy*[Vector](p: Polygon[Vector]): Polygon[Vector] = 
