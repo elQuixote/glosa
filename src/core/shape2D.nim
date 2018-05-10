@@ -65,4 +65,15 @@ proc addVertex*(polygon: var Polygon, x, y, z: float): Polygon =
 proc addVertex*(polygon: var Polygon, v: Vector): Polygon =
   polygon.vertices.add(v)
   result = polygon
+
+# NOTE: This is added from design doc
+proc contains*(polygon: var Polygon, v: Vector): bool =
+  var hit : bool
+  for vert in polygon.vertices:
+    if vert == v:
+      hit = true
+      break
+    else: hit = false
+  result = hit
+
   
