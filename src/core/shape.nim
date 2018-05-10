@@ -137,4 +137,10 @@ proc area*(p: Polygon): float =
     result -= (a.y * b.x)
   result *= 0.5
 
+proc perimeter*(p: Polygon): float =
+  var a = vector2(1,1)
+  for i in 0..p.pointCount()-1:
+    result += p.vertices[i].distanceTo(p.vertices[(i + 1) mod p.pointCount()])
+
+
   
