@@ -57,28 +57,28 @@ proc polygon*(): Polygon =
 #     Polygon implementation
 # ***************************************
 # NOTE: This is added from design doc
-proc addVertex*(polygon: var Polygon, x, y: float): Polygon = 
-  if not poly.contains(vector2(x,y)):
-    polygon.vertices.add(vector2(x, y))
+proc addVertex*(p: var Polygon, x, y: float): Polygon = 
+  if not p.contains(vector2(x,y)):
+    p.vertices.add(vector2(x, y))
   else: raise newException(AccessViolationError, "Attempting to add a vertex which alreaday exists")
-  result = polygon
+  result = p
 
-proc addVertex*(polygon: var Polygon, x, y, z: float): Polygon = 
-  if not poly.contains(vector3(x,y,z)):
-    polygon.vertices.add(vector3(x, y, z))
+proc addVertex*(p: var Polygon, x, y, z: float): Polygon = 
+  if not p.contains(vector3(x,y,z)):
+    p.vertices.add(vector3(x, y, z))
   else: raise newException(AccessViolationError, "Attempting to add a vertex which alreaday exists")
-  result = polygon
+  result = p
 
-proc addVertex*(polygon: var Polygon, v: Vector): Polygon =
-  if not poly.contains(v):
-    polygon.vertices.add(v)
+proc addVertex*(p: var Polygon, v: Vector): Polygon =
+  if not p.contains(v):
+    p.vertices.add(v)
   else: raise newException(AccessViolationError, "Attempting to add a vertex which alreaday exists")
-  result = polygon
+  result = p
 
 # NOTE: This is added from design doc
-proc contains*(polygon: var Polygon, v: Vector): bool =
+proc contains*(p: var Polygon, v: Vector): bool =
   var hit : bool
-  for vert in polygon.vertices:
+  for vert in p.vertices:
     if vert == v:
       hit = true
       break
@@ -97,5 +97,6 @@ proc `==`*(p1,p2: Polygon): bool =
 # Non Equals
 proc `!=`*(p1,p2: Polygon): bool = 
 result = not (p1 == p2)
+
 
   
