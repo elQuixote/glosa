@@ -85,4 +85,17 @@ proc contains*(polygon: var Polygon, v: Vector): bool =
     else: hit = false
   result = hit
 
+# Equals (compares points in polygon)
+proc `==`*(p1,p2: Polygon): bool =
+  if len(p1.vertices) != len(p2.vertices): return false
+  var hit : bool
+  for i in 0..len(p1.vertices)-1:
+    if p1.vertices[i] != p2.vertices[i]: return false
+    else: hit = true
+  result = hit
+
+# Non Equals
+proc `!=`*(p1,p2: Polygon): bool = 
+result = not (p1 == p2)
+
   
