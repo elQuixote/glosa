@@ -103,5 +103,10 @@ proc hash*(p: Polygon): hashes.Hash =
   for vert in p.vertices:
     result = !$(result !& hash(vert))
 
+# Clear
+proc clear*(p: var Polygon): var Polygon =
+  p.vertices = @[]
+  result = p
+
 
   
