@@ -91,9 +91,9 @@ proc contains*(p: var Polygon, v: Vector): bool =
 
 # Equals (compares points in polygon)
 proc `==`*(p1,p2: Polygon): bool =
-  if len(p1.vertices) != len(p2.vertices): return false
+  if p1.pointCount() != p2.pointCount(): return false
   var hit : bool
-  for i in 0..len(p1.vertices)-1:
+  for i in 0..p1.pointCount()-1:
     if p1.vertices[i] != p2.vertices[i]: return false
     else: hit = true
   result = hit
