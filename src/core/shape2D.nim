@@ -53,6 +53,9 @@ proc polygon*(points: seq[Vector]): Polygon =
 proc polygon*(): Polygon =
   result.vertices = @[]
 
+# ***************************************
+#     Polygon implementation
+# ***************************************
 # NOTE: This is added from design doc
 proc addVertex*(polygon: var Polygon, x, y: float): Polygon = 
   polygon.vertices.add(vector2(x, y))
