@@ -98,5 +98,10 @@ proc `==`*(p1,p2: Polygon): bool =
 proc `!=`*(p1,p2: Polygon): bool = 
 result = not (p1 == p2)
 
+# Hash
+proc hash*(p: Polygon): hashes.Hash =
+  for vert in p.vertices:
+    result = !$(result !& hash(vert))
+
 
   
