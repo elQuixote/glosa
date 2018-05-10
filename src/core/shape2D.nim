@@ -1,4 +1,5 @@
 from ./concepts import
+Vector,
 Equals,
 Hash,
 Transform,
@@ -13,6 +14,7 @@ Closest,
 Vertices
 
 export
+Vector,
 Equals,
 Hash,
 Transform,
@@ -30,16 +32,16 @@ from math import arctan2, arccos, sqrt
 from strformat import `&`
 import hashes
 
-from ./Vector import Vector2
+import ../../src/core/vector
 
 type
   Circle* = object
-    center*: Vector2
+    center*: Vector
     radius*: float
   Polygon* = object
     vertices*: seq[Vector]
   Sphere* = object
-    center*: Vector2
+    center*: Vector
     radius*: float
 
 # Polygon
@@ -50,3 +52,17 @@ proc polygon*(points: seq[Vector]): Polygon =
 
 proc polygon*(): Polygon =
   result.vertices = @[]
+
+# NOTE: This is added from design doc
+proc addVertex*(polygon: var Polygon, x, y: float): Polygon = 
+  polygon.vertices.add(vector2(x, y))
+  result = polygon
+
+proc addVertex*(polygon: var Polygon, x, y, z: float): Polygon = 
+  polygon.vertices.add(vector3(x, y, z))
+  result = polygon
+
+proc addVertex*(polygon: var Polygon, v: Vector): Polygon =
+  polygon.vertices.add(v)
+  result = polygon
+  
