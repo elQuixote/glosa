@@ -76,6 +76,10 @@ proc addVertex*(p: var Polygon, v: Vector): Polygon =
   result = p
 
 # NOTE: This is added from design doc
+proc pointCount(p: Polygon): int = 
+  result = len(p.vertices)
+
+# NOTE: This is added from design doc
 proc contains*(p: var Polygon, v: Vector): bool =
   var hit : bool
   for vert in p.vertices:
