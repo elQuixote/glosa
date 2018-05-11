@@ -662,6 +662,18 @@ proc magnitude*(v: Vector3): float =
 proc magnitude*(v: Vector4): float =
   result = sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w)
 
+proc magnitudeSquared*(v: Vector1): float = 
+  result = v.x * v.x
+
+proc magnitudeSquared*(v: Vector2): float = 
+  result = v.x * v.x + v.y * v.y
+
+proc magnitudeSquared*(v: Vector3): float = 
+  result = v.x * v.x + v.y * v.y + v.z * v.z
+
+proc magnitudeSquared*(v: Vector4): float = 
+  result = v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w
+
 # Length
 proc length*(v: Vector1): float = magnitude(v)
 proc length*(v: Vector2): float = magnitude(v)
