@@ -261,6 +261,16 @@ proc isClockwise*[Vector](p: Polygon[Vector]): bool =
 # Predicate Transforms
 
 
+# NOTE: This is added from design doc
+# NOTE: Using Nim paradigm (items, fields, pairs, etc)
+iterator verts*[Vector](p: Polygon[Vector]): Vector =
+  for i in 0..<p.pointCount():
+    yield p.vertices[i]
+
+iterator segments*[Vector](p: Polygon[Vector]): LineSegment[Vector] =
+  for i in edges(p):
+    yield i
+
 
 
   
