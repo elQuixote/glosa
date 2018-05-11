@@ -46,9 +46,9 @@ type
     radius*: float
     
 # NOTE: This is added from design doc
-  Line* = object
-    startPoint*: Vector2
-    endPoint*: Vector2
+  LineSegment*[Vector] = object
+    startPoint*: Vector
+    endPoint*: Vector
   
 # Polygon
 # Constuctors
@@ -60,15 +60,15 @@ proc polygon*[Vector](): Polygon[Vector] =
   result.vertices = @[]
 
 # NOTE: This is added from design doc
-proc line*(v1, v2: Vector2): Line =
+proc lineSegment*[Vector](v1, v2: Vector): LineSegment[Vector] =
   result.startPoint = v1
   result.endPoint = v2
 
 # ***************************************
-#     Line implementation
+#     LineSegment implementation
 # ***************************************
 # NOTE: This is added from design doc
-proc closestPointTo*(l: Line, v: Vector2): Vector2 = 
+proc closestPointTo*[Vector](l: LineSegment[Vector], v: Vector2): Vector2 = 
   #LINE TYPE AND LINES NEED TO BE REFACTORED FOR GENERICS. 
   var sub = l.endPoint.subtractNew(l.startPoint)
   var t = v.subtractNew(l.startPoint).dot(sub) / sub.magnitudeSquared()
@@ -108,7 +108,7 @@ proc pointCount*[Vector](p: Polygon[Vector]): int =
 proc reverseOrder*[Vector](p: var Polygon[Vector]): var Polygon[Vector] =
   var list = newSeq[Vector](p.pointCount())
   for i, x in p.vertices:
-    list[p.vertices.high-i] = x # or: result[xs.high-i] = x
+    list[p.vertices.high-i] = x
   p.vertices = list 
   result = p
 
@@ -179,10 +179,10 @@ proc `$`*[Vector](p: Polygon[Vector]): string =
 
 # Get Lines
 # NOTE: This is added from design doc
-proc edges*[Vector](p: Polygon[Vector]): seq[Line] =
-  var list : seq[Line] = @[]
+proc edges*[Vector](p: Polygon[Vector]): seq[LineSegment[Vector]] =
+  var list : seq[LineSegment[Vector]] = @[]
   for i in 0..<p.pointCount():
-    list.add(line(p.vertices[i],p.vertices[(i+1) mod p.pointCount()]))
+    list.add(lineSegment(p.vertices[i],p.vertices[(i+1) mod p.pointCount()]))
   result = list
 
 # Predicate Shape2 
