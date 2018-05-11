@@ -21,7 +21,7 @@ type
     va.multiplySelf(float) is T
     a.multiplyNew(float) is T
     a.dot(b) is float
-    # a.cross(b) # NOTE: Different return types (No 4D)
+    a.cross(b) # NOTE: Different return types (No 4D)
     a.inverse() is T
     a.heading() is float
     a.reflect(b) is T

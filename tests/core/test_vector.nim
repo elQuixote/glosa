@@ -171,6 +171,27 @@ suite "Setting a Vector to a single value":
   test "Setting a Vector4":
     testSetVector(vector4(0.0))
 
+suite "Setting a Vector to multiple values":
+  # Setting a Vector1 same as single value
+  test "Setting a Vector2":
+    var
+      v = vector2(0.0)
+    v = v.set(1.0, 2.0)
+    check:
+      v == vector2(1.0, 2.0)
+  test "Setting a Vector3":
+    var
+      v = vector3(0.0)
+    v = v.set(1.0, 2.0, 3.0)
+    check:
+      v == vector3(1.0, 2.0, 3.0)
+  test "Setting a Vector4":
+    var
+      v = vector4(0.0)
+    v = v.set(1.0, 2.0, 3.0, 4.0)
+    check:
+      v == vector4(1.0, 2.0, 3.0, 4.0)
+
 suite "Clearing a Vector":
   proc testClearVector(v1: Vector) =
     var
@@ -462,11 +483,11 @@ suite "Calculating cross product of Vectors":
     testCrossProductFloat(
       Vector2(x: 3.0, y: 1.0),
       Vector2(x: 4.0, y: 2.0),
-      3.0 * 4.0 - 1.0 * 2.0)
+      3.0 * 2.0 - 1.0 * 4.0)
     testCrossProductFloat(
       Vector2(x: 2.0, y: 4.0),
       Vector2(x: 3.0, y: 1.0),
-      2.0 * 3.0 - 4.0 * 1.0)
+      2.0 * 1.0 - 4.0 * 3.0)
   test "Calculating cross product of Vector3s (Vector)":
     testCrossProductVector(
       Vector3(x: 3.0, y: 1.0, z: 2.0),
@@ -484,7 +505,10 @@ suite "Calculating cross product of Vectors":
         y: 1.0 * 3.0 - 2.0 * 0.0,
         z: 2.0 * 1.0 - 4.0 * 3.0
       ))
-  # No Vector4 cross product
+  test "Calculating cross product of Vector4s (Error)":
+    expect InvalidCrossProductError:
+      cross(Vector4(x: 1.0, y: 1.0, z: 1.0, w: 1.0),
+            Vector4(x: 1.0, y: 1.0, z: 1.0, w: 1.0))
 
 suite "Calculating the inverse of a Vector":
   proc testInverseVector(v1: Vector, expected: float) =
