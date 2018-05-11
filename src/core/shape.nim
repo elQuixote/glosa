@@ -128,7 +128,7 @@ proc `$`*[Vector](p: Polygon[Vector]): string =
   for vert in p.vertices:
     result.add($vert & ",")
 
-# Shape2 Concept
+# Predicate Shape2 
 # Area
 proc area*[Vector](p: Polygon[Vector]): float =
   for i in 0..<p.pointCount():
@@ -164,6 +164,18 @@ proc average*[Vector](p: Polygon[Vector]): Vector =
   vec /= (float)p.pointCount()
   result = vec
 
+# Predication Vertices
+proc closestVertex*[Vector](p: Polygon[Vector], v: Vector): Vector =
+  var minDist : float = 1000000000000.0
+  var vecRef : Vector = p.vertices[0]
+  var vecRef2 = vecRef.copy()
+  var vec = vecRef2.clear()
+  for vert in p.vertices:
+    var dist = vert.distanceToSquared(v)
+    if(dist < minDist):
+      vec = vert
+      minDist = dist
+  result = vec
 
 
   

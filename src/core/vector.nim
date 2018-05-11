@@ -694,12 +694,12 @@ proc distanceToSquared*(v1, v2: Vector3): float =
   var c = v1.z - v2.z
   result = a * a + b * b + c * c
 
-proc distanceToSquared*(v1, v2: Vector3): float =
+proc distanceToSquared*(v1, v2: Vector4): float =
   var a = v1.x - v2.x
   var b = v1.y - v2.y 
   var c = v1.z - v2.z
   var d = v1.w - v2.w
-  result = a * a + b * b + c * c + w * w
+  result = a * a + b * b + c * c + d * d
 
 # Normalize
 # Private generic in place normalize
