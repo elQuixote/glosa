@@ -103,6 +103,24 @@ proc addVertex*[Vector](p: var Polygon[Vector], v: Vector): var Polygon[Vector] 
 proc pointCount*[Vector](p: Polygon[Vector]): int = 
   result = len(p.vertices)
 
+# Get Lines
+# NOTE: This is added from design doc
+proc edges*[Vector](p: Polygon[Vector]): seq[LineSegment[Vector]] =
+  var list : seq[LineSegment[Vector]] = @[]
+  for i in 0..<p.pointCount():
+    list.add(lineSegment(p.vertices[i],p.vertices[(i+1) mod p.pointCount()]))
+  result = list
+
+# NOTE: This is added from design doc
+# NOTE: Using Nim paradigm (items, fields, pairs, etc)
+iterator verts*[Vector](p: Polygon[Vector]): Vector =
+  for i in 0..<p.pointCount():
+    yield p.vertices[i]
+
+iterator segments*[Vector](p: Polygon[Vector]): LineSegment[Vector] =
+  for i in edges(p):
+    yield i
+
 # NOTE: This is added from design doc
 proc reverseOrder*[Vector](p: var Polygon[Vector]): var Polygon[Vector] {.noinit.} =
   var list = newSeq[Vector](p.pointCount())
@@ -125,7 +143,7 @@ proc contains*[Vector](p: Polygon[Vector], v: Vector): bool =
 # NOTE: This is added from design doc
 proc containsPoint*[Vector](p: Polygon[Vector], v: Vector): bool =
   # Checks if a point is contained within the polygon
-  var i, j = p.pointCount()-1
+  var j = p.pointCount()-1
   var nodes : bool
   var px = v.x
   var py = v.y
@@ -175,14 +193,6 @@ proc `$`*[Vector](p: Polygon[Vector]): string =
   result = ""
   for vert in p.vertices:
     result.add($vert & ",")
-
-# Get Lines
-# NOTE: This is added from design doc
-proc edges*[Vector](p: Polygon[Vector]): seq[LineSegment[Vector]] =
-  var list : seq[LineSegment[Vector]] = @[]
-  for i in 0..<p.pointCount():
-    list.add(lineSegment(p.vertices[i],p.vertices[(i+1) mod p.pointCount()]))
-  result = list
 
 # Predicate Shape2 
 # Area
@@ -258,18 +268,43 @@ proc closestPoint*[Vector](p: Polygon[Vector], v: Vector): Vector =
 # NOTE: This is added from design doc
 proc isClockwise*[Vector](p: Polygon[Vector]): bool =
   result = area(p) > 0
+
 # Predicate Transforms
+# Rotate
+proc rotate*[Vector](p: var Polygon[Vector], theta: float): var Polygon[Vector] {.noinit.} =
+  for i, x in p.vertices:
+    p.vertices[i] = x.rotateNew(theta)
+  result = p
+
+# Scale
+proc scale*[Vector](p: var Polygon[Vector], s: float): var Polygon[Vector] {.noinit.} =
+  for i, x in p.vertices:
+    p.vertices[i] = x.scaleNew(s)
+  result = p
+
+proc scale*[Vector](p: var Polygon[Vector], sx, sy: float): var Polygon[Vector] {.noinit.} =
+  for i, x in p.vertices:
+    p.vertices[i] = x.scaleNew(sx, sy)
+  result = p
+
+proc scale*[Vector](p: var Polygon[Vector], sx, sy, sz: float): var Polygon[Vector] {.noinit.} =
+  for i, x in p.vertices:
+    p.vertices[i] = x.scaleNew(sx, sy, sz)
+  result = p
+
+# Translate
+proc translate*[Vector](p: var Polygon[Vector], t: float): var Polygon[Vector] {.noinit.} =
+  for i, x in p.vertices:
+    p.vertices[i] = x.addNew(t)
+  result = p
+
+proc translate*[Vector](p: var Polygon[Vector], v: Vector): var Polygon[Vector] {.noinit.} =
+  for i, x in p.vertices:
+    p.vertices[i] = x.addNew(v)
+  result = p
+# Transform(Matrix)
 
 
-# NOTE: This is added from design doc
-# NOTE: Using Nim paradigm (items, fields, pairs, etc)
-iterator verts*[Vector](p: Polygon[Vector]): Vector =
-  for i in 0..<p.pointCount():
-    yield p.vertices[i]
-
-iterator segments*[Vector](p: Polygon[Vector]): LineSegment[Vector] =
-  for i in edges(p):
-    yield i
 
 
 
