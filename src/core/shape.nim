@@ -105,6 +105,14 @@ proc pointCount*[Vector](p: Polygon[Vector]): int =
   result = len(p.vertices)
 
 # NOTE: This is added from design doc
+proc reverseOrder*[Vector](p: var Polygon[Vector]): var Polygon[Vector] =
+  var list = newSeq[Vector](p.pointCount())
+  for i, x in p.vertices:
+    list[p.vertices.high-i] = x # or: result[xs.high-i] = x
+  p.vertices = list 
+  result = p
+
+# NOTE: This is added from design doc
 proc contains*[Vector](p: var Polygon[Vector], v: Vector): bool =
   # Checks to see if point we are adding to vertices already exists
   var hit : bool
@@ -183,7 +191,6 @@ proc area*[Vector](p: Polygon[Vector]): float =
   for i in 0..<p.pointCount():
     var a = p.vertices[i]
     var b = p.vertices[(i + 1) mod p.pointCount()]
-    echo (i + 1) mod p.pointCount()
     result += (a.x * b.y)
     result -= (a.y * b.x)
   result *= 0.5
