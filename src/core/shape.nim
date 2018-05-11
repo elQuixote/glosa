@@ -106,6 +106,7 @@ proc pointCount*[Vector](p: Polygon[Vector]): int =
 
 # NOTE: This is added from design doc
 proc contains*[Vector](p: var Polygon[Vector], v: Vector): bool =
+  # Checks to see if point we are adding to vertices already exists
   var hit : bool
   for vert in p.vertices:
     if vert == v:
@@ -113,6 +114,22 @@ proc contains*[Vector](p: var Polygon[Vector], v: Vector): bool =
       break
     else: hit = false
   result = hit
+
+# NOTE: This is added from design doc
+proc containsPoint*[Vector](p: Polygon[Vector], v: Vector): bool =
+  # Checks if a point is contained within the polygon
+  var i, j = p.pointCount()-1
+  var nodes : bool
+  var px = v.x
+  var py = v.y
+  for i in 0..<p.pointCount():
+    var vi = p.vertices[i]
+    var vj = p.vertices[j]
+    if vi.y < py and vj.y >= py or vj.y < py and vi.y >= py:
+      if vi.x + (py - vi.y) / (vj.y - vi.y) * (vj.x - vi.x) < px:
+        nodes = not nodes
+    j = i
+  result = nodes
 
 # Equals (compares points in polygon)
 proc `==`*[Vector](p1,p2: Polygon[Vector]): bool =
