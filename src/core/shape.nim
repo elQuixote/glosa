@@ -164,7 +164,7 @@ proc average*[Vector](p: Polygon[Vector]): Vector =
   vec /= (float)p.pointCount()
   result = vec
 
-# Add Planar check 
+
 
   
 
