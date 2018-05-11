@@ -69,7 +69,6 @@ proc lineSegment*[Vector](v1, v2: Vector): LineSegment[Vector] =
 # ***************************************
 # NOTE: This is added from design doc
 proc closestPointTo*[Vector](l: LineSegment[Vector], v: Vector2): Vector2 = 
-  #LINE TYPE AND LINES NEED TO BE REFACTORED FOR GENERICS. 
   var sub = l.endPoint.subtractNew(l.startPoint)
   var t = v.subtractNew(l.startPoint).dot(sub) / sub.magnitudeSquared()
   if t < 0.0:
@@ -82,19 +81,19 @@ proc closestPointTo*[Vector](l: LineSegment[Vector], v: Vector2): Vector2 =
 #     Polygon implementation
 # ***************************************
 # NOTE: This is added from design doc
-proc addVertex*[Vector](p: var Polygon[Vector], x, y: float): Polygon[Vector] = 
+proc addVertex*[Vector](p: var Polygon[Vector], x, y: float): var Polygon[Vector] {.noinit.} = 
   if not p.contains(vector2(x,y)):
     p.vertices.add(vector2(x, y))
   else: raise newException(AccessViolationError, "Attempting to add a vertex which alreaday exists")
   result = p
 
-proc addVertex*[Vector](p: var Polygon[Vector], x, y, z: float): Polygon[Vector] = 
+proc addVertex*[Vector](p: var Polygon[Vector], x, y, z: float): var Polygon[Vector] {.noinit.} = 
   if not p.contains(vector3(x,y,z)):
     p.vertices.add(vector3(x, y, z))
   else: raise newException(AccessViolationError, "Attempting to add a vertex which alreaday exists")
   result = p
 
-proc addVertex*[Vector](p: var Polygon[Vector], v: Vector): Polygon[Vector] =
+proc addVertex*[Vector](p: var Polygon[Vector], v: Vector): var Polygon[Vector] {.noinit.} =
   if not p.contains(v):
     p.vertices.add(v)
   else: raise newException(AccessViolationError, "Attempting to add a vertex which alreaday exists")
@@ -105,7 +104,7 @@ proc pointCount*[Vector](p: Polygon[Vector]): int =
   result = len(p.vertices)
 
 # NOTE: This is added from design doc
-proc reverseOrder*[Vector](p: var Polygon[Vector]): var Polygon[Vector] =
+proc reverseOrder*[Vector](p: var Polygon[Vector]): var Polygon[Vector] {.noinit.} =
   var list = newSeq[Vector](p.pointCount())
   for i, x in p.vertices:
     list[p.vertices.high-i] = x
@@ -113,7 +112,7 @@ proc reverseOrder*[Vector](p: var Polygon[Vector]): var Polygon[Vector] =
   result = p
 
 # NOTE: This is added from design doc
-proc contains*[Vector](p: var Polygon[Vector], v: Vector): bool =
+proc contains*[Vector](p: Polygon[Vector], v: Vector): bool =
   # Checks to see if point we are adding to vertices already exists
   var hit : bool
   for vert in p.vertices:
@@ -158,7 +157,7 @@ proc hash*[Vector](p: Polygon[Vector]): hashes.Hash =
     result = !$(result !& hash(vert))
 
 # Clear
-proc clear*[Vector](p: var Polygon[Vector]): var Polygon[Vector] =
+proc clear*[Vector](p: var Polygon[Vector]): var Polygon[Vector] {.noinit.} =
   p.vertices = @[]
   result = p
 
@@ -211,6 +210,7 @@ proc centroid*[Vector](p: Polygon[Vector]): Vector =
     vec += (a + b) * cross(a, b)
   result = vec.multiplySelf(1.0 / (6 * p.area()))
 
+# NOTE: This is added from design doc
 proc average*[Vector](p: Polygon[Vector]): Vector =
   var vecZ : Vector = p.vertices[0]
   var vecY = vecZ.copy()
@@ -235,7 +235,7 @@ proc closestVertex*[Vector](p: Polygon[Vector], v: Vector): Vector =
   result = vec
 
 # To Polygon
-proc toPolygon*[Vector](p: var Polygon[Vector]): var Polygon =
+proc toPolygon*[Vector](p: var Polygon[Vector]): var Polygon {.noinit.} =
   result = p
 
 # To Polyline
@@ -254,6 +254,12 @@ proc closestPoint*[Vector](p: Polygon[Vector], v: Vector): Vector =
       vec = closestVec
       minDist = dist
   result = vec
+
+# NOTE: This is added from design doc
+proc isClockwise*[Vector](p: Polygon[Vector]): bool =
+  result = area(p) > 0
+# Predicate Transforms
+
 
 
 
