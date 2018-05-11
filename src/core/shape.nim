@@ -71,7 +71,7 @@ proc line*(v1, v2: Vector2): Line =
 proc closestPointTo*(l: Line, v: Vector2): Vector2 = 
   #LINE TYPE AND LINES NEED TO BE REFACTORED FOR GENERICS. 
   var sub = l.endPoint.subtractNew(l.startPoint)
-  var t = v.subtractNew(l.startPoint).dot(sub) / sub.magnitude()
+  var t = v.subtractNew(l.startPoint).dot(sub) / sub.magnitudeSquared()
   if t < 0.0:
     return l.startPoint
   elif t > 1.0:
@@ -218,7 +218,18 @@ proc toPolygon*[Vector](p: var Polygon[Vector]): var Polygon =
 
 # Predicate Closest
 # Closest Point
-
+proc closestPoint*[Vector](p: Polygon[Vector], v: Vector): Vector =
+  var minDist : float = 1000000000000.0
+  var vecRef : Vector = p.vertices[0]
+  var vecRef2 = vecRef.copy()
+  var vec = vecRef2.clear()
+  for edges in p.edges():
+    var closestVec = edges.closestPointTo(v)
+    var dist = closestVec.distanceToSquared(v)
+    if(dist < minDist):
+      vec = closestVec
+      minDist = dist
+  result = vec
 
 
 
