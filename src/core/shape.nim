@@ -165,6 +165,7 @@ proc average*[Vector](p: Polygon[Vector]): Vector =
   result = vec
 
 # Predication Vertices
+# Closest Vertex
 proc closestVertex*[Vector](p: Polygon[Vector], v: Vector): Vector =
   var minDist : float = 1000000000000.0
   var vecRef : Vector = p.vertices[0]
@@ -176,6 +177,13 @@ proc closestVertex*[Vector](p: Polygon[Vector], v: Vector): Vector =
       vec = vert
       minDist = dist
   result = vec
+
+# To Polygon
+proc toPolygon*[Vector](p: var Polygon[Vector]): var Polygon =
+  result = p
+
+# To Polyline
+
 
 
   
