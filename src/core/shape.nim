@@ -134,6 +134,7 @@ proc area*[Vector](p: Polygon[Vector]): float =
   for i in 0..<p.pointCount():
     var a = p.vertices[i]
     var b = p.vertices[(i + 1) mod p.pointCount()]
+    echo (i + 1) mod p.pointCount()
     result += (a.x * b.y)
     result -= (a.y * b.x)
   result *= 0.5
@@ -151,8 +152,7 @@ proc centroid*[Vector](p: Polygon[Vector]): Vector =
   for i in 0..<p.pointCount():
     var a = p.vertices[i]
     var b = p.vertices[(i + 1) mod p.pointCount()]
-    var cp = cross(a, b)
-    vec += (a + b) * cp
+    vec += (a + b) * cross(a, b)
   result = vec.multiplySelf(1.0 / (6 * p.area()))
 
 proc average*[Vector](p: Polygon[Vector]): Vector =

@@ -682,6 +682,25 @@ proc distanceTo*(v1, v2: Vector3): float =
 proc distanceTo*(v1, v2: Vector4): float =
   result = v1.subtractNew(v2).length()
 
+# Distance To Squared
+proc distanceToSquared*(v1, v2: Vector2): float =
+  var a = v1.x - v2.x
+  var b = v1.y - v2.y 
+  result = a * a + b * b
+
+proc distanceToSquared*(v1, v2: Vector3): float =
+  var a = v1.x - v2.x
+  var b = v1.y - v2.y 
+  var c = v1.z - v2.z
+  result = a * a + b * b + c * c
+
+proc distanceToSquared*(v1, v2: Vector3): float =
+  var a = v1.x - v2.x
+  var b = v1.y - v2.y 
+  var c = v1.z - v2.z
+  var d = v1.w - v2.w
+  result = a * a + b * b + c * c + w * w
+
 # Normalize
 # Private generic in place normalize
 proc calculateNormalize[T](v: var T, m: float = 1.0): var T {.noinit.} =
