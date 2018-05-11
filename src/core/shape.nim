@@ -46,9 +46,9 @@ type
     radius*: float
     
 # NOTE: This is added from design doc
-  Line*[Vector] = object
-    startPoint*: Vector
-    endPoint*: Vector
+  Line* = object
+    startPoint*: Vector2
+    endPoint*: Vector2
   
 # Polygon
 # Constuctors
@@ -60,9 +60,23 @@ proc polygon*[Vector](): Polygon[Vector] =
   result.vertices = @[]
 
 # NOTE: This is added from design doc
-proc line*[Vector](v1, v2: Vector): Line[Vector] =
+proc line*(v1, v2: Vector2): Line =
   result.startPoint = v1
   result.endPoint = v2
+
+# ***************************************
+#     Line implementation
+# ***************************************
+# NOTE: This is added from design doc
+proc closestPointTo*(l: Line, v: Vector2): Vector2 = 
+  #LINE TYPE AND LINES NEED TO BE REFACTORED FOR GENERICS. 
+  var sub = l.endPoint.subtractNew(l.startPoint)
+  var t = v.subtractNew(l.startPoint).dot(sub) / sub.magnitude()
+  if t < 0.0:
+    return l.startPoint
+  elif t > 1.0:
+    return l.endPoint
+  result = l.startPoint.addNew(sub.multiplySelf(t))
 
 # ***************************************
 #     Polygon implementation
@@ -137,6 +151,14 @@ proc `$`*[Vector](p: Polygon[Vector]): string =
   result = ""
   for vert in p.vertices:
     result.add($vert & ",")
+
+# Get Lines
+# NOTE: This is added from design doc
+proc edges*[Vector](p: Polygon[Vector]): seq[Line] =
+  var list : seq[Line] = @[]
+  for i in 0..<p.pointCount():
+    list.add(line(p.vertices[i],p.vertices[(i+1) mod p.pointCount()]))
+  result = list
 
 # Predicate Shape2 
 # Area
