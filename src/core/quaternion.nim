@@ -6,29 +6,30 @@ from ./concepts import
   Copy,
   String
 
+from ./types import
+  Quaternion,
+  Matrix44,
+  Vector3
+
 export
   Compare,
   Equals,
   Hash,
   Clear,
   Copy,
-  String
+  String,
+  Quaternion
+
+from ./matrix import
+  `[]`
+
+from ./vector import
+  normalizeNew
 
 from strformat import `&`
 from math import sin, cos, arctan2, arccos, sqrt
 
 import hashes
-
-type
-  Quaternion* = object
-    x*, y*, z*, w*: float
-
-from ./matrix import
-  Matrix44,
-  `[]`
-from ./vector import
-  Vector3,
-  normalizeNew
 
 # Constructor
 proc quaternion*(x, y, z, w: float): Quaternion =
@@ -58,18 +59,16 @@ proc set*(q: var Quaternion, n: float): var Quaternion {.noinit.} =
 proc clear*(q: var Quaternion): var Quaternion = set(q, 0.0)
 
 # Inverse
-proc inverseNew*(q: Quaternion): Quaternion =
-  result.x = -q.x
-  result.y = -q.y
-  result.z = -q.z
-  result.w = -q.w
-
 proc inverseSelf*(q: var Quaternion): var Quaternion {.noinit.} =
   q.x = -q.x
   q.y = -q.y
   q.z = -q.z
   q.w = -q.w
   result = q
+
+proc inverseNew*(q: Quaternion): Quaternion =
+  var p = q.copy()
+  result = inverseSelf(p)
 
 proc inverse*(q: Quaternion): Quaternion = inverseNew(q)
 
@@ -83,10 +82,8 @@ proc invertSelf*(q: var Quaternion): var Quaternion {.noinit.} =
   result = q
 
 proc invertNew*(q: Quaternion): Quaternion =
-  result.x = 1 / q.x
-  result.y = 1 / q.y
-  result.z = 1 / q.z
-  result.w = 1 / q.w
+  var p = q.copy()
+  result = invertSelf(p)
 
 proc invert*(q: Quaternion): Quaternion = invertNew(q)
 
@@ -104,7 +101,6 @@ proc `$`*(q: Quaternion): string =
 
 # Magnitude
 proc magnitude*(q: Quaternion): float =
-  ## Gets the magnitude of the quaternion
   result = sqrt(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w)
 
 # Length
@@ -130,7 +126,7 @@ proc addSelf*(q: var Quaternion, f: float): var Quaternion {.noinit.} =
   q.w += f
   result = q
 
-proc addSelf*(q1: var Quaternion, q2: Quaternion): var Quaternion {.noinit} =
+proc addSelf*(q1: var Quaternion, q2: Quaternion): var Quaternion {.noinit.} =
   q1.x += q2.x
   q1.y += q2.y
   q1.z += q2.z
@@ -163,7 +159,7 @@ proc subtractSelf*(q: var Quaternion, f: float): var Quaternion {.noinit.} =
   q.w -= f
   result = q
 
-proc subtractSelf*(q1: var Quaternion, q2: Quaternion): var Quaternion {.noinit} =
+proc subtractSelf*(q1: var Quaternion, q2: Quaternion): var Quaternion {.noinit.} =
   q1.x -= q2.x
   q1.y -= q2.y
   q1.z -= q2.z
@@ -227,7 +223,7 @@ proc divideSelf*(q: var Quaternion, f: float): var Quaternion {.noinit.} =
   q.w /= f
   result = q
 
-proc divideSelf*(q1: var Quaternion, q2: Quaternion): var Quaternion {.noinit} =
+proc divideSelf*(q1: var Quaternion, q2: Quaternion): var Quaternion {.noinit.} =
   q1.x /= q2.x
   q1.y /= q2.y
   q1.z /= q2.z
@@ -243,17 +239,14 @@ proc `/=`*(q: var Quaternion, f: float): var Quaternion = divideSelf(q, f)
 # Normalize
 proc normalizeSelf*(q: var Quaternion, m: float = 1.0): var Quaternion {.noinit.} =
   let magnitude = magnitude(q)
-  if(magnitude > 0):
+  if (magnitude > 0):
     result = multiplySelf(q, m / magnitude)
   else:
     result = q
 
 proc normalizeNew*(q: Quaternion, m: float = 1.0): Quaternion =
-  let magnitude = magnitude(q)
-  if(magnitude > 0):
-    result = multiplyNew(q, m / magnitude)
-  else:
-    result = copy(q)
+  var p = q.copy()
+  result = normalizeSelf(p)
 
 proc normalize*(q: var Quaternion, m: float = 1.0): var Quaternion = normalizeSelf(q, m)
 
@@ -262,14 +255,6 @@ proc dot*(q1, q2: Quaternion): float =
   result = q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w
 
 # Conjugate
-proc conjugateNew(q: Quaternion): Quaternion {.noinit.} =
-  ## Computes a quaternion's conjugate, defined as the same w around the
-  ## inverted axis, returns new quaternion
-  result.x = -q.x
-  result.y = -q.y
-  result.z = -q.z
-  result.w = q.w
-
 proc conjugateSelf(q: var Quaternion): var Quaternion {.noinit.} =
   ## Computes this quaternion's conjugate, defined as the same w around the
   ## inverted axis.
@@ -278,6 +263,12 @@ proc conjugateSelf(q: var Quaternion): var Quaternion {.noinit.} =
   q.z = -q.z
   q.w = q.w
   result = q
+
+proc conjugateNew(q: Quaternion): Quaternion {.noinit.} =
+  ## Computes a quaternion's conjugate, defined as the same w around the
+  ## inverted axis, returns new quaternion
+  var p = q.copy()
+  result = conjugateSelf(p)
 
 proc conjugate*(q: Quaternion): Quaternion = conjugateNew(q)
 proc conjugate*(q: var Quaternion): var Quaternion = conjugateSelf(q)

@@ -483,11 +483,11 @@ suite "Calculating cross product of Vectors":
     testCrossProductFloat(
       Vector2(x: 3.0, y: 1.0),
       Vector2(x: 4.0, y: 2.0),
-      3.0 * 4.0 - 1.0 * 2.0)
+      3.0 * 2.0 - 1.0 * 4.0)
     testCrossProductFloat(
       Vector2(x: 2.0, y: 4.0),
       Vector2(x: 3.0, y: 1.0),
-      2.0 * 3.0 - 4.0 * 1.0)
+      2.0 * 1.0 - 4.0 * 3.0)
   test "Calculating cross product of Vector3s (Vector)":
     testCrossProductVector(
       Vector3(x: 3.0, y: 1.0, z: 2.0),
