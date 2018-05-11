@@ -44,6 +44,11 @@ type
   Sphere*[Vector] = object
     center*: Vector
     radius*: float
+    
+# NOTE: This is added from design doc
+  Line*[Vector] = object
+    startPoint*: Vector
+    endPoint*: Vector
   
 # Polygon
 # Constuctors
@@ -53,6 +58,11 @@ proc polygon*[Vector](points: seq[Vector]): Polygon[Vector] =
 
 proc polygon*[Vector](): Polygon[Vector] =
   result.vertices = @[]
+
+# NOTE: This is added from design doc
+proc line*[Vector](v1, v2: Vector): Line[Vector] =
+  result.startPoint = v1
+  result.endPoint = v2
 
 # ***************************************
 #     Polygon implementation
@@ -183,6 +193,10 @@ proc toPolygon*[Vector](p: var Polygon[Vector]): var Polygon =
   result = p
 
 # To Polyline
+
+# Predicate Closest
+# Closest Point
+
 
 
 
