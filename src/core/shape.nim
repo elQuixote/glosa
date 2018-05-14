@@ -393,3 +393,7 @@ proc clear*[Vector](c: var Circle[Vector]): var Circle[Vector] {.noinit.} =
 proc dimension*[Vector](c: Circle[Vector]): int =
   result = c.center.dimension()
 
+# Copy
+proc copy*[Vector](c: Circle[Vector]): Circle[Vector] = 
+  result = Circle[Vector](center: c.center, radius: c.radius)
+
