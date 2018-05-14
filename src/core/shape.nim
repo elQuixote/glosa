@@ -382,4 +382,9 @@ proc `!=`*[Vector](c1,c2: Circle[Vector]): bool =
 # Hash
 proc hash*[Vector](c: Circle[Vector]): hashes.Hash =
   result = !$(result !& hash(c.center.x) !& hash(c.center.y) !& hash(c.radius))
-  
+
+# Clear
+proc clear*[Vector](c: var Circle[Vector]): var Circle[Vector] {.noinit.} =
+  c.center = vector2(0,0)
+  c.radius = 1
+  result = c
