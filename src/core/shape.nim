@@ -31,6 +31,7 @@ from strformat import `&`
 import hashes
 
 import ./vector
+import ./matrix
 
 type
   
@@ -302,7 +303,12 @@ proc translate*[Vector](p: var Polygon[Vector], v: Vector): var Polygon[Vector] 
   for i, x in p.vertices:
     p.vertices[i] = x.addNew(v)
   result = p
+
 # Transform(Matrix)
+proc transformPolygon*[Vector](p: var Polygon[Vector], m : Matrix): var Polygon[Vector] {.noinit.} = 
+  for i, x in p.vertices:
+    p.vertices[i] = x.transform(m)
+  result = p
 
 
 
