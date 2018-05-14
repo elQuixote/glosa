@@ -19,7 +19,6 @@ type
     x*, y*, z*, w*: float
 
 type
-
   Circle*[Vector] = object
     center*: Vector
     radius*: float 
@@ -30,3 +29,8 @@ type
   LineSegment*[Vector] = object
     startPoint*: Vector
     endPoint*: Vector
+
+type
+  Polyline*[Vector] = object
+    vertices*: seq[Vector]
+  
