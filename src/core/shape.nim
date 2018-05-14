@@ -379,5 +379,7 @@ proc `==`*[Vector](c1,c2: Circle[Vector]): bool =
 proc `!=`*[Vector](c1,c2: Circle[Vector]): bool = 
   result = not (c1 == c2)
   
-
+# Hash
+proc hash*[Vector](c: Circle[Vector]): hashes.Hash =
+  result = !$(result !& hash(c.center.x) !& hash(c.center.y) !& hash(c.radius))
   
