@@ -37,7 +37,7 @@ type
   
   Circle*[Vector] = object
     center*: Vector
-    radius*: float
+    radius*: float 
   
   Polygon*[Vector] = object
     vertices*: seq[Vector]
@@ -51,7 +51,6 @@ type
     startPoint*: Vector
     endPoint*: Vector
   
-# Polygon
 # Constuctors
 proc polygon*[Vector](points: seq[Vector]): Polygon[Vector] =
   result.vertices = @[]
@@ -64,6 +63,26 @@ proc polygon*[Vector](): Polygon[Vector] =
 proc lineSegment*[Vector](v1, v2: Vector): LineSegment[Vector] =
   result.startPoint = v1
   result.endPoint = v2
+
+proc circle*[Vector](): Circle[Vector] =
+  result.center = vector2(0,0)
+  result.radius = 1
+
+proc circle*[Vector](c: Circle): Circle[Vector] =
+  result.center = c.center
+  result.radius = c.radius 
+
+proc circle*[Vector](v: Vector, r: float): Circle = 
+  result.center = v
+  result.radius = r
+
+proc circle*[Vector](x, y, r: float): Circle = 
+  result.center = vector2(x,y)
+  result.radius = r
+
+proc circle*[Vector](x, y, z, r: float): Circle = 
+  result.center = vector3(x,y,z)
+  result.radius = r
 
 # ***************************************
 #     LineSegment implementation
@@ -310,6 +329,9 @@ proc transform*[Vector](p: var Polygon[Vector], m : Matrix): var Polygon[Vector]
     p.vertices[i] = x.transformNew(m)
   result = p
 
+# ***************************************
+#     Circle implementation
+# ***************************************
 
 
 
