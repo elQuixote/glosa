@@ -44,3 +44,11 @@ import hashes
 
 import ./vector
 import ./matrix
+
+# Constuctors
+proc polyline*[Vector](points: seq[Vector]): Polyline[Vector] =
+    result.vertices = @[]
+    result.vertices = points
+  
+proc polyline*[Vector](): Polyline[Vector] =
+result.vertices = @[]
