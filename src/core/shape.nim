@@ -350,6 +350,15 @@ proc area*[Vector](c: Circle[Vector]): float =
 proc perimeter*[Vector](c: Circle[Vector]): float =
   result = TAU * c.radius
 
+# Predicate Centroid
+# Centroid
+proc centroid*[Vector](c: Circle[Vector]): Vector =
+  result = c.center
+
+# Average
+proc average*[Vector](c: Circle[Vector]): Vector =
+  result = c.centroid()
+
 
   
 
