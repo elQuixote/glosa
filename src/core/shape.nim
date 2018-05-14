@@ -41,10 +41,6 @@ type
   
   Polygon*[Vector] = object
     vertices*: seq[Vector]
-  
-  Sphere*[Vector] = object
-    center*: Vector
-    radius*: float
     
 # NOTE: This is added from design doc
   LineSegment*[Vector] = object
@@ -424,7 +420,6 @@ proc translate*[Vector](c: var Circle[Vector], v: Vector): var Circle[Vector] {.
 proc transform*[Vector](c: var Circle[Vector], m : Matrix): var Circle[Vector] {.noinit.} = 
   c.center = c.center.transformNew(m)
   result = c
-
 
 
 
