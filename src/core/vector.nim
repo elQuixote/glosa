@@ -42,6 +42,7 @@ from ./matrix import
   `[]`
 
 from math import sin, cos, arctan2, arccos, sqrt
+from random import rand
 from strformat import `&`
 import hashes
 
@@ -85,8 +86,118 @@ proc vector4*(v: float): Vector4 =
   result.w = v
 
 # From vector(s)
+proc vector1*(v: Vector2): Vector1 =
+  result.x = v.x
+proc vector1*(v: Vector3): Vector1 =
+  result.x = v.x
+proc vector1*(v: Vector4): Vector1 =
+  result.x = v.x
+
+proc vector2*(v: Vector1, y: float = 0.0): Vector2 =
+  result.x = v.x
+  result.y = y
+proc vector2*(v: Vector3): Vector2 =
+  result.x = v.x
+  result.y = v.y
+proc vector2*(v: Vector4): Vector2 =
+  result.x = v.x
+  result.y = v.y
+
+proc vector3*(v: Vector1, y, z: float = 0.0): Vector3 =
+  result.x = v.x
+  result.y = y
+  result.z = z
+proc vector3*(v: Vector2, z: float = 0.0): Vector3 =
+  result.x = v.x
+  result.y = v.y
+  result.z = z
+proc vector3*(v: Vector4): Vector3 =
+  result.x = v.x
+  result.y = v.y
+  result.z = v.z
+
+proc vector4*(v: Vector1, y, z, w: float = 0.0): Vector4 =
+  result.x = v.x
+  result.y = y
+  result.z = z
+  result.w = w
+proc vector4*(v: Vector2, z, w: float = 0.0): Vector4 =
+  result.x = v.x
+  result.y = v.y
+  result.z = z
+  result.w = w
+proc vector4*(v: Vector3, w: float = 0.0): Vector4 =
+  result.x = v.x
+  result.y = v.y
+  result.z = v.z
+  result.w = w
+
 # From array
+proc vector1*(a: array[1, float]): Vector1 =
+  result.x = a[0]
+
+proc vector2*(a: array[2, float]): Vector2 =
+  result.x = a[0]
+  result.y = a[1]
+
+proc vector3*(a: array[3, float]): Vector3 =
+  result.x = a[0]
+  result.y = a[1]
+  result.z = a[2]
+
+proc vector4*(a: array[4, float]): Vector4 =
+  result.x = a[0]
+  result.y = a[1]
+  result.z = a[2]
+  result.w = a[3]
+
 # From sequence
+proc vector1*(s: seq[float]): Vector1 =
+  result.x = s[0]
+
+proc vector2*(s: seq[float]): Vector2 =
+  result.x = s[0]
+  result.y = s[1]
+
+proc vector3*(s: seq[float]): Vector3 =
+  result.x = s[0]
+  result.y = s[1]
+  result.z = s[2]
+
+proc vector4*(s: seq[float]): Vector4 =
+  result.x = s[0]
+  result.y = s[1]
+  result.z = s[2]
+  result.w = s[3]
+
+# From Polar/N-Spherical Coordinates
+# NOTE: Why do n-sphere coordinates to cartesian (x, y, etc.) map like this?
+proc fromRadial*(r: float): Vector1 =
+  result = vector1(r)
+
+proc fromPolar*(r, theta: float): Vector2 =
+  result = vector2(
+    r * cos(theta),
+    r * sin(theta)
+  )
+
+proc fromSpherical*(r, theta, phi: float): Vector3 =
+  result = vector3(
+    r * sin(theta) * cos(phi),
+    r * sin(theta) * sin(phi),
+    r * cos(theta)
+  )
+
+proc from0Spherical*(r: float): Vector1 = fromRadial(r)
+proc from1Spherical*(r, theta: float): Vector2 = fromPolar(r, theta)
+proc from2Spherical*(r, theta, phi: float): Vector3 = fromSpherical(r, theta, phi)
+proc from3Spherical*(r, theta, phi, psi: float): Vector4 =
+  result = vector4(
+    r * sin(theta) * sin(phi) * cos(psi),
+    r * sin(theta) * sin(phi) * sin(psi),
+    r * sin(theta) * cos(phi),
+    r * cos(theta)
+  )
 
 # Copy
 proc copy*(v: Vector1): Vector1 =
@@ -141,6 +252,26 @@ proc set*(v: var Vector4, n: float): var Vector4 {.noinit.} =
   v.z = n
   v.w = n
   result = v
+
+# Randomize
+# NOTE: Replaces random() constructor from design doc
+proc randomize*(v: var Vector1, maxX: float = 1.0): var Vector1 {.noinit.} =
+  v.x = rand(maxX)
+
+proc randomize*(v: var Vector2, maxX, maxY: float = 1.0): var Vector2 {.noinit.} =
+  v.x = rand(maxX)
+  v.y = rand(maxX)
+
+proc randomize*(v: var Vector3, maxX, maxY, maxZ: float = 1.0): var Vector3 {.noinit.} =
+  v.x = rand(maxX)
+  v.y = rand(maxY)
+  v.z = rand(maxZ)
+
+proc randomize*(v: var Vector4, maxX, maxY, maxZ, maxW: float = 1.0): var Vector4 {.noinit.} =
+  v.x = rand(maxX)
+  v.y = rand(maxY)
+  v.z = rand(maxZ)
+  v.w = rand(maxW)
 
 # Clear
 proc clear*(v: var Vector1): var Vector1 = set(v, 0.0)
@@ -1219,6 +1350,18 @@ proc toArray*(v: Vector3): array[3, float] =
 proc toArray*(v: Vector4): array[4, float] =
   result = [v.x, v.y, v.z, v.w]
 
+proc toSeq*(v: Vector1): seq[float] =
+  result = @[v.x]
+
+proc toSeq*(v: Vector2): seq[float] =
+  result = @[v.x, v.y]
+
+proc toSeq*(v: Vector3): seq[float] =
+  result = @[v.x, v.y, v.z]
+
+proc toSeq*(v: Vector4): seq[float] =
+  result = @[v.x, v.y, v.z, v.w]
+
 # String
 # NOTE: Changed from design doc
 proc `$`*(v: Vector1): string =
@@ -1232,3 +1375,16 @@ proc `$`*(v: Vector3): string =
 
 proc `$`*(v: Vector4): string =
   result = &"[{v.x}, {v.y}, {v.z}, {v.w}]"
+
+# Batch comparisons
+proc min*(a: openArray[Vector]): Vector =
+  result = nil
+  for v in a:
+    if result == nil or v < result:
+      result = v
+
+proc max*(a: openArray[Vector]): Vector =
+  result = nil
+  for v in a:
+    if result == nil or v > result:
+      result = v
