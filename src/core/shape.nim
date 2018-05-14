@@ -305,9 +305,9 @@ proc translate*[Vector](p: var Polygon[Vector], v: Vector): var Polygon[Vector] 
   result = p
 
 # Transform(Matrix)
-proc transformPolygon*[Vector](p: var Polygon[Vector], m : Matrix): var Polygon[Vector] {.noinit.} = 
+proc transform*[Vector](p: var Polygon[Vector], m : Matrix): var Polygon[Vector] {.noinit.} = 
   for i, x in p.vertices:
-    p.vertices[i] = x.transform(m)
+    p.vertices[i] = x.transformNew(m)
   result = p
 
 
