@@ -716,17 +716,23 @@ proc distanceToSquared*(v1, v2: Vector4): float =
 
 # NOTE: This is added from design doc
 # InterpolateTo
-proc interpolateTo*(v1, v2: Vector1, f: float): Vector2 = 
-  result = v1.x + (v2.x - v1.x) * f
+proc interpolateTo*(v1, v2: Vector1, f: float): Vector1 = 
+  result.x = v1.x + (v2.x - v1.x) * f
 
 proc interpolateTo*(v1, v2: Vector2, f: float): Vector2 = 
-  result = v1.x + (v2.x - v1.x) * f, v1.y + (v2.y - v1.y) * f
+  result.x = v1.x + (v2.x - v1.x) * f
+  result.y = v1.y + (v2.y - v1.y) * f
 
 proc interpolateTo*(v1, v2: Vector3, f: float): Vector3 = 
-  result = v1.x + (v2.x - v1.x) * f, v1.y + (v2.y - v1.y) * f, v1.z + (v2.z - v1.z) * f
+  result.x = v1.x + (v2.x - v1.x) * f 
+  result.y = v1.y + (v2.y - v1.y) * f
+  result.z = v1.z + (v2.z - v1.z) * f
 
 proc interpolateTo*(v1, v2: Vector4, f: float): Vector4 = 
-  result = v1.x + (v2.x - v1.x) * f, v1.y + (v2.y - v1.y) * f, v1.z + (v2.z - v1.z) * f, v1.w + (v2.w - v1.w) * f
+  result.x = v1.x + (v2.x - v1.x) * f 
+  result.y = v1.y + (v2.y - v1.y) * f
+  result.z = v1.z + (v2.z - v1.z) * f
+  result.z = v1.w + (v2.w - v1.w) * f
 
 # Normalize
 # Private generic in place normalize
