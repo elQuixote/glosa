@@ -8,7 +8,7 @@ const
   ETA = pow(10.0, -6)
   TAU = pow(10.0, -3)
 
-proc compareVectorsWithinTau(m1, m2: Matrix): bool =
+proc compareMatricesWithinTau(m1, m2: Matrix): bool =
   let matrices = zip(m1.matrix, m2.matrix)
   result = true
   for r in matrices:
@@ -153,7 +153,7 @@ suite "Testing Matrix invert":
   proc testInvert(m, expected: Matrix) {.inline.} =
     let i = invertNew(m)
     check:
-      compareVectorsWithinTau(i, expected)
+      compareMatricesWithinTau(i, expected)
   test "Testing Matrix33 invert":
     testInvert(
       matrix33(
