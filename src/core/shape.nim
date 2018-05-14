@@ -400,3 +400,33 @@ proc copy*[Vector](c: Circle[Vector]): Circle[Vector] =
 # String
 proc `$`*[Vector](c: Circle[Vector]): string =
   result = &"[{c.center.x}, {c.center.y}, {c.radius}]"
+
+# Predicate Transforms
+# Rotate
+proc rotate*[Vector](c: var Circle[Vector], theta: float): var Circle[Vector] {.noinit.} =
+  result = c
+
+# Scale
+proc scale*[Vector](c: var Circle[Vector], s: float): var Circle[Vector] {.noinit.} =
+  c.radius *= s
+  result = c
+
+# Translate
+proc translate*[Vector](c: var Circle[Vector], t: float): var Circle[Vector] {.noinit.} =
+  c.center += t
+  result = c
+
+proc translate*[Vector](c: var Circle[Vector], v: Vector): var Circle[Vector] {.noinit.} =
+  c.center += v
+  result = c
+
+# Transform(Matrix)
+proc transform*[Vector](c: var Circle[Vector], m : Matrix): var Circle[Vector] {.noinit.} = 
+  c.center = c.center.transformNew(m)
+  result = c
+
+
+
+
+  
+
