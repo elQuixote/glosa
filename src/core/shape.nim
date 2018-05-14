@@ -339,6 +339,9 @@ proc circlefrom2Points*[Vector](v1, v2: Vector): Circle[Vector] =
   result.center = vec
   result.radius = vec.distanceTo(v2)
 
+proc containsPoint*[Vector](c: Circle[Vector], v: Vector): bool =
+  result = c.center.distanceToSquared(v) <= c.radius * c.radius
+
 
 
 
