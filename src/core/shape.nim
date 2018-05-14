@@ -26,7 +26,7 @@ export
   Closest,
   Vertices
 
-from math import arctan2, arccos, sqrt
+from math import arctan2, arccos, sqrt, TAU, PI
 from strformat import `&`
 import hashes
 
@@ -342,8 +342,13 @@ proc circlefrom2Points*[Vector](v1, v2: Vector): Circle[Vector] =
 proc containsPoint*[Vector](c: Circle[Vector], v: Vector): bool =
   result = c.center.distanceToSquared(v) <= c.radius * c.radius
 
-
-
+# Predicate Shape2 
+# Area
+proc area*[Vector](c: Circle[Vector]): float =
+  result = PI*(c.radius * c.radius)
+# Perimeter (the circumference)
+proc perimeter*[Vector](c: Circle[Vector]): float =
+  result = TAU * c.radius
 
 
   
