@@ -694,6 +694,7 @@ proc distanceTo*(v1, v2: Vector3): float =
 proc distanceTo*(v1, v2: Vector4): float =
   result = v1.subtractNew(v2).length()
 
+# NOTE: This is added from design doc
 # Distance To Squared
 proc distanceToSquared*(v1, v2: Vector2): float =
   var a = v1.x - v2.x
@@ -712,6 +713,11 @@ proc distanceToSquared*(v1, v2: Vector4): float =
   var c = v1.z - v2.z
   var d = v1.w - v2.w
   result = a * a + b * b + c * c + d * d
+
+# NOTE: This is added from design doc
+# InterpolateTo
+proc interpolateTo*(v1, v2: Vector2, f: float): Vector2 = 
+  result = v1.x + (v2.x - v1.x) * f, v1.y + (v2.y - v1.y) * f
 
 # Normalize
 # Private generic in place normalize
