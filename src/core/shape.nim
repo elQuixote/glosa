@@ -332,6 +332,13 @@ proc transform*[Vector](p: var Polygon[Vector], m : Matrix): var Polygon[Vector]
 # ***************************************
 #     Circle implementation
 # ***************************************
+# NOTE: This is added from design doc
+# other constructors
+proc circlefrom2Points*[Vector](v1, v2: Vector): Circle[Vector] =
+  var vec = v1.interpolateTo(v2, 0.5)
+  result.center = vec
+  result.radius = vec.distanceTo(v2)
+
 
 
 
