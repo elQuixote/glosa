@@ -397,3 +397,6 @@ proc dimension*[Vector](c: Circle[Vector]): int =
 proc copy*[Vector](c: Circle[Vector]): Circle[Vector] = 
   result = Circle[Vector](center: c.center, radius: c.radius)
 
+# String
+proc `$`*[Vector](c: Circle[Vector]): string =
+  result = &"[{c.center.x}, {c.center.y}, {c.radius}]"
