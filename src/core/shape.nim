@@ -12,6 +12,17 @@ from ./concepts import
   Closest,
   Vertices
 
+from ./types import
+  Vector1,
+  Vector2,
+  Vector3,
+  Vector4,
+  Matrix33,
+  Matrix44, 
+  Circle,
+  Polygon,
+  LineSegment
+
 export
   Equals,
   Hash,
@@ -24,7 +35,10 @@ export
   Centroid,
   Shape2,
   Closest,
-  Vertices
+  Vertices,
+  Circle,
+  Polygon,
+  LineSegment
 
 from math import arctan2, arccos, sqrt, TAU, PI
 from strformat import `&`
@@ -33,20 +47,6 @@ import hashes
 import ./vector
 import ./matrix
 
-type
-  
-  Circle*[Vector] = object
-    center*: Vector
-    radius*: float 
-  
-  Polygon*[Vector] = object
-    vertices*: seq[Vector]
-    
-# NOTE: This is added from design doc
-  LineSegment*[Vector] = object
-    startPoint*: Vector
-    endPoint*: Vector
-  
 # Constuctors
 proc polygon*[Vector](points: seq[Vector]): Polygon[Vector] =
   result.vertices = @[]
