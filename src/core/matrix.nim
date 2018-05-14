@@ -101,7 +101,7 @@ proc `m32=`*(m: var Matrix44, v: float) {.noinit.} = m.matrix[3][2] = v
 proc `m33=`*(m: var Matrix44, v: float) {.noinit.} = m.matrix[3][3] = v
 
 # Constructors
-proc Matrix33*(
+proc matrix33*(
     m00, m01, m02,
     m10, m11, m12,
     m20, m21, m22: float
@@ -139,7 +139,7 @@ proc matrix44*(
   result.matrix[3][2] = m32
   result.matrix[3][3] = m33
 
-proc Matrix33*(v1, v2, v3: Vector3): Matrix44 =
+proc matrix33*(v1, v2, v3: Vector3): Matrix44 =
   result.matrix[0][0] = v1.x
   result.matrix[0][1] = v2.x
   result.matrix[0][2] = v3.x
@@ -171,7 +171,7 @@ proc matrix44*(v1, v2, v3, v4: Vector4): Matrix44 =
 # Identity
 # NOTE: This is Added, not in design doc
 const
-  IDMatrix33*: Matrix33 = Matrix33(
+  IDMatrix33*: Matrix33 = matrix33(
     1.0, 0.0, 0.0,
     0.0, 1.0, 0.0,
     0.0, 0.0, 1.0
@@ -257,7 +257,7 @@ proc `==`*(m1, m2: Matrix44): bool =
            m1.matrix[2][0] == m2.matrix[2][0] and
            m1.matrix[2][1] == m2.matrix[2][1] and
            m1.matrix[2][2] == m2.matrix[2][2] and
-           m1.matrix[2][3] == m2.matrix[2][2] and
+           m1.matrix[2][3] == m2.matrix[2][3] and
            m1.matrix[3][0] == m2.matrix[3][0] and
            m1.matrix[3][1] == m2.matrix[3][1] and
            m1.matrix[3][2] == m2.matrix[3][2] and
@@ -327,18 +327,30 @@ proc determinant*(m: Matrix33): float =
 
 proc determinant*(m: Matrix44): float =
   let
-    q0 = m.matrix[2][2] * m.matrix[3][3] - m.matrix[2][3] * m.matrix[3][2]
-    q1 = m.matrix[2][1] * m.matrix[3][2] - m.matrix[2][2] * m.matrix[3][1]
-    q2 = m.matrix[2][0] * m.matrix[3][3] + m.matrix[2][3] * m.matrix[3][0]
-    q3 = m.matrix[2][0] * m.matrix[3][1] - m.matrix[2][1] * m.matrix[3][0]
-    p0 = m.matrix[2][1] * m.matrix[3][3]
-    p1 = m.matrix[2][3] * m.matrix[3][1]
-    p2 = m.matrix[2][0] * m.matrix[3][2]
-    p3 = m.matrix[2][2] * m.matrix[3][0]
-  result =  m.matrix[0][0] * (m.matrix[1][1] * q0 - m.matrix[1][2] * (p0 + p1) + m.matrix[1][3] * q1) -
-            m.matrix[0][1] * (m.matrix[1][0] * q0 - m.matrix[1][2] * q2 + m.matrix[1][3] * (p2 - p3)) +
-            m.matrix[0][2] * (m.matrix[1][0] * (p0 - p1) - m.matrix[1][1] * q2 + m.matrix[1][3] * q3) -
-            m.matrix[0][3] * (m.matrix[1][0] * q1 - m.matrix[1][1] * (p2 + p3) + m.matrix[1][2] * q3)
+    p0 = m.matrix[0][2] * m.matrix[1][3]
+    p1 = m.matrix[0][2] * m.matrix[2][3]
+    p2 = m.matrix[0][2] * m.matrix[3][3]
+    p3 = m.matrix[1][2] * m.matrix[0][3]
+    p4 = m.matrix[1][2] * m.matrix[2][3]
+    p5 = m.matrix[1][2] * m.matrix[3][3]
+    p6 = m.matrix[2][2] * m.matrix[0][3]
+    p7 = m.matrix[2][2] * m.matrix[1][3]
+    p8 = m.matrix[2][2] * m.matrix[3][3]
+    p9 = m.matrix[3][2] * m.matrix[0][3]
+    pA = m.matrix[3][2] * m.matrix[1][3]
+    pB = m.matrix[3][2] * m.matrix[2][3]
+  result = m.matrix[0][0] * m.matrix[1][1] * (p8 - pB) +
+           m.matrix[0][0] * m.matrix[2][1] * (pA - p5) +
+           m.matrix[0][0] * m.matrix[3][1] * (p4 - p7) +
+           m.matrix[1][0] * m.matrix[0][1] * (pB - p8) +
+           m.matrix[1][0] * m.matrix[2][1] * (p2 - p9) +
+           m.matrix[1][0] * m.matrix[3][1] * (p6 - p1) +
+           m.matrix[2][0] * m.matrix[0][1] * (p5 - pA) +
+           m.matrix[2][0] * m.matrix[1][1] * (p9 - p2) +
+           m.matrix[2][0] * m.matrix[3][1] * (p0 - p3) +
+           m.matrix[3][0] * m.matrix[0][1] * (p7 - p4) +
+           m.matrix[3][0] * m.matrix[1][1] * (p1 - p6) +
+           m.matrix[3][0] * m.matrix[2][1] * (p3 - p0)
 # Invert
 proc invertSelf*(m: var Matrix33): var Matrix33 {.noinit.} =
   let
