@@ -359,6 +359,15 @@ proc centroid*[Vector](c: Circle[Vector]): Vector =
 proc average*[Vector](c: Circle[Vector]): Vector =
   result = c.centroid()
 
+# Predicate Closest
+# ClosestPoint to circle in 2D
+proc closestPoint*[Vector](c: Circle[Vector], v: Vector): Vector =
+  var vX = v.x - c.center.x
+  var vY = v.y - c.center.y
+  var magV = vX*vX - vY*vY 
+  result.x = c.center.x + vX / magV * c.radius
+  result.y = c.center.y + vY / magv * c.radius
+
 
   
 
