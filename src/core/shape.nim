@@ -368,7 +368,16 @@ proc closestPoint*[Vector](c: Circle[Vector], v: Vector): Vector =
   result.x = c.center.x + vX / magV * c.radius
   result.y = c.center.y + vY / magv * c.radius
 
+# Equals (compares center and radius for circle)
+proc `==`*[Vector](c1,c2: Circle[Vector]): bool =
+  if (c1.center != c2.center) and (c1.radius != c2.radius): 
+    result = false
+  else:
+    result = true
 
+# Non Equals
+proc `!=`*[Vector](c1,c2: Circle[Vector]): bool = 
+  result = not (c1 == c2)
   
 
   
