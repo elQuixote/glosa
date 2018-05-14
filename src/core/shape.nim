@@ -388,3 +388,8 @@ proc clear*[Vector](c: var Circle[Vector]): var Circle[Vector] {.noinit.} =
   c.center = vector2(0,0)
   c.radius = 1
   result = c
+
+# Dimension
+proc dimension*[Vector](c: Circle[Vector]): int =
+  result = c.center.dimension()
+
