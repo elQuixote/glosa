@@ -37,6 +37,9 @@ export
   Vector3,
   Vector4
 
+# from ./constants import
+#   ETA
+
 from ./matrix import
   matrix44,
   invert,
@@ -120,9 +123,9 @@ macro generateSwizzleProcs(t: typed, chars: static[string]): untyped =
         for m in chars:
           let
             mIdent = ident("" & m)
-            ijkIdent = ident(ijkString & m)
+            ijkmIdent = ident(ijkString & m)
           result.add quote do:
-            proc `ijkIdent`*(v: `t`): Vector4 =
+            proc `ijkmIdent`*(v: `t`): Vector4 =
               Vector4(x: v.`iIdent`, y: v.`jIdent`, z: v.`kIdent`, w: v.`mIdent`)
 
 generateSwizzleProcs(Vector1, "x")
@@ -1533,3 +1536,45 @@ proc max*(a: openArray[Vector]): Vector =
   for v in a:
     if result == nil or v > result:
       result = v
+
+# Miscellaneous
+# NOTE: This is added from the design doc
+# NOTE: All plane operations should be refactored as some point
+
+proc calculatePlane*(v1, v2, v3: Vector3): Vector4 =
+  let cp = cross(subtractNew(v3, v1), subtractNew(v2, v1))
+  result = vector4(cp, -1.0 * dot(cp, v3))
+
+proc areCollinear*(v1, v2, v3: Vector3): bool =
+  result = true
+  let ms = magnitudeSquared(cross(subtractNew(v3, v1), subtractNew(v2, v1)))
+  # if ms > ETA:
+  if ms != 0:
+    result = false
+
+# NOTE: Write generaly isCollinear for array
+
+# This is probably not the most efficient algorithm for coplanarity
+# Finds the first plane, and then each points distance to that plane
+proc arePlanar*(a: openArray[Vector3]): bool =
+  result = true
+  let l = len(a)
+  if l > 3:
+    block:
+      var
+        collinear = true
+        p = vector4(0.0, 0.0, 0.0, 0.0)
+      for i in 0..<(l - 2):
+        if not areCollinear(a[0], a[1], a[2]):
+          collinear = false
+          p = calculatePlane(a[0], a[1], a[2])
+          break
+      if collinear:
+        break
+      for i in 3..<l:
+        let d = p.x * a[i].x + p.y * a[i].y + p.z * a[i].z + p.w
+        # NOTE: Refactor if needed to use ETA because of floating point
+        # if d > ETA:
+        if d != 0.0:
+          result = false
+          break

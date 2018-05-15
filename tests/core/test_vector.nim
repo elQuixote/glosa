@@ -5,8 +5,8 @@ from system import `@`, abs
 from math import pow, sqrt, PI
 from sequtils import zip, toSeq
 
-const
-  ETA = pow(10.0, -6)
+from ../../src/core/constants import
+  ETA
 
 # Vector testing utilities
 proc compareVectorToValue(vector: Vector, value: float): bool =
@@ -927,3 +927,36 @@ suite "Getting string from Vector":
     testVectorToString(vector3(1.0, 2.0, 3.0), "[1.0, 2.0, 3.0]")
   test "Getting string from Vector4":
     testVectorToString(vector4(1.0, 2.0, 3.0, 4.0), "[1.0, 2.0, 3.0, 4.0]")
+
+suite "Calculating a plane and planarity":
+  # 10x - 10y + z = -2
+  let
+    p0 = vector3(10.0, 5.0, -52.0)
+    p1 = vector3(5.0, 10.0, 48.0)
+    p2 = vector3(2.0, 4.0, 18.0)
+    p3 = vector3(3.0, 4.0, 8.0)
+    p4 = vector3(3.0, 1.0, -22.0)
+    p5 = vector3(7.0, 10.0, 28.0)
+    n0 = vector3(-1.0, 100.0, 2.0)
+    n1 = vector3(-10.0, 1.0, 40.0)
+    n2 = vector3(1.0, 1.0, 1.0)
+  proc estimateDistanceToPlane(v: Vector3, p: Vector4): float =
+    result = p.x * v.x + p.y * v.y + p.z * v.z + p.w
+  test "Calculating a plane from 3 Vector3s":
+    let plane = calculatePlane(p0, p1, p2)
+    check:
+      estimateDistanceToPlane(p0, plane) == 0
+      estimateDistanceToPlane(p1, plane) == 0
+      estimateDistanceToPlane(p2, plane) == 0
+      estimateDistanceToPlane(p3, plane) == 0
+      estimateDistanceToPlane(p4, plane) == 0
+      estimateDistanceToPlane(p5, plane) == 0
+      estimateDistanceToPlane(n0, plane) != 0
+      estimateDistanceToPlane(n1, plane) != 0
+      estimateDistanceToPlane(n2, plane) != 0
+  test "Testing planarity of a set of Vector3s":
+    check:
+      arePlanar([p0, p1, p2, p3, p4, p5])
+      not arePlanar([p0, p1, p2, p3, p4, p5, n0, n1, n2])
+      not arePlanar([n0, n1, n2, p3, p4, p5])
+      arePlanar([n0, n1, n2])
