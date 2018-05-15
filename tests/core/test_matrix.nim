@@ -4,16 +4,15 @@ import unittest
 from sequtils import zip
 
 from ../../src/core/constants import
-  ETA,
-  TAU
+  ETA
 
-proc compareMatricesWithinTau(m1, m2: Matrix): bool =
+proc compareMatricesWithinHalfEta(m1, m2: Matrix): bool =
   let matrices = zip(m1.matrix, m2.matrix)
   result = true
   for r in matrices:
     let rows = zip(r[0], r[1])
     for cells in rows:
-      if abs(cells[0] - cells[1]) >= TAU:
+      if abs(cells[0] - cells[1]) >= (ETA / 2.0):
         result = false
   if not result:
     checkpoint("m1 was " & $m1)
@@ -152,7 +151,7 @@ suite "Inverting a Matrix":
   proc testInvert(m, expected: Matrix) {.inline.} =
     let i = invertNew(m)
     check:
-      compareMatricesWithinTau(i, expected)
+      compareMatricesWithinHalfEta(i, expected)
   test "Inverting a Matrix33":
     testInvert(
       matrix33(

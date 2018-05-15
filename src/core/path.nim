@@ -19,7 +19,7 @@ from ./types import
   Vector3,
   Vector4,
   Matrix33,
-  Matrix44, 
+  Matrix44,
   Polyline,
   LineSegment,
   Polygon
@@ -45,7 +45,6 @@ from strformat import `&`
 import hashes
 
 from ./vector import vector2, vector3, clear, copy, dimension
-from ./shape import polygon
 
 # Constuctors
 proc polyline*[Vector](points: seq[Vector]): Polyline[Vector] =
@@ -53,7 +52,7 @@ proc polyline*[Vector](points: seq[Vector]): Polyline[Vector] =
     raise newException(AccessViolationError, "Need more than 2 points to create a polyline")
   result.vertices = @[]
   result.vertices = points
-  
+
 proc polyline*[Vector](): Polyline[Vector] =
   result.vertices = @[]
 
@@ -66,7 +65,7 @@ proc lineSegment*[Vector](v1, v2: Vector): LineSegment[Vector] =
 #     LineSegment implementation
 # ***************************************
 # NOTE: This is added from design doc
-proc closestPointTo*[Vector](l: LineSegment[Vector], v: Vector2): Vector2 = 
+proc closestPointTo*[Vector](l: LineSegment[Vector], v: Vector2): Vector2 =
   var sub = l.endPoint.subtractNew(l.startPoint)
   var t = v.subtractNew(l.startPoint).dot(sub) / sub.magnitudeSquared()
   if t < 0.0:
@@ -79,13 +78,13 @@ proc closestPointTo*[Vector](l: LineSegment[Vector], v: Vector2): Vector2 =
 #     Polyline implementation
 # ***************************************
 # NOTE: This is added from design doc
-proc addVertex*[Vector](p: var Polyline[Vector], x, y: float): var Polyline[Vector] {.noinit.} = 
+proc addVertex*[Vector](p: var Polyline[Vector], x, y: float): var Polyline[Vector] {.noinit.} =
   if not p.contains(vector2(x,y)):
     p.vertices.add(vector2(x, y))
   else: raise newException(AccessViolationError, "Attempting to add a vertex which alreaday exists")
   result = p
 
-proc addVertex*[Vector](p: var Polyline[Vector], x, y, z: float): var Polyline[Vector] {.noinit.} = 
+proc addVertex*[Vector](p: var Polyline[Vector], x, y, z: float): var Polyline[Vector] {.noinit.} =
   if not p.contains(vector3(x,y,z)):
     p.vertices.add(vector3(x, y, z))
   else: raise newException(AccessViolationError, "Attempting to add a vertex which alreaday exists")
@@ -98,7 +97,7 @@ proc addVertex*[Vector](p: var Polyline[Vector], v: Vector): var Polyline[Vector
   result = p
 
 # NOTE: This is added from design doc
-proc pointCount*[Vector](p: Polyline[Vector]): int = 
+proc pointCount*[Vector](p: Polyline[Vector]): int =
   result = len(p.vertices)
 
 # Get Lines
@@ -125,7 +124,7 @@ proc reverseOrder*[Vector](p: var Polyline[Vector]): var Polyline[Vector] {.noin
   var list = newSeq[Vector](p.pointCount())
   for i, x in p.vertices:
     list[p.vertices.high-i] = x
-  p.vertices = list 
+  p.vertices = list
   result = p
 
 # NOTE: This is added from design doc
@@ -165,7 +164,7 @@ proc `==`*[Vector](p1,p2: Polyline[Vector]): bool =
   result = hit
 
 # Non Equals
-proc `!=`*[Vector](p1,p2: Polyline[Vector]): bool = 
+proc `!=`*[Vector](p1,p2: Polyline[Vector]): bool =
   result = not (p1 == p2)
 
 # Hash
@@ -184,7 +183,7 @@ proc dimension*[Vector](p: Polyline[Vector]): int =
   result = p.vertices[0].dimension()
 
 # Copy
-proc copy*[Vector](p: Polyline[Vector]): Polyline[Vector] = 
+proc copy*[Vector](p: Polyline[Vector]): Polyline[Vector] =
   result = Polyline(vertices: p.vertices)
 
 # String
@@ -225,7 +224,7 @@ proc toPolyline*[Vector](p: var Polyline[Vector]): var Polyline[Vector] {.noinit
 
 # To Polygon
 proc toPolygon*[Vector](p: Polyline[Vector]): Polygon[Vector] =
-  result = polygon(p.vertices)
+  result = Polygon(vertices: p.vertices)
 
 # Predicate Closest
 # Closest Point
@@ -277,7 +276,7 @@ proc translate*[Vector](p: var Polyline[Vector], v: Vector): var Polyline[Vector
   result = p
 
 # Transform(Matrix)
-proc transform*[Vector](p: var Polyline[Vector], m : Matrix): var Polyline[Vector] {.noinit.} = 
+proc transform*[Vector](p: var Polyline[Vector], m : Matrix): var Polyline[Vector] {.noinit.} =
   for i, x in p.vertices:
     p.vertices[i] = x.transformNew(m)
   result = p
