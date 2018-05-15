@@ -41,6 +41,7 @@ from ./matrix import
   invert,
   `[]`
 
+import macros
 from math import sin, cos, arctan2, arccos, sqrt
 from random import rand
 from strformat import `&`
@@ -48,6 +49,85 @@ import hashes
 
 type
   InvalidCrossProductError* = object of Exception
+
+proc `[]`*(v: Vector1, i: int): float =
+  case i:
+  of 0: result = v.x
+  else: assert(false)
+proc `[]`*(v: Vector2, i: int): float =
+  case i:
+  of 0: result = v.x
+  of 1: result = v.y
+  else: assert(false)
+proc `[]`*(v: Vector3, i: int): float =
+  case i:
+  of 0: result = v.x
+  of 1: result = v.y
+  of 2: result = v.z
+  else: assert(false)
+proc `[]`*(v: Vector4, i: int): float =
+  case i:
+  of 0: result = v.x
+  of 1: result = v.y
+  of 2: result = v.z
+  of 3: result = v.w
+  else: assert(false)
+
+proc `[]=`*(v: var Vector1, i: int, value: float): float =
+  case i:
+  of 0: v.x = value
+  else: assert(false)
+proc `[]=`*(v: var Vector2, i: int, value: float): float =
+  case i:
+  of 0: v.x = value
+  of 1: v.y = value
+  else: assert(false)
+proc `[]=`*(v: var Vector3, i: int, value: float): float =
+  case i:
+  of 0: v.x = value
+  of 1: v.y = value
+  of 2: v.z = value
+  else: assert(false)
+proc `[]=`*(v: var Vector4, i: int, value: float): float =
+  case i:
+  of 0: v.x = value
+  of 1: v.y = value
+  of 2: v.z = value
+  of 3: v.w = value
+  else: assert(false)
+
+macro swizzleProcs(t: typed, chars: static[string]): untyped =
+  result = newStmtList()
+  for i in chars:
+    for j in chars:
+      let
+        iIdent = ident("" & i)
+        jIdent = ident("" & j)
+        ijString = i & j
+        ijName = ident(ijString)
+      result.add quote do:
+        proc `ijName`*(v: `t`): Vector2 =
+          Vector2(x: v.`iIdent`, y: v.`jIdent`)
+      for k in chars:
+        let
+          kIdent = ident("" & k)
+          ijkString = ijString & k
+          ijkIdent = ident(ijkString)
+        result.add quote do:
+          proc `ijkIdent`*(v: `t`): Vector3 =
+            Vector3(x: v.`iIdent`, y: v.`jIdent`, z: v.`kIdent`)
+        for m in chars:
+          let
+            mIdent = ident("" & m)
+            ijkIdent = ident(ijkString & m)
+          result.add quote do:
+            proc `ijkIdent`*(v: `t`): Vector4 =
+              Vector4(x: v.`iIdent`, y: v.`jIdent`, z: v.`kIdent`, w: v.`mIdent`)
+
+swizzleProcs(Vector1, "x")
+swizzleProcs(Vector2, "xy")
+swizzleProcs(Vector3, "xyz")
+swizzleProcs(Vector4, "xyzw")
 
 # Constructors
 # From parameters
