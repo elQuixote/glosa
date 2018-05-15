@@ -861,29 +861,29 @@ proc heading*(v: Vector3): float = headingXY(v)
 proc heading*(v: Vector4): float = headingXY(v)
 
 # Magnitude
+proc magnitudeSquared*(v: Vector1): float {.inline.} =
+  result = v.x * v.x
+
+proc magnitudeSquared*(v: Vector2): float {.inline.} =
+  result = v.x * v.x + v.y * v.y
+
+proc magnitudeSquared*(v: Vector3): float {.inline.} =
+  result = v.x * v.x + v.y * v.y + v.z * v.z
+
+proc magnitudeSquared*(v: Vector4): float {.inline.} =
+  result = v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w
+
 proc magnitude*(v: Vector1): float =
   result = abs(v.x)
 
 proc magnitude*(v: Vector2): float =
-  result = sqrt(v.x * v.x + v.y * v.y)
+  result = sqrt(magnitudeSquared(v))
 
 proc magnitude*(v: Vector3): float =
-  result = sqrt(v.x * v.x + v.y * v.y + v.z * v.z)
+  result = sqrt(magnitudeSquared(v))
 
 proc magnitude*(v: Vector4): float =
-  result = sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w)
-
-proc magnitudeSquared*(v: Vector1): float =
-  result = v.x * v.x
-
-proc magnitudeSquared*(v: Vector2): float =
-  result = v.x * v.x + v.y * v.y
-
-proc magnitudeSquared*(v: Vector3): float =
-  result = v.x * v.x + v.y * v.y + v.z * v.z
-
-proc magnitudeSquared*(v: Vector4): float =
-  result = v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w
+  result = sqrt(magnitudeSquared(v))
 
 # Length
 proc length*(v: Vector1): float = magnitude(v)
@@ -891,22 +891,8 @@ proc length*(v: Vector2): float = magnitude(v)
 proc length*(v: Vector3): float = magnitude(v)
 proc length*(v: Vector4): float = magnitude(v)
 
-# NOTE: This is added from design doc
 # Distance To
-proc distanceTo*(v1, v2: Vector1): float =
-  result = v1.subtractNew(v2).length()
-
-proc distanceTo*(v1, v2: Vector2): float =
-  result = v1.subtractNew(v2).length()
-
-proc distanceTo*(v1, v2: Vector3): float =
-  result = v1.subtractNew(v2).length()
-
-proc distanceTo*(v1, v2: Vector4): float =
-  result = v1.subtractNew(v2).length()
-
 # NOTE: This is added from design doc
-# Distance To Squared
 proc distanceToSquared*(v1, v2: Vector2): float =
   var a = v1.x - v2.x
   var b = v1.y - v2.y
@@ -925,8 +911,20 @@ proc distanceToSquared*(v1, v2: Vector4): float =
   var d = v1.w - v2.w
   result = a * a + b * b + c * c + d * d
 
+proc distanceTo*(v1, v2: Vector1): float =
+  result = v1.subtractNew(v2).length()
+
+proc distanceTo*(v1, v2: Vector2): float =
+  result = v1.subtractNew(v2).length()
+
+proc distanceTo*(v1, v2: Vector3): float =
+  result = v1.subtractNew(v2).length()
+
+proc distanceTo*(v1, v2: Vector4): float =
+  result = v1.subtractNew(v2).length()
+
+# Interpolate To
 # NOTE: This is added from design doc
-# InterpolateTo
 proc interpolateTo*(v1, v2: Vector1, f: float): Vector1 =
   result.x = v1.x + (v2.x - v1.x) * f
 
@@ -1090,52 +1088,52 @@ proc angleBetween*(v1, v2: Vector4): float =
 
 # Compare (compares magnitudes)
 proc `>`*(v1, v2: Vector1): bool =
-  result = magnitude(v1) > magnitude(v2)
+  result = magnitudeSquared(v1) > magnitudeSquared(v2)
 
 proc `<`*(v1, v2: Vector1): bool =
-  result = magnitude(v1) < magnitude(v2)
+  result = magnitudeSquared(v1) < magnitudeSquared(v2)
 
 proc `>=`*(v1, v2: Vector1): bool =
-  result = magnitude(v1) >= magnitude(v2)
+  result = magnitudeSquared(v1) >= magnitudeSquared(v2)
 
 proc `<=`*(v1, v2: Vector1): bool =
-  result = magnitude(v1) <= magnitude(v2)
+  result = magnitudeSquared(v1) <= magnitudeSquared(v2)
 
 proc `>`*(v1, v2: Vector2): bool =
-  result = magnitude(v1) > magnitude(v2)
+  result = magnitudeSquared(v1) > magnitudeSquared(v2)
 
 proc `<`*(v1, v2: Vector2): bool =
-  result = magnitude(v1) < magnitude(v2)
+  result = magnitudeSquared(v1) < magnitudeSquared(v2)
 
 proc `>=`*(v1, v2: Vector2): bool =
-  result = magnitude(v1) >= magnitude(v2)
+  result = magnitudeSquared(v1) >= magnitudeSquared(v2)
 
 proc `<=`*(v1, v2: Vector2): bool =
-  result = magnitude(v1) <= magnitude(v2)
+  result = magnitudeSquared(v1) <= magnitudeSquared(v2)
 
 proc `>`*(v1, v2: Vector3): bool =
-  result = magnitude(v1) > magnitude(v2)
+  result = magnitudeSquared(v1) > magnitudeSquared(v2)
 
 proc `<`*(v1, v2: Vector3): bool =
-  result = magnitude(v1) < magnitude(v2)
+  result = magnitudeSquared(v1) < magnitudeSquared(v2)
 
 proc `>=`*(v1, v2: Vector3): bool =
-  result = magnitude(v1) >= magnitude(v2)
+  result = magnitudeSquared(v1) >= magnitudeSquared(v2)
 
 proc `<=`*(v1, v2: Vector3): bool =
-  result = magnitude(v1) <= magnitude(v2)
+  result = magnitudeSquared(v1) <= magnitudeSquared(v2)
 
 proc `>`*(v1, v2: Vector4): bool =
-  result = magnitude(v1) > magnitude(v2)
+  result = magnitudeSquared(v1) > magnitudeSquared(v2)
 
 proc `<`*(v1, v2: Vector4): bool =
-  result = magnitude(v1) < magnitude(v2)
+  result = magnitudeSquared(v1) < magnitudeSquared(v2)
 
 proc `>=`*(v1, v2: Vector4): bool =
-  result = magnitude(v1) >= magnitude(v2)
+  result = magnitudeSquared(v1) >= magnitudeSquared(v2)
 
 proc `<=`*(v1, v2: Vector4): bool =
-  result = magnitude(v1) <= magnitude(v2)
+  result = magnitudeSquared(v1) <= magnitudeSquared(v2)
 
 # Equals (compares coordinates)
 proc `==`*(v1, v2: Vector1): bool =
