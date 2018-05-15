@@ -1,8 +1,6 @@
 import ../../core/vector
 
 # Vector2 Proc Wraps
-proc toVector3*(v1: Vector2, z: cdouble): Vector3 {.cdecl, exportc, dynlib.} = vector3(v1, z)
-proc fromArray_v2(a: array[2, cdouble]): Vector3 {.cdecl, exportc, dynlib.} = vector2(a)
 proc copy_v2*(v1: Vector2): Vector2 {.cdecl, exportc, dynlib.} = copy(v1)
 proc set_v2*(v: var Vector2, n: cdouble): Vector2 {.cdecl, exportc, noinit, dynlib.} = set(v, n)
 proc set2_v2*(v: var Vector2, x, y: cdouble): Vector2 {.cdecl, exportc, noinit, dynlib.} = set(v, x, y)
@@ -43,10 +41,11 @@ proc toArray_v2*(v: Vector2, a: var array[2, cdouble]): void {.cdecl, exportc, d
 proc stringify_v2*(v: Vector2): cstring {.cdecl, exportc, dynlib.} =
     setupForeignThreadGc()
     $v
+proc toVector3*(v1: Vector2, z: cdouble): Vector3 {.cdecl, exportc, dynlib.} = vector3(v1, z)
+proc fromArray_v2(a: array[2, cdouble]): Vector3 {.cdecl, exportc, dynlib.} = vector2(a)
+proc fromPolar_v2(r, theta: cdouble): Vector2 {.cdecl, exportc, dynlib.} = fromPolar(r, theta)
 
 # Vector3 Proc Wraps
-proc toVector2*(v: Vector3): Vector2 {.cdecl, exportc, dynlib.} = vector2(v)
-proc fromArray_v3(a: array[3, cdouble]): Vector3 {.cdecl, exportc, dynlib.} = vector3(a)
 proc copy_v3*(v1: Vector3): Vector3 {.cdecl, exportc, dynlib.} = copy(v1)
 proc set_v3*(v: var Vector3, n: cdouble): Vector3 {.cdecl, exportc, noinit, dynlib.} = set(v, n)
 proc set2_v3*(v: var Vector3, x, y, z: cdouble): Vector3 {.cdecl, exportc, noinit, dynlib.} = set(v, x, y, z)
@@ -90,3 +89,6 @@ proc toArray_v3*(v: Vector3, a: var array[3, cdouble]): void {.cdecl, exportc, d
 proc stringify_v3*(v: Vector3): cstring {.cdecl, exportc, dynlib.} =
     setupForeignThreadGc()
     $v
+proc toVector2*(v: Vector3): Vector2 {.cdecl, exportc, dynlib.} = vector2(v)
+proc fromArray_v3(a: array[3, cdouble]): Vector3 {.cdecl, exportc, dynlib.} = vector3(a)
+proc fromSpherical_v3(r, theta, phi: cdouble): Vector2 {.cdecl, exportc, dynlib.} = fromSpherical(r, theta, phi)
