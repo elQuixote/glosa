@@ -104,9 +104,9 @@ macro swizzleProcs(t: typed, chars: static[string]): untyped =
         iIdent = ident("" & i)
         jIdent = ident("" & j)
         ijString = i & j
-        ijName = ident(ijString)
+        ijIdent = ident(ijString)
       result.add quote do:
-        proc `ijName`*(v: `t`): Vector2 =
+        proc `ijIdent`*(v: `t`): Vector2 =
           Vector2(x: v.`iIdent`, y: v.`jIdent`)
       for k in chars:
         let
