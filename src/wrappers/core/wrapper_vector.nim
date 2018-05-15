@@ -44,6 +44,7 @@ proc stringify_v2*(v: Vector2): cstring {.cdecl, exportc, dynlib.} =
 proc toVector3*(v1: Vector2, z: cdouble): Vector3 {.cdecl, exportc, dynlib.} = vector3(v1, z)
 proc fromArray_v2(a: array[2, cdouble]): Vector3 {.cdecl, exportc, dynlib.} = vector2(a)
 proc fromPolar_v2(r, theta: cdouble): Vector2 {.cdecl, exportc, dynlib.} = fromPolar(r, theta)
+proc randomize_v2(v: var Vector2, maxX, maxY: cdouble): var Vector2 {.cdecl, exportc, noinit, dynlib.} = randomize(v, maxX, maxY)
 
 # Vector3 Proc Wraps
 proc copy_v3*(v1: Vector3): Vector3 {.cdecl, exportc, dynlib.} = copy(v1)
@@ -92,3 +93,4 @@ proc stringify_v3*(v: Vector3): cstring {.cdecl, exportc, dynlib.} =
 proc toVector2*(v: Vector3): Vector2 {.cdecl, exportc, dynlib.} = vector2(v)
 proc fromArray_v3(a: array[3, cdouble]): Vector3 {.cdecl, exportc, dynlib.} = vector3(a)
 proc fromSpherical_v3(r, theta, phi: cdouble): Vector2 {.cdecl, exportc, dynlib.} = fromSpherical(r, theta, phi)
+proc randomize_v3(v: var Vector3, maxX, maxY, maxZ: cdouble): var Vector3 {.cdecl, exportc, noinit, dynlib.} = randomize(v, maxX, maxY, maxZ)
