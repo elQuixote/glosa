@@ -101,7 +101,7 @@ proc `m32=`*(m: var Matrix44, v: float) {.noinit.} = m.matrix[3][2] = v
 proc `m33=`*(m: var Matrix44, v: float) {.noinit.} = m.matrix[3][3] = v
 
 # Constructors
-proc Matrix33*(
+proc matrix33*(
     m00, m01, m02,
     m10, m11, m12,
     m20, m21, m22: float
@@ -139,7 +139,7 @@ proc matrix44*(
   result.matrix[3][2] = m32
   result.matrix[3][3] = m33
 
-proc Matrix33*(v1, v2, v3: Vector3): Matrix44 =
+proc matrix33*(v1, v2, v3: Vector3): Matrix44 =
   result.matrix[0][0] = v1.x
   result.matrix[0][1] = v2.x
   result.matrix[0][2] = v3.x
@@ -171,7 +171,7 @@ proc matrix44*(v1, v2, v3, v4: Vector4): Matrix44 =
 # Identity
 # NOTE: This is Added, not in design doc
 const
-  IDMatrix33*: Matrix33 = Matrix33(
+  IDMatrix33*: Matrix33 = matrix33(
     1.0, 0.0, 0.0,
     0.0, 1.0, 0.0,
     0.0, 0.0, 1.0
@@ -257,7 +257,7 @@ proc `==`*(m1, m2: Matrix44): bool =
            m1.matrix[2][0] == m2.matrix[2][0] and
            m1.matrix[2][1] == m2.matrix[2][1] and
            m1.matrix[2][2] == m2.matrix[2][2] and
-           m1.matrix[2][3] == m2.matrix[2][2] and
+           m1.matrix[2][3] == m2.matrix[2][3] and
            m1.matrix[3][0] == m2.matrix[3][0] and
            m1.matrix[3][1] == m2.matrix[3][1] and
            m1.matrix[3][2] == m2.matrix[3][2] and
@@ -321,52 +321,54 @@ proc transpose*(m: Matrix44): Matrix44 = transposeNew(m)
 
 # Determinant
 proc determinant*(m: Matrix33): float =
-  result = m.matrix[0][0] * m.matrix[1][1] * m.matrix[2][2] +
-           m.matrix[0][1] * m.matrix[1][2] * m.matrix[2][0] +
-           m.matrix[0][2] * m.matrix[1][0] * m.matrix[2][1] -
-           m.matrix[0][0] * m.matrix[1][2] * m.matrix[2][1] +
-           m.matrix[0][1] * m.matrix[1][0] * m.matrix[2][2] +
-           m.matrix[0][2] * m.matrix[1][1] * m.matrix[2][0]
+  result = m.matrix[0][0] * (m.matrix[1][1] * m.matrix[2][2] - m.matrix[1][2] * m.matrix[2][1]) -
+           m.matrix[0][1] * (m.matrix[1][0] * m.matrix[2][2] - m.matrix[1][2] * m.matrix[2][0]) +
+           m.matrix[0][2] * (m.matrix[1][0] * m.matrix[2][1] - m.matrix[1][1] * m.matrix[2][0])
 
 proc determinant*(m: Matrix44): float =
-  result = m.matrix[0][3] * m.matrix[1][2] * m.matrix[2][1] * m.matrix[3][0] -
-           m.matrix[0][2] * m.matrix[1][3] * m.matrix[2][1] * m.matrix[3][0] -
-           m.matrix[0][3] * m.matrix[1][1] * m.matrix[2][2] * m.matrix[3][0] +
-           m.matrix[0][1] * m.matrix[1][3] * m.matrix[2][2] * m.matrix[3][0] +
-           m.matrix[0][2] * m.matrix[1][1] * m.matrix[2][3] * m.matrix[3][0] -
-           m.matrix[0][1] * m.matrix[1][2] * m.matrix[2][3] * m.matrix[3][0] -
-           m.matrix[0][3] * m.matrix[1][2] * m.matrix[2][0] * m.matrix[3][1] +
-           m.matrix[0][2] * m.matrix[1][3] * m.matrix[2][0] * m.matrix[3][1] +
-           m.matrix[0][3] * m.matrix[1][0] * m.matrix[2][2] * m.matrix[3][1] -
-           m.matrix[0][0] * m.matrix[1][3] * m.matrix[2][2] * m.matrix[3][1] -
-           m.matrix[0][2] * m.matrix[1][0] * m.matrix[2][3] * m.matrix[3][1] +
-           m.matrix[0][0] * m.matrix[1][2] * m.matrix[2][3] * m.matrix[3][1] +
-           m.matrix[0][3] * m.matrix[1][1] * m.matrix[2][0] * m.matrix[3][2] -
-           m.matrix[0][1] * m.matrix[1][3] * m.matrix[2][0] * m.matrix[3][2] -
-           m.matrix[0][3] * m.matrix[1][0] * m.matrix[2][1] * m.matrix[3][2] +
-           m.matrix[0][0] * m.matrix[1][3] * m.matrix[2][1] * m.matrix[3][2] +
-           m.matrix[0][1] * m.matrix[1][0] * m.matrix[2][3] * m.matrix[3][2] -
-           m.matrix[0][0] * m.matrix[1][1] * m.matrix[2][3] * m.matrix[3][2] -
-           m.matrix[0][2] * m.matrix[1][1] * m.matrix[2][0] * m.matrix[3][3] +
-           m.matrix[0][1] * m.matrix[1][2] * m.matrix[2][0] * m.matrix[3][3] +
-           m.matrix[0][2] * m.matrix[1][0] * m.matrix[2][1] * m.matrix[3][3] -
-           m.matrix[0][0] * m.matrix[1][2] * m.matrix[2][1] * m.matrix[3][3] -
-           m.matrix[0][1] * m.matrix[1][0] * m.matrix[2][2] * m.matrix[3][3] +
-           m.matrix[0][0] * m.matrix[1][1] * m.matrix[2][2] * m.matrix[3][3]
-
+  let
+    p0 = m.matrix[0][2] * m.matrix[1][3]
+    p1 = m.matrix[0][2] * m.matrix[2][3]
+    p2 = m.matrix[0][2] * m.matrix[3][3]
+    p3 = m.matrix[1][2] * m.matrix[0][3]
+    p4 = m.matrix[1][2] * m.matrix[2][3]
+    p5 = m.matrix[1][2] * m.matrix[3][3]
+    p6 = m.matrix[2][2] * m.matrix[0][3]
+    p7 = m.matrix[2][2] * m.matrix[1][3]
+    p8 = m.matrix[2][2] * m.matrix[3][3]
+    p9 = m.matrix[3][2] * m.matrix[0][3]
+    pA = m.matrix[3][2] * m.matrix[1][3]
+    pB = m.matrix[3][2] * m.matrix[2][3]
+  result = m.matrix[0][0] * m.matrix[1][1] * (p8 - pB) +
+           m.matrix[0][0] * m.matrix[2][1] * (pA - p5) +
+           m.matrix[0][0] * m.matrix[3][1] * (p4 - p7) +
+           m.matrix[1][0] * m.matrix[0][1] * (pB - p8) +
+           m.matrix[1][0] * m.matrix[2][1] * (p2 - p9) +
+           m.matrix[1][0] * m.matrix[3][1] * (p6 - p1) +
+           m.matrix[2][0] * m.matrix[0][1] * (p5 - pA) +
+           m.matrix[2][0] * m.matrix[1][1] * (p9 - p2) +
+           m.matrix[2][0] * m.matrix[3][1] * (p0 - p3) +
+           m.matrix[3][0] * m.matrix[0][1] * (p7 - p4) +
+           m.matrix[3][0] * m.matrix[1][1] * (p1 - p6) +
+           m.matrix[3][0] * m.matrix[2][1] * (p3 - p0)
 # Invert
 proc invertSelf*(m: var Matrix33): var Matrix33 {.noinit.} =
-  let det = m.determinant()
+  let
+    q0 = m.matrix[1][1] * m.matrix[2][2] - m.matrix[1][2] * m.matrix[2][1]
+    q1 = m.matrix[1][0] * m.matrix[2][1] - m.matrix[1][1] * m.matrix[2][0]
+    p0 = m.matrix[1][0] * m.matrix[2][2]
+    p1 = m.matrix[1][2] * m.matrix[2][0]
+    det = m.matrix[0][0] * q0 - m.matrix[0][1] * (p0 - p1) + m.matrix[0][2] * q1
   if det == 0.0:
     raise newException(DivByZeroError, "Cannot invert a zero determinant matrix")
   m = m.set(
-    (m.matrix[1][1] * m.matrix[2][2] - m.matrix[1][2] * m.matrix[2][1]) / det,
+    q0 / det,
     (m.matrix[0][2] * m.matrix[2][1] - m.matrix[0][1] * m.matrix[2][2]) / det,
     (m.matrix[0][1] * m.matrix[1][2] - m.matrix[0][2] * m.matrix[1][1]) / det,
-    (m.matrix[1][2] * m.matrix[2][0] - m.matrix[1][0] * m.matrix[2][2]) / det,
+    (p1 - p0) / det,
     (m.matrix[0][0] * m.matrix[2][2] - m.matrix[0][2] * m.matrix[2][0]) / det,
     (m.matrix[0][2] * m.matrix[1][0] - m.matrix[0][0] * m.matrix[1][2]) / det,
-    (m.matrix[1][0] * m.matrix[2][1] - m.matrix[1][1] * m.matrix[2][0]) / det,
+    q1 / det,
     (m.matrix[0][1] * m.matrix[2][0] - m.matrix[0][0] * m.matrix[2][1]) / det,
     (m.matrix[0][0] * m.matrix[1][1] - m.matrix[0][1] * m.matrix[1][0]) / det,
   )
@@ -377,106 +379,81 @@ proc invertNew*(m: Matrix33): Matrix33 =
   result = invertSelf(n)
 
 proc invertSelf*(m: var Matrix44): var Matrix44 {.noinit.} =
-  let det = m.determinant()
+  let
+    lr10 = m.matrix[1][0] * m.matrix[2][1]
+    lr11 = m.matrix[1][1] * m.matrix[2][2]
+    lr12 = m.matrix[1][2] * m.matrix[2][3]
+    lr13 = m.matrix[1][3] * m.matrix[2][0]
+    lr20 = m.matrix[2][0] * m.matrix[3][1]
+    lr21 = m.matrix[2][1] * m.matrix[3][2]
+    lr22 = m.matrix[2][2] * m.matrix[3][3]
+    lr23 = m.matrix[2][3] * m.matrix[3][0]
+    rl10 = m.matrix[1][0] * m.matrix[2][3]
+    rl11 = m.matrix[1][1] * m.matrix[2][0]
+    rl12 = m.matrix[1][2] * m.matrix[2][1]
+    rl13 = m.matrix[1][3] * m.matrix[2][2]
+    rl20 = m.matrix[2][0] * m.matrix[3][3]
+    rl21 = m.matrix[2][1] * m.matrix[3][0]
+    rl22 = m.matrix[2][2] * m.matrix[3][1]
+    rl23 = m.matrix[2][3] * m.matrix[3][2]
+  let
+    i0  = lr11 * m.matrix[3][3] - m.matrix[1][1] * rl23 - rl12 * m.matrix[3][3] +
+          m.matrix[1][3] * lr21 + lr12 * m.matrix[3][1] - rl13 * m.matrix[3][1]
+    i4  = rl10 * m.matrix[3][2] - m.matrix[1][0] * lr22 + m.matrix[1][2] * rl20 -
+          lr13 * m.matrix[3][2] - lr12 * m.matrix[3][0] + rl13 * m.matrix[3][0]
+    i8  = lr10 * m.matrix[3][3] - rl10 * m.matrix[3][1] - rl11 * m.matrix[3][3] +
+          lr13 * m.matrix[3][1] + m.matrix[1][1] * lr23 - m.matrix[1][3] * rl21
+    i12 = m.matrix[1][0] * rl22 - lr10 * m.matrix[3][2] + rl11 * m.matrix[3][2] -
+          m.matrix[1][2] * lr20 - lr11 * m.matrix[3][0] + rl12 * m.matrix[3][0]
+    det = m.matrix[0][0] * i0 + m.matrix[0][1] * i4 + m.matrix[0][2] * i8 + m.matrix[0][3] * i12
   if det == 0.0:
     raise newException(DivByZeroError, "Cannot invert a zero determinant matrix")
+  let
+    lr00 = m.matrix[0][0] * m.matrix[1][1]
+    lr01 = m.matrix[0][1] * m.matrix[1][2]
+    lr02 = m.matrix[0][2] * m.matrix[1][3]
+    lr03 = m.matrix[0][3] * m.matrix[1][0]
+    lr30 = m.matrix[3][0] * m.matrix[0][1]
+    lr31 = m.matrix[3][1] * m.matrix[0][2]
+    lr32 = m.matrix[3][2] * m.matrix[0][3]
+    lr33 = m.matrix[3][3] * m.matrix[0][0]
+    rl00 = m.matrix[0][0] * m.matrix[1][3]
+    rl01 = m.matrix[0][1] * m.matrix[1][0]
+    rl02 = m.matrix[0][2] * m.matrix[1][1]
+    rl03 = m.matrix[0][3] * m.matrix[1][2]
+    rl30 = m.matrix[3][0] * m.matrix[0][3]
+    rl31 = m.matrix[3][1] * m.matrix[0][0]
+    rl32 = m.matrix[3][2] * m.matrix[0][1]
+    rl33 = m.matrix[3][3] * m.matrix[0][2]
   m = m.set(
-    (m.matrix[1][2] * m.matrix[2][3] * m.matrix[3][1] -
-     m.matrix[1][3] * m.matrix[2][2] * m.matrix[3][1] +
-     m.matrix[1][3] * m.matrix[2][1] * m.matrix[3][2] -
-     m.matrix[1][1] * m.matrix[2][3] * m.matrix[3][2] -
-     m.matrix[1][2] * m.matrix[2][1] * m.matrix[3][3] +
-     m.matrix[1][1] * m.matrix[2][2] * m.matrix[3][3]) / det,
-    (m.matrix[0][3] * m.matrix[2][2] * m.matrix[3][1] -
-     m.matrix[0][2] * m.matrix[2][3] * m.matrix[3][1] -
-     m.matrix[0][3] * m.matrix[2][1] * m.matrix[3][2] +
-     m.matrix[0][1] * m.matrix[2][3] * m.matrix[3][2] +
-     m.matrix[0][2] * m.matrix[2][1] * m.matrix[3][3] -
-     m.matrix[0][1] * m.matrix[2][2] * m.matrix[3][3]) / det,
-    (m.matrix[0][2] * m.matrix[1][3] * m.matrix[3][1] -
-     m.matrix[0][3] * m.matrix[1][2] * m.matrix[3][1] +
-     m.matrix[0][3] * m.matrix[1][1] * m.matrix[3][2] -
-     m.matrix[0][1] * m.matrix[1][3] * m.matrix[3][2] -
-     m.matrix[0][2] * m.matrix[1][1] * m.matrix[3][3] +
-     m.matrix[0][1] * m.matrix[1][2] * m.matrix[3][3]) / det,
-    (m.matrix[0][3] * m.matrix[1][2] * m.matrix[2][1] -
-     m.matrix[0][2] * m.matrix[1][3] * m.matrix[2][1] -
-     m.matrix[0][3] * m.matrix[1][1] * m.matrix[2][2] +
-     m.matrix[0][1] * m.matrix[1][3] * m.matrix[2][2] +
-     m.matrix[0][2] * m.matrix[1][1] * m.matrix[2][3] -
-     m.matrix[0][1] * m.matrix[1][2] * m.matrix[2][3]) / det,
-    (m.matrix[1][3] * m.matrix[2][2] * m.matrix[3][0] -
-     m.matrix[1][2] * m.matrix[2][3] * m.matrix[3][0] -
-     m.matrix[1][3] * m.matrix[2][0] * m.matrix[3][2] +
-     m.matrix[1][0] * m.matrix[2][3] * m.matrix[3][2] +
-     m.matrix[1][2] * m.matrix[2][0] * m.matrix[3][3] -
-     m.matrix[1][0] * m.matrix[2][2] * m.matrix[3][3]) / det,
-    (m.matrix[0][2] * m.matrix[2][3] * m.matrix[3][0] -
-     m.matrix[0][3] * m.matrix[2][2] * m.matrix[3][0] +
-     m.matrix[0][3] * m.matrix[2][0] * m.matrix[3][2] -
-     m.matrix[0][0] * m.matrix[2][3] * m.matrix[3][2] -
-     m.matrix[0][2] * m.matrix[2][0] * m.matrix[3][3] +
-     m.matrix[0][0] * m.matrix[2][2] * m.matrix[3][3]) / det,
-    (m.matrix[0][3] * m.matrix[1][2] * m.matrix[3][0] -
-     m.matrix[0][2] * m.matrix[1][3] * m.matrix[3][0] -
-     m.matrix[0][3] * m.matrix[1][0] * m.matrix[3][2] +
-     m.matrix[0][0] * m.matrix[1][3] * m.matrix[3][2] +
-     m.matrix[0][2] * m.matrix[1][0] * m.matrix[3][3] -
-     m.matrix[0][0] * m.matrix[1][2] * m.matrix[3][3]) / det,
-    (m.matrix[0][2] * m.matrix[1][3] * m.matrix[2][0] -
-     m.matrix[0][3] * m.matrix[1][2] * m.matrix[2][0] +
-     m.matrix[0][3] * m.matrix[1][0] * m.matrix[2][2] -
-     m.matrix[0][0] * m.matrix[1][3] * m.matrix[2][2] -
-     m.matrix[0][2] * m.matrix[1][0] * m.matrix[2][3] +
-     m.matrix[0][0] * m.matrix[1][2] * m.matrix[2][3]) / det,
-    (m.matrix[1][1] * m.matrix[2][3] * m.matrix[3][0] -
-     m.matrix[1][3] * m.matrix[2][1] * m.matrix[3][0] +
-     m.matrix[1][3] * m.matrix[2][0] * m.matrix[3][1] -
-     m.matrix[1][0] * m.matrix[2][3] * m.matrix[3][1] -
-     m.matrix[1][1] * m.matrix[2][0] * m.matrix[3][3] +
-     m.matrix[1][0] * m.matrix[2][1] * m.matrix[3][3]) / det,
-    (m.matrix[0][3] * m.matrix[2][1] * m.matrix[3][0] -
-     m.matrix[0][1] * m.matrix[2][3] * m.matrix[3][0] -
-     m.matrix[0][3] * m.matrix[2][0] * m.matrix[3][1] +
-     m.matrix[0][0] * m.matrix[2][3] * m.matrix[3][1] +
-     m.matrix[0][1] * m.matrix[2][0] * m.matrix[3][3] -
-     m.matrix[0][0] * m.matrix[2][1] * m.matrix[3][3]) / det,
-    (m.matrix[0][1] * m.matrix[1][3] * m.matrix[3][0] -
-     m.matrix[0][3] * m.matrix[1][1] * m.matrix[3][0] +
-     m.matrix[0][3] * m.matrix[1][0] * m.matrix[3][1] -
-     m.matrix[0][0] * m.matrix[1][3] * m.matrix[3][1] -
-     m.matrix[0][1] * m.matrix[1][0] * m.matrix[3][3] +
-     m.matrix[0][0] * m.matrix[1][1] * m.matrix[3][3]) / det,
-    (m.matrix[0][3] * m.matrix[1][1] * m.matrix[2][0] -
-     m.matrix[0][1] * m.matrix[1][3] * m.matrix[2][0] -
-     m.matrix[0][3] * m.matrix[1][0] * m.matrix[2][1] +
-     m.matrix[0][0] * m.matrix[1][3] * m.matrix[2][1] +
-     m.matrix[0][1] * m.matrix[1][0] * m.matrix[2][3] -
-     m.matrix[0][0] * m.matrix[1][1] * m.matrix[2][3]) / det,
-    (m.matrix[1][2] * m.matrix[2][1] * m.matrix[3][0] -
-     m.matrix[1][1] * m.matrix[2][2] * m.matrix[3][0] -
-     m.matrix[1][2] * m.matrix[2][0] * m.matrix[3][1] +
-     m.matrix[1][0] * m.matrix[2][2] * m.matrix[3][1] +
-     m.matrix[1][1] * m.matrix[2][0] * m.matrix[3][2] -
-     m.matrix[1][0] * m.matrix[2][1] * m.matrix[3][2]) / det,
-    (m.matrix[0][1] * m.matrix[2][2] * m.matrix[3][0] -
-     m.matrix[0][2] * m.matrix[2][1] * m.matrix[3][0] +
-     m.matrix[0][2] * m.matrix[2][0] * m.matrix[3][1] -
-     m.matrix[0][0] * m.matrix[2][2] * m.matrix[3][1] -
-     m.matrix[0][1] * m.matrix[2][0] * m.matrix[3][2] +
-     m.matrix[0][0] * m.matrix[2][1] * m.matrix[3][2]) / det,
-    (m.matrix[0][2] * m.matrix[1][1] * m.matrix[3][0] -
-     m.matrix[0][1] * m.matrix[1][2] * m.matrix[3][0] -
-     m.matrix[0][2] * m.matrix[1][0] * m.matrix[3][1] +
-     m.matrix[0][0] * m.matrix[1][2] * m.matrix[3][1] +
-     m.matrix[0][1] * m.matrix[1][0] * m.matrix[3][2] -
-     m.matrix[0][0] * m.matrix[1][1] * m.matrix[3][2]) / det,
-    (m.matrix[0][1] * m.matrix[1][2] * m.matrix[2][0] -
-     m.matrix[0][2] * m.matrix[1][1] * m.matrix[2][0] +
-     m.matrix[0][2] * m.matrix[1][0] * m.matrix[2][1] -
-     m.matrix[0][0] * m.matrix[1][2] * m.matrix[2][1] -
-     m.matrix[0][1] * m.matrix[1][0] * m.matrix[2][2] +
-     m.matrix[0][0] * m.matrix[1][1] * m.matrix[2][2]) / det,
+     i0 / det,
+    (m.matrix[0][1] * rl23 - m.matrix[0][1] * lr22 + rl33 * m.matrix[2][1] -
+     m.matrix[0][3] * lr21 - lr31 * m.matrix[2][3] + m.matrix[0][3] * rl22) / det,
+    (lr01 * m.matrix[3][3] - rl32 * m.matrix[1][3] - rl02 * m.matrix[3][3] +
+     lr32 * m.matrix[1][1] + lr02 * m.matrix[3][1] - rl03 * m.matrix[3][1]) / det,
+    (m.matrix[0][1] * rl13 - lr01 * m.matrix[2][3] + rl02 * m.matrix[2][3] -
+     m.matrix[0][3] * lr11 - lr02 * m.matrix[2][1] + rl03 * m.matrix[2][1]) / det,
+     i4 / det,
+    (m.matrix[0][0] * lr22 - m.matrix[0][0] * rl23 - m.matrix[0][2] * rl20 +
+     lr32 * m.matrix[2][0] + m.matrix[0][2] * lr23 - rl30 * m.matrix[2][2]) / det,
+    (rl00 * m.matrix[3][2] - lr33 * m.matrix[1][2] + rl33 * m.matrix[1][0] -
+     lr03 * m.matrix[3][2] - lr02 * m.matrix[3][0] + rl03 * m.matrix[3][0]) / det,
+    (m.matrix[0][0] * lr12 - rl00 * m.matrix[2][2] - m.matrix[0][2] * rl10 +
+     lr03 * m.matrix[2][2] + lr02 * m.matrix[2][0] - rl03 * m.matrix[2][0]) / det,
+     i8 / det,
+    (rl31 * m.matrix[2][3] - lr33 * m.matrix[2][1] + m.matrix[0][1] * rl20 -
+     m.matrix[0][3] * lr20 - m.matrix[0][1] * lr23 + m.matrix[0][3] * rl21) / det,
+    (lr00 * m.matrix[3][3] - rl00 * m.matrix[3][1] - rl01 * m.matrix[3][3] +
+     lr03 * m.matrix[3][1] + lr30 * m.matrix[1][3] - rl30 * m.matrix[1][1]) / det,
+    (rl00 * m.matrix[2][1] - lr00 * m.matrix[2][3] + rl01 * m.matrix[2][3] -
+     lr03 * m.matrix[2][1] - m.matrix[0][1] * lr13 + m.matrix[0][3] * rl11) / det,
+     i12 / det,
+    (m.matrix[0][0] * lr21 - m.matrix[0][0] * rl22 - rl32 * m.matrix[2][0] +
+     m.matrix[0][2] * lr20 + lr30 * m.matrix[2][2] - m.matrix[0][2] * rl21) / det,
+    (rl31 * m.matrix[1][2] - lr00 * m.matrix[3][2] + rl01 * m.matrix[3][2] -
+     lr31 * m.matrix[1][0] - lr01 * m.matrix[3][0] + rl02 * m.matrix[3][0]) / det,
+    (lr00 * m.matrix[2][2] - m.matrix[0][0] * rl12 - rl01 * m.matrix[2][2] +
+     m.matrix[0][2] * lr10 + lr01 * m.matrix[2][0] - rl02 * m.matrix[2][0]) / det,
   )
   result = m
 
@@ -484,8 +461,8 @@ proc invertNew*(m: Matrix44): Matrix44 =
   var n = m.copy()
   result = invertSelf(n)
 
-proc invert*(m: var Matrix33): var Matrix33 {.noInit.} = invertSelf(m)
-proc invert*(m: var Matrix44): var Matrix44 {.noInit.} = invertSelf(m)
+proc invert*(m: var Matrix33): var Matrix33 {.noinit.} = invertSelf(m)
+proc invert*(m: var Matrix44): var Matrix44 {.noinit.} = invertSelf(m)
 
 # Module Level Procs (Constructors)
 # Rotation

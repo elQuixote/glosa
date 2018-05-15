@@ -137,6 +137,53 @@ suite "Creating a new Vector with single value constructor":
         Vector4(x: 0.0, y: 0.0, z: 0.0, w: 0.0),
         vector4(0.0))
 
+suite "Testing Vector swizzles":
+  test "Testing Vector1 swizzles":
+    let v = vector1(1.0)
+    check:
+      v.xx == vector2(1.0, 1.0)
+      v.xxx == vector3(1.0, 1.0, 1.0)
+      v.xxxx == vector4(1.0, 1.0, 1.0, 1.0)
+  test "Testing Vector2 swizzles":
+    let v = vector2(1.0, 2.0)
+    check:
+      v.xx == vector2(1.0, 1.0)
+      v.xxx == vector3(1.0, 1.0, 1.0)
+      v.xxxx == vector4(1.0, 1.0, 1.0, 1.0)
+      v.xy == vector2(1.0, 2.0)
+      v.yy == vector2(2.0, 2.0)
+      v.xyy == vector3(1.0, 2.0, 2.0)
+      v.xyxy == vector4(1.0, 2.0, 1.0, 2.0)
+  test "Testing Vector3 swizzles":
+    let v = vector3(1.0, 2.0, 3.0)
+    check:
+      v.xx == vector2(1.0, 1.0)
+      v.xxx == vector3(1.0, 1.0, 1.0)
+      v.xxxx == vector4(1.0, 1.0, 1.0, 1.0)
+      v.xy == vector2(1.0, 2.0)
+      v.yy == vector2(2.0, 2.0)
+      v.xyy == vector3(1.0, 2.0, 2.0)
+      v.xyxy == vector4(1.0, 2.0, 1.0, 2.0)
+      v.zz == vector2(3.0, 3.0)
+      v.xzz == vector3(1.0, 3.0, 3.0)
+      v.xzyz == vector4(1.0, 3.0, 2.0, 3.0)
+  test "Testing Vector4 swizzles":
+    let v = vector4(1.0, 2.0, 3.0, 4.0)
+    check:
+      v.xx == vector2(1.0, 1.0)
+      v.xxx == vector3(1.0, 1.0, 1.0)
+      v.xxxx == vector4(1.0, 1.0, 1.0, 1.0)
+      v.xy == vector2(1.0, 2.0)
+      v.yy == vector2(2.0, 2.0)
+      v.xyy == vector3(1.0, 2.0, 2.0)
+      v.xyxy == vector4(1.0, 2.0, 1.0, 2.0)
+      v.zz == vector2(3.0, 3.0)
+      v.xzz == vector3(1.0, 3.0, 3.0)
+      v.xzyz == vector4(1.0, 3.0, 2.0, 3.0)
+      v.ww == vector2(4.0, 4.0)
+      v.wzz == vector3(4.0, 3.0, 3.0)
+      v.wzxy == vector4(4.0, 3.0, 1.0, 2.0)
+
 suite "Copying a new Vector":
   proc testCopyVector(v1, v2: Vector) =
     var v3 = v1.copy()
