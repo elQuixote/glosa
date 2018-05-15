@@ -10,7 +10,8 @@ from ./concepts import
   Centroid,
   Shape2,
   Closest,
-  Vertices
+  Vertices,
+  Matrix
 
 from ./types import
   Vector1,
@@ -20,7 +21,8 @@ from ./types import
   Matrix33,
   Matrix44, 
   Polyline,
-  LineSegment
+  LineSegment,
+  Polygon
 
 export
   Equals,
@@ -42,17 +44,36 @@ from math import arctan2, arccos, sqrt, TAU, PI
 from strformat import `&`
 import hashes
 
-import ./vector
-import ./matrix
-import ./shape
+from ./vector import vector2, vector3, clear, copy, dimension
+from ./shape import polygon
 
 # Constuctors
 proc polyline*[Vector](points: seq[Vector]): Polyline[Vector] =
+  if len(points) < 3:
+    raise newException(AccessViolationError, "Need more than 2 points to create a polyline")
   result.vertices = @[]
   result.vertices = points
   
 proc polyline*[Vector](): Polyline[Vector] =
   result.vertices = @[]
+
+# NOTE: This is added from design doc
+proc lineSegment*[Vector](v1, v2: Vector): LineSegment[Vector] =
+  result.startPoint = v1
+  result.endPoint = v2
+
+# ***************************************
+#     LineSegment implementation
+# ***************************************
+# NOTE: This is added from design doc
+proc closestPointTo*[Vector](l: LineSegment[Vector], v: Vector2): Vector2 = 
+  var sub = l.endPoint.subtractNew(l.startPoint)
+  var t = v.subtractNew(l.startPoint).dot(sub) / sub.magnitudeSquared()
+  if t < 0.0:
+    return l.startPoint
+  elif t > 1.0:
+    return l.endPoint
+  result = l.startPoint.addNew(sub.multiplySelf(t))
 
 # ***************************************
 #     Polyline implementation
@@ -82,7 +103,8 @@ proc pointCount*[Vector](p: Polyline[Vector]): int =
 
 # Get Lines
 # NOTE: This is added from design doc
-proc edges*[Vector](p: Polyline[Vector]): seq[LineSegment[Vector]] =
+proc segment*[Vector](p: Polyline[Vector]): seq[LineSegment[Vector]] =
+  # closes polyline and returns edges
   var list : seq[LineSegment[Vector]] = @[]
   for i in 0..<p.pointCount():
     list.add(lineSegment(p.vertices[i],p.vertices[(i+1) mod p.pointCount()]))
@@ -95,7 +117,7 @@ iterator verts*[Vector](p: Polyline[Vector]): Vector =
     yield p.vertices[i]
 
 iterator segments*[Vector](p: Polyline[Vector]): LineSegment[Vector] =
-  for i in edges(p):
+  for i in segment(p):
     yield i
 
 # NOTE: This is added from design doc
@@ -198,10 +220,12 @@ proc closestVertex*[Vector](p: Polyline[Vector], v: Vector): Vector =
   result = vec
 
 # To Polyline
-proc toPolyline*[Vector](p: var Polyline[Vector]): var Polyline {.noinit.} =
+proc toPolyline*[Vector](p: var Polyline[Vector]): var Polyline[Vector] {.noinit.} =
   result = p
 
 # To Polygon
+proc toPolygon*[Vector](p: Polyline[Vector]): Polygon[Vector] =
+  result = polygon(p.vertices)
 
 # Predicate Closest
 # Closest Point
@@ -210,7 +234,7 @@ proc closestPoint*[Vector](p: Polyline[Vector], v: Vector): Vector =
   var vecRef : Vector = p.vertices[0]
   var vecRef2 = vecRef.copy()
   var vec = vecRef2.clear()
-  for edges in p.edges():
+  for edges in p.segment():
     var closestVec = edges.closestPointTo(v)
     var dist = closestVec.distanceToSquared(v)
     if(dist < minDist):

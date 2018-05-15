@@ -19,18 +19,18 @@ type
     x*, y*, z*, w*: float
 
 type
-  Circle*[Vector] = object
-    center*: Vector
-    radius*: float 
-  
-  Polygon*[Vector] = object
+  Polyline*[Vector] = object
     vertices*: seq[Vector]
-    
+
   LineSegment*[Vector] = object
     startPoint*: Vector
     endPoint*: Vector
 
-type
-  Polyline*[Vector] = object
-    vertices*: seq[Vector]
+type 
+  Polygon*[Vector] = object
+    polyline*: Polyline[Vector]
+
+  Circle*[Vector] = object
+    center*: Vector
+    radius*: float 
   
