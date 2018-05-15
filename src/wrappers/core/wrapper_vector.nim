@@ -1,6 +1,7 @@
 import ../../core/vector
 
 # Vector2 Proc Wraps
+proc toVector3*(v1: Vector2, z: cdouble): Vector3 {.cdecl, exportc, dynlib.} = vector3(v1, z)
 proc copy_v2*(v1: Vector2): Vector2 {.cdecl, exportc, dynlib.} = copy(v1)
 proc set_v2*(v: var Vector2, n: cdouble): Vector2 {.cdecl, exportc, noinit, dynlib.} = set(v, n)
 proc set2_v2*(v: var Vector2, x, y: cdouble): Vector2 {.cdecl, exportc, noinit, dynlib.} = set(v, x, y)
@@ -43,6 +44,7 @@ proc stringify_v2*(v: Vector2): cstring {.cdecl, exportc, dynlib.} =
     $v
 
 # Vector3 Proc Wraps
+proc toVector2*(v: Vector3): Vector2 {.cdecl, exportc, dynlib.} = vector2(v)
 proc copy_v3*(v1: Vector3): Vector3 {.cdecl, exportc, dynlib.} = copy(v1)
 proc set_v3*(v: var Vector3, n: cdouble): Vector3 {.cdecl, exportc, noinit, dynlib.} = set(v, n)
 proc set2_v3*(v: var Vector3, x, y, z: cdouble): Vector3 {.cdecl, exportc, noinit, dynlib.} = set(v, x, y, z)
