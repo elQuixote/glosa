@@ -17,7 +17,8 @@ from ./types import
   Vector3,
   Vector4,
   Matrix33,
-  Matrix44
+  Matrix44,
+  Quaternion
 
 export
   Vector,
