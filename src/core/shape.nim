@@ -128,7 +128,7 @@ proc copy*[Vector](c: Circle[Vector]): Circle[Vector] =
 proc `$`*[Vector](c: Circle[Vector]): string =
   result = &"[c: [{c.center.x}, {c.center.y}], r: {c.radius}]"
 
-# Predicate Transforms
+# Transforms
 # Rotate
 proc rotateSelf*[Vector](c: var Circle[Vector], theta: float): var Circle[Vector] {.noinit.} =
   result = c
@@ -160,7 +160,7 @@ proc translateNew*[Vector](c: Circle[Vector], v: Vector): Circle[Vector] =
 
 proc translate*[Vector](c: var Circle[Vector], t: float): var Circle[Vector] {.noinit.} = translateSelf(c, t)
 
-# Transform(Matrix)
+# Transform
 proc transformSelf*[Vector](c: var Circle[Vector], m : Matrix): var Circle[Vector] {.noinit.} =
   c.center = transformSelf(c.center, m)
   result = c
