@@ -78,3 +78,19 @@ type
   String* {.explain.} = concept a
     # NOTE: This changed from design doc
     a.`$`() is string
+
+  Centroid* {.explain.} = concept a
+    a.centroid() is Vector
+    a.average() is Vector
+
+  Shape2* {.explain.} = concept a
+    a.perimeter() is float
+    a.area() is float
+
+  Closest* {.explain.} = concept a
+    a.closestPoint(Vector) is Vector
+
+  Vertices* {.explain.} = concept a, type T
+    a.toPolyline() is T
+    a.toPolygon() is T
+    a.closestVertex(Vector) is Vector

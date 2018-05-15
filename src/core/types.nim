@@ -17,3 +17,20 @@ type
 type
   Quaternion* = object
     x*, y*, z*, w*: float
+
+type
+  Polyline*[Vector] = object
+    vertices*: seq[Vector]
+
+  LineSegment*[Vector] = object
+    startPoint*: Vector
+    endPoint*: Vector
+
+type 
+  Polygon*[Vector] = object
+    polyline*: Polyline[Vector]
+
+  Circle*[Vector] = object
+    center*: Vector
+    radius*: float 
+  
