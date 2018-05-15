@@ -96,7 +96,7 @@ proc `[]=`*(v: var Vector4, i: int, value: float): float =
   of 3: v.w = value
   else: assert(false)
 
-macro swizzleProcs(t: typed, chars: static[string]): untyped =
+macro generateSwizzleProcs(t: typed, chars: static[string]): untyped =
   result = newStmtList()
   for i in chars:
     for j in chars:
@@ -124,10 +124,10 @@ macro swizzleProcs(t: typed, chars: static[string]): untyped =
             proc `ijkIdent`*(v: `t`): Vector4 =
               Vector4(x: v.`iIdent`, y: v.`jIdent`, z: v.`kIdent`, w: v.`mIdent`)
 
-swizzleProcs(Vector1, "x")
-swizzleProcs(Vector2, "xy")
-swizzleProcs(Vector3, "xyz")
-swizzleProcs(Vector4, "xyzw")
+generateSwizzleProcs(Vector1, "x")
+generateSwizzleProcs(Vector2, "xy")
+generateSwizzleProcs(Vector3, "xyz")
+generateSwizzleProcs(Vector4, "xyzw")
 
 # Constructors
 # From parameters
