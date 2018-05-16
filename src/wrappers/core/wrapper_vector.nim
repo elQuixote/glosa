@@ -51,6 +51,8 @@ proc distanceToSquared_v2*(v1, v2: Vector2): cdouble {.cdecl, exportc, dynlib.} 
 proc interpolateTo_v2*(v1, v2: Vector2, f: cdouble): Vector2 {.cdecl, exportc, dynlib.} = interpolateTo(v1, v2, f)
 proc transformSelf_v2*(v: var Vector2, m: Matrix33): Vector2 {.cdecl, exportc, noinit, dynlib.} = transform(v, m)
 proc transformNew_v2*(v: Vector2, m: Matrix33): Vector2 {.cdecl, exportc, dynlib.} = transformNew(v, m)
+proc rotateSelf_v2*(v: var Vector2, theta: cdouble): Vector2 {.cdecl, exportc, noinit, dynlib.} = rotateSelf(v, theta)
+proc rotateNew_v2*(v: Vector2, theta: cdouble): Vector2 {.cdecl, exportc, noinit, dynlib.} = rotateNew(v, theta)
 
 # Vector3 Proc Wraps
 proc copy_v3*(v1: Vector3): Vector3 {.cdecl, exportc, dynlib.} = copy(v1)
@@ -106,3 +108,10 @@ proc distanceToSquared_v3*(v1, v2: Vector3): cdouble {.cdecl, exportc, dynlib.} 
 proc interpolateTo_v3*(v1, v2: Vector3, f: cdouble): Vector3 {.cdecl, exportc, dynlib.} = interpolateTo(v1, v2, f)
 proc transformSelf_v3*(v: var Vector3, m: Matrix44): Vector3 {.cdecl, exportc, noinit, dynlib.} = transform(v, m)
 proc transformNew_v3*(v: Vector3, m: Matrix44): Vector3 {.cdecl, exportc, dynlib.} = transformNew(v, m)
+proc rotateXSelf_v3*(v: var Vector3, theta: cdouble): Vector3 {.cdecl, exportc, noinit, dynlib.} = rotateXSelf(v, theta)
+proc rotateXNew_v3*(v: Vector3, theta: cdouble): Vector3 {.cdecl, exportc, dynlib.} = rotateXNew(v, theta)
+proc rotateYSelf_v3*(v: var Vector3, theta: cdouble): Vector3 {.cdecl, exportc, noinit, dynlib.} = rotateYSelf(v, theta)
+proc rotateYNew_v3*(v: Vector3, theta: cdouble): Vector3 {.cdecl, exportc, dynlib.} = rotateYNew(v, theta)
+proc rotateZSelf_v3*(v: var Vector3, theta: cdouble): Vector3 {.cdecl, exportc, noinit, dynlib.} = rotateZSelf(v, theta)
+proc rotateZNew_v3*(v: Vector3, theta: cdouble): Vector3 {.cdecl, exportc, dynlib.} = rotateZNew(v, theta)
+proc rotateAxis_v3*(v: var Vector3, axis: Vector3, theta: cdouble): Vector3 {.cdecl, exportc, noinit, dynlib.} = rotate(v, axis, theta)
