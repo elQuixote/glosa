@@ -1,5 +1,6 @@
 import ../../core/matrix
 import ../../core/quaternion
+from ../../core/vector import Vector3, Vector4
 
 # Matrix33 Proc Wraps
 proc idMatrix_33*(): Matrix33 {.cdecl, exportc, dynlib.} = IDMatrix33
@@ -29,6 +30,7 @@ proc scale_33*(s: cdouble): Matrix33 {.cdecl, exportc, dynlib.} = scale33(s)
 proc scale2_33*(sx, sy: cdouble): Matrix33 {.cdecl, exportc, dynlib.} = scale(sx, sy)
 proc shearX_33*(sx: cdouble): Matrix33 {.cdecl, exportc, dynlib.} = shearX33(sx)
 proc shearY_33*(sy: cdouble): Matrix33 {.cdecl, exportc, dynlib.} = shearY33(sy)
+proc fromVector3(v1,v2,v3: Vector3): Matrix33 {.cdecl, exportc, dynlib.} = matrix33(v1,v2,v3)
 
 # Matrix44 Proc Wraps
 proc idMatrix_44*(): Matrix44 {.cdecl, exportc, dynlib.} = IDMatrix44
@@ -67,3 +69,4 @@ proc shearZ_44*(sx, sy: cdouble): Matrix44 {.cdecl, exportc, dynlib.} = shearZ44
 proc shearUniform_X_44*(sh: cdouble): Matrix44 {.cdecl, exportc, dynlib.} = shearX44(sh)
 proc shearUniform_Y_44*(sh: cdouble): Matrix44 {.cdecl, exportc, dynlib.} = shearY44(sh)
 proc shearUniform_Z_44*(sh: cdouble): Matrix44 {.cdecl, exportc, dynlib.} = shearZ44(sh)
+proc fromVector4(v1, v2, v3, v4: Vector4): Matrix44 {.cdecl, exportc, dynlib.} = matrix44(v1, v2, v3, v4)
