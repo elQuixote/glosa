@@ -16,8 +16,8 @@ from ./concepts import
 
 from ./types import
   Polygon,
-  LineSegment,
-  Polyline
+  Polyline,
+  LineSegment
 
 export
   Equals,
@@ -60,16 +60,16 @@ proc polygon*[Vector](polyline: Polyline[Vector]): Polygon[Vector] =
   result.polyline = polyline
 
 # NOTE: This is added from design doc
-proc addVertex*[Vector](p: var Polygon[Vector], x, y: float): var Polygon[Vector] {.noinit.} =
-  discard p.polyline.addVertex(x,y)
+proc addVertex*[Vector2](p: var Polygon[Vector2], x, y: float): var Polygon[Vector2] {.noinit.} =
+  p.polyline = addVertex(p.polyline, x, y)
   result = p
 
-proc addVertex*[Vector](p: var Polygon[Vector], x, y, z: float): var Polygon[Vector] {.noinit.} =
-  discard p.polyline.addVertex(x,y,z)
+proc addVertex*[Vector3](p: var Polygon[Vector3], x, y, z: float): var Polygon[Vector3] {.noinit.} =
+  p.polyline = addVertex(p.polyline, x, y, z)
   result = p
 
 proc addVertex*[Vector](p: var Polygon[Vector], v: Vector): var Polygon[Vector] {.noinit.} =
-  discard p.polyline.addVertex(v)
+  p.polyline = addVertex(p.polyline, v)
   result = p
 
 # NOTE: This is added from design doc
@@ -95,10 +95,7 @@ proc containsPoint*[Vector](p: Polygon[Vector], v: Vector): bool =
 
 # Equals (compares points in polygon)
 proc `==`*[Vector](p1,p2: Polygon[Vector]): bool =
-  if p1.polyline == p2.polyline:
-    result = true
-  else:
-    result = false
+  result = p1.polyline == p2.polyline
 
 # Non Equals
 proc `!=`*[Vector](p1,p2: Polygon[Vector]): bool =

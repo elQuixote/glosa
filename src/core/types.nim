@@ -1,4 +1,7 @@
+from sets import OrderedSet
+
 type
+  # Vectors
   Vector1* = object
     x*: float
   Vector2* = object
@@ -8,29 +11,30 @@ type
   Vector4* = object
     x*, y*, z*, w*: float
 
-type
+  # Matrices
   Matrix33* = object
     matrix*: array[3, array[3, float]]
   Matrix44* = object
     matrix*: array[4, array[4, float]]
 
-type
+  # Quaternions
   Quaternion* = object
     x*, y*, z*, w*: float
 
-type
+  # Paths
+  LineSegment*[Vector] = object
+    startVertex*: Vector
+    endVertex*: Vector
+
   Polyline*[Vector] = object
     vertices*: seq[Vector]
+    segments*: seq[LineSegment[Vector]]
 
-  LineSegment*[Vector] = object
-    startPoint*: Vector
-    endPoint*: Vector
-
-type 
+  # Polygon
   Polygon*[Vector] = object
     polyline*: Polyline[Vector]
 
+  # Shapes
   Circle*[Vector] = object
     center*: Vector
-    radius*: float 
-  
+    radius*: float

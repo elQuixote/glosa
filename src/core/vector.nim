@@ -1254,7 +1254,7 @@ proc rotateNew*(v: Vector1, theta: float): Vector1 =
 
 proc rotateSelf*(v: var Vector2, theta: float): var Vector2 {.noinit.} =
   let r = calculateRotate(v.x, v.y, theta)
-  result = v.set(r.a, r.b)
+  result = set(v, r.a, r.b)
 
 proc rotateNew*(v: Vector2, theta: float): Vector2 =
   let r = calculateRotate(v.x, v.y, theta)
@@ -1262,7 +1262,7 @@ proc rotateNew*(v: Vector2, theta: float): Vector2 =
 
 proc rotateXSelf*(v: var Vector3, theta: float): var Vector3 {.noinit.} =
   let r = calculateRotate(v.y, v.z, theta)
-  result = v.set(v.x, r.a, r.b)
+  result = set(v, v.x, r.a, r.b)
 
 proc rotateXNew*(v: Vector3, theta: float): Vector3 =
   let r = calculateRotate(v.y, v.z, theta)
@@ -1270,7 +1270,7 @@ proc rotateXNew*(v: Vector3, theta: float): Vector3 =
 
 proc rotateYSelf*(v: var Vector3, theta: float): var Vector3 {.noinit.} =
   let r = calculateRotate(v.x, v.z, theta)
-  result = v.set(r.a, v.y, r.b)
+  result = set(v, r.a, v.y, r.b)
 
 proc rotateYNew*(v: Vector3, theta: float): Vector3 =
   let r = calculateRotate(v.x, v.z, theta)
@@ -1278,7 +1278,7 @@ proc rotateYNew*(v: Vector3, theta: float): Vector3 =
 
 proc rotateZSelf*(v: var Vector3, theta: float): var Vector3 {.noinit.} =
   let r = calculateRotate(v.x, v.y, theta)
-  result = v.set(r.a, r.b, v.z)
+  result = set(v, r.a, r.b, v.z)
 
 proc rotateZNew*(v: Vector3, theta: float): Vector3 =
   let r = calculateRotate(v.x, v.y, theta)
@@ -1286,7 +1286,7 @@ proc rotateZNew*(v: Vector3, theta: float): Vector3 =
 
 proc rotateXYSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
   let r = calculateRotate(v.z, v.w, theta)
-  result = v.set(v.x, v.y, r.a, r.b)
+  result = set(v, v.x, v.y, r.a, r.b)
 
 proc rotateXYNew*(v: Vector4, theta: float): Vector4 =
   let r = calculateRotate(v.z, v.w, theta)
@@ -1294,7 +1294,7 @@ proc rotateXYNew*(v: Vector4, theta: float): Vector4 =
 
 proc rotateXZSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
   let r = calculateRotate(v.y, v.w, theta)
-  result = v.set(v.x, r.a, v.z, r.b)
+  result = set(v, v.x, r.a, v.z, r.b)
 
 proc rotateXZNew*(v: Vector4, theta: float): Vector4 =
   let r = calculateRotate(v.y, v.w, theta)
@@ -1302,7 +1302,7 @@ proc rotateXZNew*(v: Vector4, theta: float): Vector4 =
 
 proc rotateXWSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
   let r = calculateRotate(v.y, v.z, theta)
-  result = v.set(v.x, r.a, r.b, v.w)
+  result = set(v, v.x, r.a, r.b, v.w)
 
 proc rotateXWNew*(v: Vector4, theta: float): Vector4 =
   let r = calculateRotate(v.y, v.z, theta)
@@ -1310,7 +1310,7 @@ proc rotateXWNew*(v: Vector4, theta: float): Vector4 =
 
 proc rotateYZSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
   let r = calculateRotate(v.x, v.w, theta)
-  result = v.set(r.a, v.y, v.z, r.b)
+  result = set(v, r.a, v.y, v.z, r.b)
 
 proc rotateYZNew*(v: Vector4, theta: float): Vector4 =
   let r = calculateRotate(v.x, v.w, theta)
@@ -1318,7 +1318,7 @@ proc rotateYZNew*(v: Vector4, theta: float): Vector4 =
 
 proc rotateYWSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
   let r = calculateRotate(v.x, v.z, theta)
-  result = v.set(r.a, v.y, r.b, v.w)
+  result = set(v, r.a, v.y, r.b, v.w)
 
 proc rotateYWNew*(v: Vector4, theta: float): Vector4 =
   let r = calculateRotate(v.x, v.y, theta)
@@ -1326,7 +1326,7 @@ proc rotateYWNew*(v: Vector4, theta: float): Vector4 =
 
 proc rotateZWSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
   let r = calculateRotate(v.x, v.y, theta)
-  result = v.set(r.a, r.b, v.z, v.w)
+  result = set(v, r.a, r.b, v.z, v.w)
 
 proc rotateZWNew*(v: Vector4, theta: float): Vector4 =
   let r = calculateRotate(v.x, v.y, theta)
@@ -1552,7 +1552,7 @@ proc areCollinear*(v1, v2, v3: Vector3): bool =
   if ms != 0:
     result = false
 
-# NOTE: Write generaly isCollinear for array
+# NOTE: Write generaly areCollinear for array
 
 # This is probably not the most efficient algorithm for coplanarity
 # Finds the first plane, and then each points distance to that plane
@@ -1560,21 +1560,20 @@ proc arePlanar*(a: openArray[Vector3]): bool =
   result = true
   let l = len(a)
   if l > 3:
-    block:
-      var
-        collinear = true
-        p = vector4(0.0, 0.0, 0.0, 0.0)
-      for i in 0..<(l - 2):
-        if not areCollinear(a[0], a[1], a[2]):
-          collinear = false
-          p = calculatePlane(a[0], a[1], a[2])
-          break
-      if collinear:
+    var
+      collinear = true
+      p = vector4(0.0, 0.0, 0.0, 0.0)
+    for i in 0..<(l - 2):
+      if not areCollinear(a[0], a[1], a[2]):
+        collinear = false
+        p = calculatePlane(a[0], a[1], a[2])
         break
-      for i in 3..<l:
-        let d = p.x * a[i].x + p.y * a[i].y + p.z * a[i].z + p.w
-        # NOTE: Refactor if needed to use ETA because of floating point
-        # if d > ETA:
-        if d != 0.0:
-          result = false
-          break
+    if collinear:
+      return true
+    for i in 3..<l:
+      let d = p.x * a[i].x + p.y * a[i].y + p.z * a[i].z + p.w
+      # NOTE: Refactor if needed to use ETA because of floating point
+      # if d > ETA:
+      if d != 0.0:
+        result = false
+        break

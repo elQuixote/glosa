@@ -48,6 +48,10 @@ from ./vector import
   interpolateTo,
   magnitude
 
+# const
+#   UNIT_CIRCLE_2D = Circle(center: Vector2(x: 0.0, y: 0.0), radius: 1.0)
+#   UNIT_CIRCLE_3D = Circle(center: Vector3(x: 0.0, y: 0.0, z: 0.0), radius: 1.0)
+
 # Constructors
 proc circle*[Vector](v: Vector, r: float): Circle =
   result.center = v
@@ -86,7 +90,7 @@ proc centroid*[Vector](c: Circle[Vector]): Vector =
 
 # Average
 proc average*[Vector](c: Circle[Vector]): Vector =
-  result = c.centroid()
+  result = centroid(c)
 
 # Closest Point
 # Closest point to circle in 2D
@@ -98,9 +102,7 @@ proc closestPoint*[Vector](c: Circle[Vector], v: Vector): Vector =
 
 # Equals
 proc `==`*[Vector](c1,c2: Circle[Vector]): bool =
-  result = true
-  if (c1.radius != c2.radius) or (c1.center != c2.center):
-    result = false
+  result = (c1.radius == c2.radius) and (c1.center == c2.center)
 
 # Non Equals
 proc `!=`*[Vector](c1, c2: Circle[Vector]): bool =
@@ -118,7 +120,7 @@ proc clear*[Vector](c: var Circle[Vector]): var Circle[Vector] {.noinit.} =
 
 # Dimension
 proc dimension*[Vector](c: Circle[Vector]): int =
-  result = c.center.dimension()
+  result = dimension(c.center)
 
 # Copy
 proc copy*[Vector](c: Circle[Vector]): Circle[Vector] =
@@ -126,7 +128,7 @@ proc copy*[Vector](c: Circle[Vector]): Circle[Vector] =
 
 # String
 proc `$`*[Vector](c: Circle[Vector]): string =
-  result = &"[c: [{c.center.x}, {c.center.y}], r: {c.radius}]"
+  result = &"[center: [{$c.center}], radius: {c.radius}]"
 
 # Transforms
 # Rotate
