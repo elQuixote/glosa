@@ -1,4 +1,5 @@
 import ../../core/vector
+import ../../core/matrix
 
 # Vector2 Proc Wraps
 proc copy_v2*(v1: Vector2): Vector2 {.cdecl, exportc, dynlib.} = copy(v1)
