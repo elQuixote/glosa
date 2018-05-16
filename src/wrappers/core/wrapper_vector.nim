@@ -47,6 +47,7 @@ proc fromPolar_v2*(r, theta: cdouble): Vector2 {.cdecl, exportc, dynlib.} = from
 proc randomize_v2*(v: var Vector2, maxX, maxY: cdouble): Vector2 {.cdecl, exportc, noinit, dynlib.} = randomize(v, maxX, maxY)
 proc magnitudeSquared_v2*(v: Vector2): cdouble {.cdecl, exportc, dynlib.} = magnitudeSquared(v)
 proc distanceTo_v2*(v1, v2: Vector2): cdouble {.cdecl, exportc, dynlib.} = distanceTo(v1,v2)
+proc distanceToSquared_v2*(v1, v2: Vector2): cdouble {.cdecl, exportc, dynlib.} = distanceToSquared(v1,v2)
 
 # Vector3 Proc Wraps
 proc copy_v3*(v1: Vector3): Vector3 {.cdecl, exportc, dynlib.} = copy(v1)
@@ -98,3 +99,4 @@ proc fromSpherical_v3*(r, theta, phi: cdouble): Vector3 {.cdecl, exportc, dynlib
 proc randomize_v3*(v: var Vector3, maxX, maxY, maxZ: cdouble): Vector3 {.cdecl, exportc, noinit, dynlib.} = randomize(v, maxX, maxY, maxZ)
 proc magnitudeSquared_v3*(v: Vector3): cdouble {.cdecl, exportc, dynlib.} = magnitudeSquared(v)
 proc distanceTo_v3*(v1, v2: Vector3): cdouble {.cdecl, exportc, dynlib.} = distanceTo(v1,v2)
+proc distanceToSquared_v3*(v1, v2: Vector3): cdouble {.cdecl, exportc, dynlib.} = distanceToSquared(v1,v2)
