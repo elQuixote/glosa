@@ -30,7 +30,7 @@ proc scale_33*(s: cdouble): Matrix33 {.cdecl, exportc, dynlib.} = scale33(s)
 proc scale2_33*(sx, sy: cdouble): Matrix33 {.cdecl, exportc, dynlib.} = scale(sx, sy)
 proc shearX_33*(sx: cdouble): Matrix33 {.cdecl, exportc, dynlib.} = shearX33(sx)
 proc shearY_33*(sy: cdouble): Matrix33 {.cdecl, exportc, dynlib.} = shearY33(sy)
-proc fromVector3(v1,v2,v3: Vector3): Matrix33 {.cdecl, exportc, dynlib.} = matrix33(v1,v2,v3)
+proc fromVector3(v1, v2, v3: Vector3): Matrix33 {.cdecl, exportc, dynlib.} = matrix33(v1, v2, v3)
 
 # Matrix44 Proc Wraps
 proc idMatrix_44*(): Matrix44 {.cdecl, exportc, dynlib.} = IDMatrix44
