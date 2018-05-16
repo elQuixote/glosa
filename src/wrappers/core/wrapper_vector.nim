@@ -49,6 +49,8 @@ proc magnitudeSquared_v2*(v: Vector2): cdouble {.cdecl, exportc, dynlib.} = magn
 proc distanceTo_v2*(v1, v2: Vector2): cdouble {.cdecl, exportc, dynlib.} = distanceTo(v1, v2)
 proc distanceToSquared_v2*(v1, v2: Vector2): cdouble {.cdecl, exportc, dynlib.} = distanceToSquared(v1, v2)
 proc interpolateTo_v2*(v1, v2: Vector2, f: cdouble): Vector2 {.cdecl, exportc, dynlib.} = interpolateTo(v1, v2, f)
+proc transformSelf_v2*(v: var Vector2, m: Matrix33): Vector2 {.cdecl, exportc, noinit, dynlib.} = transform(v, m)
+proc transformNew_v2*(v: Vector2, m: Matrix33): Vector2 {.cdecl, exportc, dynlib.} = transformNew(v, m)
 
 # Vector3 Proc Wraps
 proc copy_v3*(v1: Vector3): Vector3 {.cdecl, exportc, dynlib.} = copy(v1)
@@ -102,3 +104,5 @@ proc magnitudeSquared_v3*(v: Vector3): cdouble {.cdecl, exportc, dynlib.} = magn
 proc distanceTo_v3*(v1, v2: Vector3): cdouble {.cdecl, exportc, dynlib.} = distanceTo(v1, v2)
 proc distanceToSquared_v3*(v1, v2: Vector3): cdouble {.cdecl, exportc, dynlib.} = distanceToSquared(v1, v2)
 proc interpolateTo_v3*(v1, v2: Vector3, f: cdouble): Vector3 {.cdecl, exportc, dynlib.} = interpolateTo(v1, v2, f)
+proc transformSelf_v3*(v: var Vector3, m: Matrix44): Vector3 {.cdecl, exportc, noinit, dynlib.} = transform(v, m)
+proc transformNew_v3*(v: Vector3, m: Matrix44): Vector3 {.cdecl, exportc, dynlib.} = transformNew(v, m)
