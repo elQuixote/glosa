@@ -58,6 +58,8 @@ proc scaleNew_v2*(v: Vector2, s: cdouble): Vector2 {.cdecl, exportc, dynlib.} = 
 proc scaleSelfComponent_v2*(v: var Vector2, sx, sy: cdouble): Vector2 {.cdecl, exportc, noinit, dynlib.} = scaleSelf(v, sx, sy)
 proc scaleNewComponent_v2*(v: Vector2, sx, sy: cdouble): Vector2 {.cdecl, exportc, dynlib.} = scaleNew(v, sx, sy)
 proc translate_v2*(v1: var Vector2, v2: Vector2): Vector2 {.cdecl, exportc, noinit, dynlib.} = translate(v1, v2)
+proc min_v2(a: openArray[Vector2]): Vector2 {.cdecl, exportc, dynlib.} = min(a)
+proc max_v2(a: openArray[Vector2]): Vector2 {.cdecl, exportc, dynlib.} = max(a)
 
 # Vector3 Proc Wraps
 proc copy_v3*(v1: Vector3): Vector3 {.cdecl, exportc, dynlib.} = copy(v1)
@@ -125,3 +127,5 @@ proc scaleNew_v3*(v: Vector3, s: cdouble): Vector3 {.cdecl, exportc, dynlib.} = 
 proc scaleSelfComponent_v3*(v: var Vector3, sx, sy, sz: cdouble): Vector3 {.cdecl, exportc, noinit, dynlib.} = scaleSelf(v, sx, sy, sz)
 proc scaleNewComponent_v3*(v: Vector3, sx, sy, sz: cdouble): Vector3 {.cdecl, exportc, dynlib.} = scaleNew(v, sx, sy, sz)
 proc translate_v3*(v1: var Vector3, v2: Vector3): Vector3 {.cdecl, exportc, noinit, dynlib.} = translate(v1, v2)
+proc min_v3(a: openArray[Vector3]): Vector3 {.cdecl, exportc, dynlib.} = min(a)
+proc max_v3(a: openArray[Vector3]): Vector3 {.cdecl, exportc, dynlib.} = max(a)
