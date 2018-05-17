@@ -28,6 +28,12 @@ type
     vertices*: seq[Vector]
     segments*: seq[LineSegment[Vector]]
 
+  # Curves
+  NurbsCurve*[Vector] = object
+    degree*: int
+    controlPoints*: seq[Vector]
+    knots*: seq[float]
+
   # Polygon
   Polygon*[Vector] = object
     polyline*: Polyline[Vector]
