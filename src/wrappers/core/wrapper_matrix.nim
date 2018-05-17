@@ -2,6 +2,38 @@ import ../../core/matrix
 import ../../core/quaternion
 from ../../core/vector import Vector3, Vector4
 
+type
+  Matrix33_Net* = object
+    m00, m01, m02: cdouble 
+    m10, m11, m12: cdouble  
+    m20, m21, m22: cdouble 
+
+proc matrix33_Net*(m: Matrix33): Matrix33_Net = 
+  result = Matrix33_Net(
+    m00 : m.matrix[0][0],
+    m01 : m.matrix[0][1],
+    m02 : m.matrix[0][2],
+    m10 : m.matrix[1][0],
+    m11 : m.matrix[1][1],
+    m12 : m.matrix[1][2],
+    m20 : m.matrix[2][0],
+    m21 : m.matrix[2][1],
+    m22 : m.matrix[2][2]
+  )
+
+proc matrix33_Net*(m: Matrix33_Net): Matrix33 = 
+  result = Matrix33(matrix:
+    [[m.m00, 
+    m.m01,
+    m.m02],
+    [m.m10,
+    m.m11,
+    m.m12],
+    [m.m20,
+    m.m21,
+    m.m22]]
+  )
+
 # Matrix33 Proc Wraps
 proc idMatrix_33*(): Matrix33 {.cdecl, exportc, dynlib.} = IDMatrix33
 proc set_33*(m: var Matrix33, n: cdouble): var Matrix33 {.cdecl, exportc, noinit, dynlib.} = set(m, n)
@@ -14,7 +46,10 @@ proc set2_33*(m: var Matrix33,
     m10, m11, m12, 
     m20, m21, m22)
 proc copy_33*(m: Matrix33): Matrix33 {.cdecl, exportc, dynlib.} = copy(m)
-proc clear_33*(m: var Matrix33): var Matrix33 {.cdecl, exportc, noinit, dynlib.} = clear(m)
+proc clear_33*(m: Matrix33_Net): Matrix33_Net {.cdecl, exportc, noinit, dynlib.} = 
+  var x = matrix33_Net(m)
+  x = clear(x)
+  result = matrix33_Net(x)
 proc equals_33*(m1, m2: Matrix33): bool {.cdecl, exportc, dynlib.} = m1 == m2
 proc hash_33*(m: Matrix33): int {.cdecl, exportc, dynlib.} = hash(m)
 proc stringify_33*(m: Matrix33): cstring {.cdecl, exportc, dynlib.} =
