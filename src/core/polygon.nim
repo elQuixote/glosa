@@ -19,6 +19,11 @@ from ./types import
   Polyline,
   LineSegment
 
+from ./errors import
+  InvalidPolylineError,
+  InvalidSegmentsError,
+  InvalidVerticesError
+
 export
   Equals,
   Hash,
@@ -32,7 +37,11 @@ export
   Shape2,
   Closest,
   Vertices,
-  Polygon
+  Polygon,
+  LineSegment,
+  InvalidPolylineError,
+  InvalidSegmentsError,
+  InvalidVerticesError
 
 from math import arctan2, arccos, sqrt, TAU, PI
 from strformat import `&`
@@ -45,9 +54,12 @@ from ./vector import
   dimension,
   clear,
   copy,
-  distanceTo
+  distanceTo,
+  arePlanar
 
 from ./path import
+  polyline,
+  areClosed,
   closestVertex,
   closestPoint,
   containsPoint,
@@ -58,7 +70,28 @@ from ./path import
 
 # Constuctors
 proc polygon*[Vector](polyline: Polyline[Vector]): Polygon[Vector] =
+  if not (areClosed(polyline.segments)):
+    raise newException(InvalidPolylineError,
+      "Polyline is not closed")
+  if not (arePlanar(polyline.vertices)):
+    raise newException(InvalidPolylineError,
+      "Polyline is not planar")
   result.polyline = polyline
+
+proc polygon*[Vector](segments: openArray[LineSegment[Vector]]): Polygon[Vector] =
+  if not areClosed(segments):
+    raise newException(InvalidSegmentsError,
+      "Segments are not closed")
+  result.polyline = polyline(segments)
+  if not arePlanar(result.polyline.vertices):
+    raise newException(InvalidSegmentsError,
+      "Segments are not planar")
+
+proc polygon*[Vector](vertices: openArray[Vector]): Polygon[Vector] =
+  if not arePlanar(vertices):
+    raise newException(InvalidVerticesError,
+      "Vertices are not planar")
+  result.polyline = polyline(vertices, true)
 
 # NOTE: This is added from design doc
 # proc addVertex*[Vector2](p: var Polygon[Vector2], x, y: float): var Polygon[Vector2] {.noinit.} =
@@ -80,7 +113,20 @@ proc vertices*[Vector](p: Polygon[Vector]): seq[Vector] {.inline.} =
 proc segments*[Vector](p: Polygon[Vector]): seq[LineSegment[Vector]] {.inline.} =
   result = p.polyline.segments
 
-proc faces*[Vector](p: Polygon[Vector]): seq[LineSegment[Vector]] = p.segments
+proc faces*[Vector](p: Polygon[Vector]): seq[LineSegment[Vector]] {.inline.} = p.segments
+
+# Iterators
+iterator vertices*[Vector](p: Polygon[Vector]): Vector =
+  for v in p.vertices:
+    yield v
+
+iterator segments*[Vector](p: Polygon[Vector]): LineSegment[Vector] =
+  for s in p.segments:
+    yield s
+
+iterator faces*[Vector](p: Polygon[Vector]): LineSegment[Vector] =
+  for s in p.segments:
+    yield s
 
 # NOTE: This is added from design doc
 proc reverse*[Vector](p: Polygon[Vector]): Polygon[Vector] =
@@ -147,7 +193,7 @@ proc centroid*[Vector](p: Polygon[Vector]): Vector =
         a = s.startVertex
         b = s.endVertex
       vec += (a + b) * cross(a, b)
-    result = vec.multiplySelf(1.0 / (6 * p.area()))
+    result = vec.multiplySelf(1.0 / (6.0 * p.area()))
 
 # Predication Vertices
 # Closest Vertex

@@ -20,6 +20,9 @@ from ./types import
   Matrix44,
   Quaternion
 
+from ./errors import
+  InvalidCrossProductError
+
 export
   Vector,
   Compare,
@@ -35,7 +38,8 @@ export
   Vector1,
   Vector2,
   Vector3,
-  Vector4
+  Vector4,
+  InvalidCrossProductError
 
 # from ./constants import
 #   ETA
@@ -50,9 +54,6 @@ from math import sin, cos, arctan2, arccos, sqrt
 from random import rand
 from strformat import `&`
 import hashes
-
-type
-  InvalidCrossProductError* = object of Exception
 
 proc `[]`*(v: Vector1, i: int): float =
   case i:

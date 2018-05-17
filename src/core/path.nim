@@ -24,6 +24,9 @@ from ./types import
   LineSegment,
   Polygon
 
+from ./errors import
+  InvalidSegmentsError
+
 export
   Equals,
   Hash,
@@ -38,11 +41,11 @@ export
   Closest,
   Vertices,
   Polyline,
-  LineSegment
+  LineSegment,
+  InvalidSegmentsError
 
 from math import arctan2, arccos, sqrt, TAU, PI
 from strformat import `&`
-from sequtils import toSeq
 from algorithm import reverse
 import hashes
 
@@ -68,20 +71,14 @@ proc lineSegment*[Vector](v1, v2: Vector): LineSegment[Vector] =
   result.startVertex = v1
   result.endVertex = v2
 
-proc areClosed[Vector](vertices: openArray[Vector]): bool =
+proc areClosed*[Vector](vertices: openArray[Vector]): bool =
   result = len(vertices) > 1 and vertices[0] == vertices[^1]
 
-proc areClosed[Vector](segments: openArray[LineSegment[Vector]]): bool =
+proc areClosed*[Vector](segments: openArray[LineSegment[Vector]]): bool =
   result = len(segments) > 1 and segments[0].startVertex == segments[^1].endVertex
 
-proc vertices[Vector](segments: openArray[LineSegment[Vector]], closed: bool): seq[Vector] =
-  if len(segments) > 0:
-    for s in segments:
-      add(result, s.startVertex)
-    if not closed:
-      add(result, segments[^1].endVertex)
-
-proc segments[Vector](vertices: openArray[Vector], closed: bool): seq[LineSegment[Vector]] =
+proc getSegments*[Vector](vertices: openArray[Vector], closed: bool): seq[LineSegment[Vector]] =
+  result = @[]
   let l = len(vertices)
   if l > 1:
     for i in 0..<(len(vertices) - 1):
@@ -89,16 +86,40 @@ proc segments[Vector](vertices: openArray[Vector], closed: bool): seq[LineSegmen
     if closed:
       add(result, lineSegment(vertices[l - 1], vertices[0]))
 
+proc getVertices*[Vector](segments: openArray[LineSegment[Vector]], closed: bool): seq[Vector] =
+  result = @[]
+  if len(segments) > 0:
+    for s in segments:
+      add(result, s.startVertex)
+    if not closed:
+      add(result, segments[^1].endVertex)
+
+proc collapseVertices[Vector](vertices: openArray[Vector]): seq[Vector] =
+  result = @[]
+  for i, v in pairs(vertices):
+    if i == 0 or vertices[i - 1] != v:
+      add(result, v)
+
+proc areSegmentsValid[Vector](segments: openArray[LineSegment[Vector]]): bool =
+  result = true
+  for i in 0..<(len(segments) - 1):
+    if segments[i].endVertex != segments[i + 1].startVertex:
+      result = false
+      break
+
+proc polyline*[Vector](vertices: openArray[Vector], closed: bool = false): Polyline[Vector] =
+  let
+    c = closed or areClosed(vertices)
+    vs = collapseVertices(vertices)
+  result.vertices = @vs
+  result.segments = getSegments(vs, c)
+
 proc polyline*[Vector](segments: openArray[LineSegment[Vector]]): Polyline[Vector] =
-  result.vertices = vertices(segments, areClosed(segments))
-  result.segements = toSeq(segments)
-
-proc polyline*[Vector](vertices: openArray[Vector], closed: bool): Polyline[Vector] =
-  result.vertices = toSeq(vertices)
-  result.segments = segments(vertices, closed)
-
-proc polyline*[Vector](vertices: openArray[Vector]): Polyline[Vector] =
-  result = polyline(vertices, areClosed(vertices))
+  if not areSegmentsValid(segments):
+    raise newException(InvalidSegmentsError,
+      "Segments are disjoint")
+  result.vertices = getVertices(segments, areClosed(segments))
+  result.segments = @segments
 
 # NOTE: This is added from design doc
 proc closestPointTo*[Vector](l: LineSegment[Vector], v: Vector2): Vector2 =
@@ -139,6 +160,10 @@ iterator vertices*[Vector](p: Polyline[Vector]): Vector =
 iterator segments*[Vector](p: Polyline[Vector]): LineSegment[Vector] =
   for s in p.segments:
     yield s
+
+# NOTE: This is added from design doc
+proc isClosed*[Vector](p: Polyline[Vector]): bool =
+  result = p.segments[0].startVertex == p.segments[^1].endVertex
 
 # NOTE: This is added from design doc
 proc reverse*[Vector](p: Polyline[Vector]): Polyline[Vector] =
@@ -205,10 +230,12 @@ proc copy*[Vector](p: Polyline[Vector]): Polyline[Vector] =
 
 # String
 proc `$`*[Vector](p: Polyline[Vector]): string =
+  result = ""
   if len(p.vertices) > 0:
-    result &= $p.vertices[0]
-  for v in p.vertices[1..^1]:
-    result &= ", " & $v
+    result &= "[" & $p.vertices[0]
+    for v in p.vertices[1..^1]:
+      result &= ", " & $v
+    result &= "]"
 
 # NOTE: This is added from design doc
 proc average*[Vector](p: Polyline[Vector]): Vector =
