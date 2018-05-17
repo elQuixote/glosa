@@ -169,7 +169,7 @@ proc `$`*[Vector](p: Polygon[Vector]): string =
   result = $p.polyline
 
 # Area
-proc area*[Vector](p: Polygon[Vector]): float =
+proc signedArea[Vector](p: Polygon[Vector]): float =
   for s in p.segments:
     let
       a = s.startVertex
@@ -177,6 +177,8 @@ proc area*[Vector](p: Polygon[Vector]): float =
     result += (a.x * b.y)
     result -= (a.y * b.x)
   result *= 0.5
+
+proc area*[Vector](p: Polygon[Vector]): float = abs(signedArea(p))
 
 # Perimeter (the circumference)
 proc perimeter*[Vector](p: Polygon[Vector]): float =
@@ -193,7 +195,7 @@ proc centroid*[Vector](p: Polygon[Vector]): Vector =
         a = s.startVertex
         b = s.endVertex
       vec += (a + b) * cross(a, b)
-    result = vec.multiplySelf(1.0 / (6.0 * p.area()))
+    result = vec.multiplySelf(1.0 / (6.0 * p.signedArea()))
 
 # Predication Vertices
 # Closest Vertex
@@ -215,7 +217,7 @@ proc closestPoint*[Vector](p: Polygon[Vector], v: Vector): Vector =
 
 # NOTE: This is added from design doc
 proc isClockwise*[Vector](p: Polygon[Vector]): bool =
-  result = area(p) > 0
+  result = signedArea(p) > 0
 
 # Predicate Transforms
 # Rotate
