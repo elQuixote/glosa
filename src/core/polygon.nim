@@ -124,7 +124,7 @@ proc `$`*[Vector](p: Polygon[Vector]): string =
 
 # Area
 proc area*[Vector](p: Polygon[Vector]): float =
-  for s in p.polyline.segments:
+  for s in p.segments:
     let
       a = s.startVertex
       b = s.endVertex
@@ -134,15 +134,15 @@ proc area*[Vector](p: Polygon[Vector]): float =
 
 # Perimeter (the circumference)
 proc perimeter*[Vector](p: Polygon[Vector]): float =
-  for s in p.polyline.segments:
+  for s in p.segments:
     result += distanceTo(s.startVertex, s.endVertex)
 
 # Centroid
 proc centroid*[Vector](p: Polygon[Vector]): Vector =
   let l = len(p.vertices)
   if l > 0:
-    var vec: Vector = clear(copy(p.polyline.vertices[0]))
-    for s in p.polyline.segments:
+    var vec: Vector = clear(copy(p.vertices[0]))
+    for s in p.segments:
       let
         a = s.startVertex
         b = s.endVertex
