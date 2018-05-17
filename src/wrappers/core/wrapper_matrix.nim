@@ -80,7 +80,9 @@ proc matrix44_Net*(m: Matrix44_Net): Matrix44 =
     m.m33]]
   )
 
-# Matrix33 Proc Wraps
+# ***************************************
+#     Matrix33 Proc Wrappers
+# ***************************************
 proc idMatrix_33*(): Matrix33_Net {.cdecl, exportc, dynlib.} = matrix33_Net(IDMatrix33)
 proc set_33*(m: Matrix33_Net, n: cdouble): Matrix33_Net {.cdecl, exportc, noinit, dynlib.} = 
   var x = matrix33_Net(m)
@@ -130,41 +132,63 @@ proc fromVector3(v1, v2, v3: Vector3): Matrix33_Net {.cdecl, exportc, dynlib.} =
 proc toArray_33*(m: Matrix33_Net, a: var array[3, array[3, cdouble]]): void {.cdecl, exportc, dynlib.} =
   a = matrix33_Net(m).matrix
 
-# Matrix44 Proc Wraps
-proc idMatrix_44*(): Matrix44 {.cdecl, exportc, dynlib.} = IDMatrix44
-proc set_44*(m: var Matrix44, n: cdouble): var Matrix44 {.cdecl, exportc, noinit, dynlib.} = set(m, n)
-proc set2_44*(m: var Matrix44, 
+# ***************************************
+#     Matrix44 Proc Wrappers
+# ***************************************
+proc idMatrix_44*(): Matrix44_Net {.cdecl, exportc, dynlib.} = matrix44_Net(IDMatrix44)
+proc set_44*(m: Matrix44_Net, n: cdouble): Matrix44_Net {.cdecl, exportc, noinit, dynlib.} = 
+  var x = matrix44_Net(m)
+  x = set(x, n)
+  result = matrix44_Net(x)
+proc set2_44*(m: Matrix44_Net, 
   m00, m01, m02, m03, 
   m10, m11, m12, m13, 
   m20, m21, m22, m23, 
   m30, m31, m32, m33: cdouble
-  ): var Matrix44 {.cdecl, exportc, noinit, dynlib.} = set(m, 
+  ): Matrix44_Net {.cdecl, exportc, noinit, dynlib.} = 
+    var x = matrix44_Net(m)
+    set(x, 
     m00, m01, m02, m03, 
     m10, m11, m12, m13, 
     m20, m21, m22, m23, 
     m30, m31, m32, m33)
-proc copy_44*(m: Matrix44): Matrix44 {.cdecl, exportc, dynlib.} = copy(m)
-proc clear_44*(m: var Matrix44): var Matrix44 {.cdecl, exportc, noinit, dynlib.} = clear(m)
-proc equals_44*(m1, m2: Matrix44): bool {.cdecl, exportc, dynlib.} = m1 == m2
-proc hash_44*(m: Matrix44): int {.cdecl, exportc, dynlib.} = hash(m)
-proc stringify_44*(m: Matrix44): cstring {.cdecl, exportc, dynlib.} =
+    result = matrix44_Net(x)
+proc copy_44*(m: Matrix44_Net): Matrix44_Net {.cdecl, exportc, dynlib.} = 
+  result = matrix44_Net(copy(matrix44_Net(m)))
+proc clear_44*(m: Matrix44_Net): Matrix44_Net {.cdecl, exportc, noinit, dynlib.} = 
+  var x = matrix44_Net(m)
+  x = clear(x)
+  result = matrix44_Net(x)
+proc equals_44*(m1, m2: Matrix44_Net): bool {.cdecl, exportc, dynlib.} = matrix44_Net(m1) == matrix44_Net(m2)
+proc hash_44*(m: Matrix44_Net): int {.cdecl, exportc, dynlib.} = hash(matrix44_Net(m))
+proc stringify_44*(m: Matrix44_Net): cstring {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
-  $m
-proc transposeSelf_44*(m: var Matrix44): var Matrix44 {.cdecl, exportc, noinit, dynlib.} = transposeSelf(m)
-proc transposeNew_44*(m: Matrix44): Matrix44 {.cdecl, exportc, dynlib.} = transpose(m)
-proc determinant_44*(m: Matrix44): cdouble {.cdecl, exportc, dynlib.} = determinant(m)
-proc invertSelf_44*(m: var Matrix44): var Matrix44 {.cdecl, exportc, noinit, dynlib.} = invertSelf(m)
-proc invertNew_44*(m: Matrix44): Matrix44 {.cdecl, exportc, dynlib.} = invertNew(m)
-proc fromQuaternion_44*(q: Quaternion): Matrix44 {.cdecl, exportc, dynlib.} = fromQuaternion(q)
-proc rotateX_44*(theta: cdouble): Matrix44 {.cdecl, exportc, dynlib.} = rotateX44(theta)
-proc rotateY_44*(theta: cdouble): Matrix44 {.cdecl, exportc, dynlib.} = rotateY44(theta)
-proc rotateZ_44*(theta: cdouble): Matrix44 {.cdecl, exportc, dynlib.} = rotateZ44(theta)
-proc scale_44*(s: cdouble): Matrix44 {.cdecl, exportc, dynlib.} = scale44(s)
-proc scale2_44*(sx, sy, sz: cdouble): Matrix44 {.cdecl, exportc, dynlib.} = scale(sx, sy, sz)
-proc shearX_44*(sy, sz: cdouble): Matrix44 {.cdecl, exportc, dynlib.} = shearX44(sy, sz)
-proc shearY_44*(sx, sz: cdouble): Matrix44 {.cdecl, exportc, dynlib.} = shearY44(sx, sz)
-proc shearZ_44*(sx, sy: cdouble): Matrix44 {.cdecl, exportc, dynlib.} = shearZ44(sx, sy)
-proc shearUniform_X_44*(sh: cdouble): Matrix44 {.cdecl, exportc, dynlib.} = shearX44(sh)
-proc shearUniform_Y_44*(sh: cdouble): Matrix44 {.cdecl, exportc, dynlib.} = shearY44(sh)
-proc shearUniform_Z_44*(sh: cdouble): Matrix44 {.cdecl, exportc, dynlib.} = shearZ44(sh)
-proc fromVector4(v1, v2, v3, v4: Vector4): Matrix44 {.cdecl, exportc, dynlib.} = matrix44(v1, v2, v3, v4)
+  $matrix44_Net(m)
+proc transposeSelf_44*(m: Matrix44_Net): Matrix44_Net {.cdecl, exportc, noinit, dynlib.} = 
+  var x = matrix44_Net(m)
+  x = transposeSelf(x)
+  result = matrix44_Net(x)
+proc transposeNew_44*(m: Matrix44_Net): Matrix44_Net {.cdecl, exportc, dynlib.} = 
+  result = matrix44_Net(transpose(matrix44_Net(m)))
+proc determinant_44*(m: Matrix44_Net): cdouble {.cdecl, exportc, dynlib.} = determinant(matrix44_Net(m))
+proc invertSelf_44*(m: Matrix44_Net): Matrix44_Net {.cdecl, exportc, noinit, dynlib.} = 
+  var x = matrix44_Net(m)
+  x = invertSelf(x)
+  result = matrix44_Net(x)
+proc invertNew_44*(m: Matrix44_Net): Matrix44_Net {.cdecl, exportc, dynlib.} = 
+  result = matrix44_Net(invertNew(matrix44_Net(m)))
+proc fromQuaternion_44*(q: Quaternion): Matrix44_Net {.cdecl, exportc, dynlib.} = matrix44_Net(fromQuaternion(q))
+proc rotateMatrixX_44*(theta: cdouble): Matrix44_Net {.cdecl, exportc, dynlib.} = matrix44_Net(rotateX44(theta))
+proc rotateMatrixY_44*(theta: cdouble): Matrix44_Net {.cdecl, exportc, dynlib.} = matrix44_Net(rotateY44(theta))
+proc rotateMatrixZ_44*(theta: cdouble): Matrix44_Net {.cdecl, exportc, dynlib.} = matrix44_Net(rotateZ44(theta))
+proc scaleMatrix_44*(s: cdouble): Matrix44_Net {.cdecl, exportc, dynlib.} = matrix44_Net(scale44(s))
+proc scaleMatrix2_44*(sx, sy, sz: cdouble): Matrix44_Net {.cdecl, exportc, dynlib.} = matrix44_Net(scale(sx, sy, sz))
+proc shearMatrixX_44*(sy, sz: cdouble): Matrix44_Net {.cdecl, exportc, dynlib.} = matrix44_Net(shearX44(sy, sz))
+proc shearMatrixY_44*(sx, sz: cdouble): Matrix44_Net {.cdecl, exportc, dynlib.} = matrix44_Net(shearY44(sx, sz))
+proc shearMatrixZ_44*(sx, sy: cdouble): Matrix44_Net {.cdecl, exportc, dynlib.} = matrix44_Net(shearZ44(sx, sy))
+proc shearUniformMatrix_X_44*(sh: cdouble): Matrix44_Net {.cdecl, exportc, dynlib.} = matrix44_Net(shearX44(sh))
+proc shearUniformMatrix_Y_44*(sh: cdouble): Matrix44_Net {.cdecl, exportc, dynlib.} = matrix44_Net(shearY44(sh))
+proc shearUniformMatrix_Z_44*(sh: cdouble): Matrix44_Net {.cdecl, exportc, dynlib.} = matrix44_Net(shearZ44(sh))
+proc fromVector4(v1, v2, v3, v4: Vector4): Matrix44_Net {.cdecl, exportc, dynlib.} = matrix44_Net(matrix44(v1, v2, v3, v4))
+proc toArray_44*(m: Matrix44_Net, a: var array[4, array[4, cdouble]]): void {.cdecl, exportc, dynlib.} =
+  a = matrix44_Net(m).matrix
