@@ -82,16 +82,7 @@ proc shearMatrixX_33*(sx: cdouble): Matrix33_Net {.cdecl, exportc, dynlib.} = ma
 proc shearMatrixY_33*(sy: cdouble): Matrix33_Net {.cdecl, exportc, dynlib.} = matrix33_Net(shearY33(sy))
 proc fromVector3(v1, v2, v3: Vector3): Matrix33_Net {.cdecl, exportc, dynlib.} = matrix33_Net(matrix33(v1, v2, v3))
 proc toArray_33*(m: Matrix33_Net, a: var array[3, array[3, cdouble]]): void {.cdecl, exportc, dynlib.} =
-  let matrix = matrix33_Net(m)
-  a[0][0] = matrix.matrix[0][0]
-  a[0][1] = matrix.matrix[0][1]
-  a[0][2] = matrix.matrix[0][2]
-  a[1][0] = matrix.matrix[1][0]
-  a[1][1] = matrix.matrix[1][1]
-  a[1][2] = matrix.matrix[1][2]
-  a[2][0] = matrix.matrix[2][0]
-  a[2][1] = matrix.matrix[2][1]
-  a[2][2] = matrix.matrix[2][2]
+  a = matrix33_Net(m).matrix
 
 # Matrix44 Proc Wraps
 proc idMatrix_44*(): Matrix44 {.cdecl, exportc, dynlib.} = IDMatrix44
