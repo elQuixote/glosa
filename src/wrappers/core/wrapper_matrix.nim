@@ -49,35 +49,17 @@ proc matrix44_Net*(m: Matrix44): Matrix44_Net =
 
 proc matrix33_Net*(m: Matrix33_Net): Matrix33 = 
   result = Matrix33(matrix:
-    [[m.m00, 
-    m.m01,
-    m.m02],
-    [m.m10,
-    m.m11,
-    m.m12],
-    [m.m20,
-    m.m21,
-    m.m22]]
+    [[m.m00, m.m01, m.m02],
+    [m.m10, m.m11, m.m12],
+    [m.m20, m.m21, m.m22]]
   )
 
 proc matrix44_Net*(m: Matrix44_Net): Matrix44 = 
   result = Matrix44(matrix:
-    [[m.m00, 
-    m.m01,
-    m.m02,
-    m.m03],
-    [m.m10,
-    m.m11,
-    m.m12,
-    m.m13],
-    [m.m20,
-    m.m21,
-    m.m22,
-    m.m23],
-    [m.m30, 
-    m.m31,
-    m.m32,
-    m.m33]]
+    [[m.m00, m.m01, m.m02, m.m03],
+    [m.m10, m.m11, m.m12, m.m13],
+    [m.m20, m.m21, m.m22, m.m23],
+    [m.m30, m.m31, m.m32, m.m33]]
   )
 
 # ***************************************
@@ -147,7 +129,7 @@ proc set2_44*(m: Matrix44_Net,
   m30, m31, m32, m33: cdouble
   ): Matrix44_Net {.cdecl, exportc, noinit, dynlib.} = 
     var x = matrix44_Net(m)
-    set(x, 
+    x = set(x, 
     m00, m01, m02, m03, 
     m10, m11, m12, m13, 
     m20, m21, m22, m23, 
