@@ -8,6 +8,12 @@ type
     m10, m11, m12: cdouble  
     m20, m21, m22: cdouble 
 
+  Matrix44_Net* = object
+    m00, m01, m02, m03: cdouble
+    m10, m11, m12, m13: cdouble
+    m20, m21, m22, m23: cdouble
+    m30, m31, m32, m33: cdouble
+
 proc matrix33_Net*(m: Matrix33): Matrix33_Net = 
   result = Matrix33_Net(
     m00 : m.matrix[0][0],
@@ -21,6 +27,26 @@ proc matrix33_Net*(m: Matrix33): Matrix33_Net =
     m22 : m.matrix[2][2]
   )
 
+proc matrix44_Net*(m: Matrix44): Matrix44_Net = 
+  result = Matrix44_Net(
+    m00 : m.matrix[0][0],
+    m01 : m.matrix[0][1],
+    m02 : m.matrix[0][2],
+    m03 : m.matrix[0][3],
+    m10 : m.matrix[1][0],
+    m11 : m.matrix[1][1],
+    m12 : m.matrix[1][2],
+    m13 : m.matrix[1][3],
+    m20 : m.matrix[2][0],
+    m21 : m.matrix[2][1],
+    m22 : m.matrix[2][2],
+    m23 : m.matrix[2][3],
+    m30 : m.matrix[3][0],
+    m31 : m.matrix[3][1],
+    m32 : m.matrix[3][2],
+    m33 : m.matrix[3][3]
+  )
+
 proc matrix33_Net*(m: Matrix33_Net): Matrix33 = 
   result = Matrix33(matrix:
     [[m.m00, 
@@ -32,6 +58,26 @@ proc matrix33_Net*(m: Matrix33_Net): Matrix33 =
     [m.m20,
     m.m21,
     m.m22]]
+  )
+
+proc matrix44_Net*(m: Matrix44_Net): Matrix44 = 
+  result = Matrix44(matrix:
+    [[m.m00, 
+    m.m01,
+    m.m02,
+    m.m03],
+    [m.m10,
+    m.m11,
+    m.m12,
+    m.m13],
+    [m.m20,
+    m.m21,
+    m.m22,
+    m.m23],
+    [m.m30, 
+    m.m31,
+    m.m32,
+    m.m33]]
   )
 
 # Matrix33 Proc Wraps
