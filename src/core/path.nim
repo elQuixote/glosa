@@ -63,7 +63,8 @@ from ./vector import
   rotate,
   scale,
   translate,
-  transform
+  transform,
+  distanceToSquared
 
 # Constuctors
 # NOTE: This is added from design doc
@@ -240,24 +241,21 @@ proc `$`*[Vector](p: Polyline[Vector]): string =
 # NOTE: This is added from design doc
 proc average*[Vector](p: Polyline[Vector]): Vector =
   if len(p.vertices) > 0:
-    var vec = clear(copy(p.vertices[0]))
+    result = clear(copy(p.vertices[0]))
     for i in 0..<len(p.vertices):
-      vec += p.vertices[i]
-    vec /= (float) len(p.vertices)
-    result = vec
+      result += p.vertices[i]
+    result /= (float) len(p.vertices)
 
 # Closest Vertex
 proc closestVertex*[Vector](p: Polyline[Vector], v: Vector): Vector =
   if len(p.vertices > 0):
-    var
-      minDist = high(float)
-      vec = clear(copy(p.vertices[0]))
-    for v in p.vertices:
-      var dist = v.distanceToSquared(v)
+    result = clear(copy(p.vertices[0]))
+    var minDist = high(float)
+    for vertex in p.vertices:
+      var dist = distanceToSquared(vertex, v)
       if (dist < minDist):
-        vec = v
+        result = vertex
         minDist = dist
-    result = vec
 
 # To Polyline
 proc toPolyline*[Vector](p: Polyline[Vector]): Polyline[Vector] =
@@ -270,17 +268,15 @@ proc toPolygon*[Vector](p: Polyline[Vector]): Polygon[Vector] =
 # Closest Point
 proc closestPoint*[Vector](p: Polyline[Vector], v: Vector): Vector =
   if len(p.vertices) > 0:
-    var
-      minDist = high(float)
-      vec = clear(copy(p.vertices[0]))
+    result = clear(copy(p.vertices[0]))
+    var minDist = high(float)
     for s in p.segments:
       var
         closestVec = s.closestPointTo(v)
         dist = closestVec.distanceToSquared(v)
       if (dist < minDist):
-        vec = closestVec
+        result = closestVec
         minDist = dist
-    result = vec
 
 # Transforms
 # Rotate

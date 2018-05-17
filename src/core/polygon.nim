@@ -190,13 +190,13 @@ proc perimeter*[Vector](p: Polygon[Vector]): float =
 proc centroid*[Vector](p: Polygon[Vector]): Vector =
   let l = len(p.vertices)
   if l > 0:
-    var vec: Vector = clear(copy(p.vertices[0]))
+    result = clear(copy(p.vertices[0]))
     for s in p.segments:
       let
         a = s.startVertex
         b = s.endVertex
-      vec += (a + b) * cross(a, b)
-    result = multiplySelf(vec, 1.0 / (6.0 * signedArea(p)))
+      result += (a + b) * cross(a, b)
+    result = multiplySelf(result, 1.0 / (6.0 * signedArea(p)))
 
 # Predication Vertices
 # Closest Vertex
