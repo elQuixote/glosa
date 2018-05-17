@@ -55,7 +55,8 @@ from ./vector import
   clear,
   copy,
   distanceTo,
-  arePlanar
+  arePlanar,
+  multiplySelf
 
 from ./path import
   polyline,
@@ -195,7 +196,7 @@ proc centroid*[Vector](p: Polygon[Vector]): Vector =
         a = s.startVertex
         b = s.endVertex
       vec += (a + b) * cross(a, b)
-    result = vec.multiplySelf(1.0 / (6.0 * p.signedArea()))
+    result = multiplySelf(vec, 1.0 / (6.0 * signedArea(p)))
 
 # Predication Vertices
 # Closest Vertex
