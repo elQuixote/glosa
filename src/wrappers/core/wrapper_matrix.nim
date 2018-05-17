@@ -35,37 +35,52 @@ proc matrix33_Net*(m: Matrix33_Net): Matrix33 =
   )
 
 # Matrix33 Proc Wraps
-proc idMatrix_33*(): Matrix33 {.cdecl, exportc, dynlib.} = IDMatrix33
-proc set_33*(m: var Matrix33, n: cdouble): var Matrix33 {.cdecl, exportc, noinit, dynlib.} = set(m, n)
-proc set2_33*(m: var Matrix33, 
+proc idMatrix_33*(): Matrix33_Net {.cdecl, exportc, dynlib.} = matrix33_Net(IDMatrix33)
+proc set_33*(m: Matrix33_Net, n: cdouble): Matrix33_Net {.cdecl, exportc, noinit, dynlib.} = 
+  var x = matrix33_Net(m)
+  x = set(x, n)
+  result = matrix33_Net(x)
+proc set2_33*(m: Matrix33_Net, 
   m00, m01, m02, 
   m10, m11, m12, 
   m20, m21, m22: cdouble
-  ): var Matrix33 {.cdecl, exportc, noinit, dynlib.} = set(m, 
+  ): Matrix33_Net {.cdecl, exportc, noinit, dynlib.} = 
+    var x = matrix33_Net(m)
+    x = set(x, 
     m00, m01, m02, 
     m10, m11, m12, 
     m20, m21, m22)
-proc copy_33*(m: Matrix33): Matrix33 {.cdecl, exportc, dynlib.} = copy(m)
+    result = matrix33_Net(x)
+proc copy_33*(m: Matrix33_Net): Matrix33_Net {.cdecl, exportc, dynlib.} = 
+  result = matrix33_Net(copy(matrix33_Net(m)))
 proc clear_33*(m: Matrix33_Net): Matrix33_Net {.cdecl, exportc, noinit, dynlib.} = 
   var x = matrix33_Net(m)
   x = clear(x)
   result = matrix33_Net(x)
-proc equals_33*(m1, m2: Matrix33): bool {.cdecl, exportc, dynlib.} = m1 == m2
-proc hash_33*(m: Matrix33): int {.cdecl, exportc, dynlib.} = hash(m)
-proc stringify_33*(m: Matrix33): cstring {.cdecl, exportc, dynlib.} =
+proc equals_33*(m1, m2: Matrix33_Net): bool {.cdecl, exportc, dynlib.} = matrix33_Net(m1) == matrix33_Net(m2)
+proc hash_33*(m: Matrix33_Net): int {.cdecl, exportc, dynlib.} = hash(matrix33_Net(m))
+proc stringify_33*(m: Matrix33_Net): cstring {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
-  $m
-proc transposeSelf_33*(m: var Matrix33): var Matrix33 {.cdecl, exportc, noinit, dynlib.} = transposeSelf(m)
-proc transposeNew_33*(m: Matrix33): Matrix33 {.cdecl, exportc, dynlib.} = transpose(m)
-proc determinant_33*(m: Matrix33): cdouble {.cdecl, exportc, dynlib.} = determinant(m)
-proc invertSelf_33*(m: var Matrix33): var Matrix33 {.cdecl, exportc, noinit, dynlib.} = invertSelf(m)
-proc invertNew_33*(m: Matrix33): Matrix33 {.cdecl, exportc, dynlib.} = invertNew(m)
-proc rotate_33*(theta: cdouble): Matrix33 {.cdecl, exportc, dynlib.} = rotate33(theta)
-proc scale_33*(s: cdouble): Matrix33 {.cdecl, exportc, dynlib.} = scale33(s)
-proc scale2_33*(sx, sy: cdouble): Matrix33 {.cdecl, exportc, dynlib.} = scale(sx, sy)
-proc shearX_33*(sx: cdouble): Matrix33 {.cdecl, exportc, dynlib.} = shearX33(sx)
-proc shearY_33*(sy: cdouble): Matrix33 {.cdecl, exportc, dynlib.} = shearY33(sy)
-proc fromVector3(v1, v2, v3: Vector3): Matrix33 {.cdecl, exportc, dynlib.} = matrix33(v1, v2, v3)
+  $matrix33_Net(m)
+proc transposeSelf_33*(m: Matrix33_Net): Matrix33_Net {.cdecl, exportc, noinit, dynlib.} = 
+  var x = matrix33_Net(m)
+  x = transposeSelf(x)
+  result = matrix33_Net(x)
+proc transposeNew_33*(m: Matrix33_Net): Matrix33_Net {.cdecl, exportc, dynlib.} = 
+  result = matrix33_Net(transpose(matrix33_Net(m)))
+proc determinant_33*(m: Matrix33_Net): cdouble {.cdecl, exportc, dynlib.} = determinant(matrix33_Net(m))
+proc invertSelf_33*(m: Matrix33_Net): Matrix33_Net {.cdecl, exportc, noinit, dynlib.} = 
+  var x = matrix33_Net(m)
+  x = invertSelf(x)
+  result = matrix33_Net(x)
+proc invertNew_33*(m: Matrix33_Net): Matrix33_Net {.cdecl, exportc, dynlib.} = 
+  result = matrix33_Net(invertNew(matrix33_Net(m)))
+proc rotateMatrix_33*(theta: cdouble): Matrix33_Net {.cdecl, exportc, dynlib.} = matrix33_Net(rotate33(theta))
+proc scaleMatrix_33*(s: cdouble): Matrix33_Net {.cdecl, exportc, dynlib.} = matrix33_Net(scale33(s))
+proc scaleMatrix2_33*(sx, sy: cdouble): Matrix33_Net {.cdecl, exportc, dynlib.} = matrix33_Net(scale(sx, sy))
+proc shearMatrixX_33*(sx: cdouble): Matrix33_Net {.cdecl, exportc, dynlib.} = matrix33_Net(shearX33(sx))
+proc shearMatrixY_33*(sy: cdouble): Matrix33_Net {.cdecl, exportc, dynlib.} = matrix33_Net(shearY33(sy))
+proc fromVector3(v1, v2, v3: Vector3): Matrix33_Net {.cdecl, exportc, dynlib.} = matrix33_Net(matrix33(v1, v2, v3))
 
 # Matrix44 Proc Wraps
 proc idMatrix_44*(): Matrix44 {.cdecl, exportc, dynlib.} = IDMatrix44
