@@ -17,7 +17,11 @@ from ./types import
   Vector3,
   Vector4,
   Matrix33,
-  Matrix44
+  Matrix44,
+  Quaternion
+
+from ./errors import
+  InvalidCrossProductError
 
 export
   Vector,
@@ -34,7 +38,11 @@ export
   Vector1,
   Vector2,
   Vector3,
-  Vector4
+  Vector4,
+  InvalidCrossProductError
+
+# from ./constants import
+#   ETA
 
 from ./matrix import
   matrix44,
@@ -46,9 +54,6 @@ from math import sin, cos, arctan2, arccos, sqrt
 from random import rand
 from strformat import `&`
 import hashes
-
-type
-  InvalidCrossProductError* = object of Exception
 
 proc `[]`*(v: Vector1, i: int): float =
   case i:
@@ -119,9 +124,9 @@ macro generateSwizzleProcs(t: typed, chars: static[string]): untyped =
         for m in chars:
           let
             mIdent = ident("" & m)
-            ijkIdent = ident(ijkString & m)
+            ijkmIdent = ident(ijkString & m)
           result.add quote do:
-            proc `ijkIdent`*(v: `t`): Vector4 =
+            proc `ijkmIdent`*(v: `t`): Vector4 =
               Vector4(x: v.`iIdent`, y: v.`jIdent`, z: v.`kIdent`, w: v.`mIdent`)
 
 generateSwizzleProcs(Vector1, "x")
@@ -861,29 +866,29 @@ proc heading*(v: Vector3): float = headingXY(v)
 proc heading*(v: Vector4): float = headingXY(v)
 
 # Magnitude
+proc magnitudeSquared*(v: Vector1): float {.inline.} =
+  result = v.x * v.x
+
+proc magnitudeSquared*(v: Vector2): float {.inline.} =
+  result = v.x * v.x + v.y * v.y
+
+proc magnitudeSquared*(v: Vector3): float {.inline.} =
+  result = v.x * v.x + v.y * v.y + v.z * v.z
+
+proc magnitudeSquared*(v: Vector4): float {.inline.} =
+  result = v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w
+
 proc magnitude*(v: Vector1): float =
   result = abs(v.x)
 
 proc magnitude*(v: Vector2): float =
-  result = sqrt(v.x * v.x + v.y * v.y)
+  result = sqrt(magnitudeSquared(v))
 
 proc magnitude*(v: Vector3): float =
-  result = sqrt(v.x * v.x + v.y * v.y + v.z * v.z)
+  result = sqrt(magnitudeSquared(v))
 
 proc magnitude*(v: Vector4): float =
-  result = sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w)
-
-proc magnitudeSquared*(v: Vector1): float =
-  result = v.x * v.x
-
-proc magnitudeSquared*(v: Vector2): float =
-  result = v.x * v.x + v.y * v.y
-
-proc magnitudeSquared*(v: Vector3): float =
-  result = v.x * v.x + v.y * v.y + v.z * v.z
-
-proc magnitudeSquared*(v: Vector4): float =
-  result = v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w
+  result = sqrt(magnitudeSquared(v))
 
 # Length
 proc length*(v: Vector1): float = magnitude(v)
@@ -891,22 +896,8 @@ proc length*(v: Vector2): float = magnitude(v)
 proc length*(v: Vector3): float = magnitude(v)
 proc length*(v: Vector4): float = magnitude(v)
 
-# NOTE: This is added from design doc
 # Distance To
-proc distanceTo*(v1, v2: Vector1): float =
-  result = v1.subtractNew(v2).length()
-
-proc distanceTo*(v1, v2: Vector2): float =
-  result = v1.subtractNew(v2).length()
-
-proc distanceTo*(v1, v2: Vector3): float =
-  result = v1.subtractNew(v2).length()
-
-proc distanceTo*(v1, v2: Vector4): float =
-  result = v1.subtractNew(v2).length()
-
 # NOTE: This is added from design doc
-# Distance To Squared
 proc distanceToSquared*(v1, v2: Vector2): float =
   var a = v1.x - v2.x
   var b = v1.y - v2.y
@@ -925,8 +916,20 @@ proc distanceToSquared*(v1, v2: Vector4): float =
   var d = v1.w - v2.w
   result = a * a + b * b + c * c + d * d
 
+proc distanceTo*(v1, v2: Vector1): float =
+  result = v1.subtractNew(v2).length()
+
+proc distanceTo*(v1, v2: Vector2): float =
+  result = v1.subtractNew(v2).length()
+
+proc distanceTo*(v1, v2: Vector3): float =
+  result = v1.subtractNew(v2).length()
+
+proc distanceTo*(v1, v2: Vector4): float =
+  result = v1.subtractNew(v2).length()
+
+# Interpolate To
 # NOTE: This is added from design doc
-# InterpolateTo
 proc interpolateTo*(v1, v2: Vector1, f: float): Vector1 =
   result.x = v1.x + (v2.x - v1.x) * f
 
@@ -1090,52 +1093,52 @@ proc angleBetween*(v1, v2: Vector4): float =
 
 # Compare (compares magnitudes)
 proc `>`*(v1, v2: Vector1): bool =
-  result = magnitude(v1) > magnitude(v2)
+  result = magnitudeSquared(v1) > magnitudeSquared(v2)
 
 proc `<`*(v1, v2: Vector1): bool =
-  result = magnitude(v1) < magnitude(v2)
+  result = magnitudeSquared(v1) < magnitudeSquared(v2)
 
 proc `>=`*(v1, v2: Vector1): bool =
-  result = magnitude(v1) >= magnitude(v2)
+  result = magnitudeSquared(v1) >= magnitudeSquared(v2)
 
 proc `<=`*(v1, v2: Vector1): bool =
-  result = magnitude(v1) <= magnitude(v2)
+  result = magnitudeSquared(v1) <= magnitudeSquared(v2)
 
 proc `>`*(v1, v2: Vector2): bool =
-  result = magnitude(v1) > magnitude(v2)
+  result = magnitudeSquared(v1) > magnitudeSquared(v2)
 
 proc `<`*(v1, v2: Vector2): bool =
-  result = magnitude(v1) < magnitude(v2)
+  result = magnitudeSquared(v1) < magnitudeSquared(v2)
 
 proc `>=`*(v1, v2: Vector2): bool =
-  result = magnitude(v1) >= magnitude(v2)
+  result = magnitudeSquared(v1) >= magnitudeSquared(v2)
 
 proc `<=`*(v1, v2: Vector2): bool =
-  result = magnitude(v1) <= magnitude(v2)
+  result = magnitudeSquared(v1) <= magnitudeSquared(v2)
 
 proc `>`*(v1, v2: Vector3): bool =
-  result = magnitude(v1) > magnitude(v2)
+  result = magnitudeSquared(v1) > magnitudeSquared(v2)
 
 proc `<`*(v1, v2: Vector3): bool =
-  result = magnitude(v1) < magnitude(v2)
+  result = magnitudeSquared(v1) < magnitudeSquared(v2)
 
 proc `>=`*(v1, v2: Vector3): bool =
-  result = magnitude(v1) >= magnitude(v2)
+  result = magnitudeSquared(v1) >= magnitudeSquared(v2)
 
 proc `<=`*(v1, v2: Vector3): bool =
-  result = magnitude(v1) <= magnitude(v2)
+  result = magnitudeSquared(v1) <= magnitudeSquared(v2)
 
 proc `>`*(v1, v2: Vector4): bool =
-  result = magnitude(v1) > magnitude(v2)
+  result = magnitudeSquared(v1) > magnitudeSquared(v2)
 
 proc `<`*(v1, v2: Vector4): bool =
-  result = magnitude(v1) < magnitude(v2)
+  result = magnitudeSquared(v1) < magnitudeSquared(v2)
 
 proc `>=`*(v1, v2: Vector4): bool =
-  result = magnitude(v1) >= magnitude(v2)
+  result = magnitudeSquared(v1) >= magnitudeSquared(v2)
 
 proc `<=`*(v1, v2: Vector4): bool =
-  result = magnitude(v1) <= magnitude(v2)
+  result = magnitudeSquared(v1) <= magnitudeSquared(v2)
 
 # Equals (compares coordinates)
 proc `==`*(v1, v2: Vector1): bool =
@@ -1252,7 +1255,7 @@ proc rotateNew*(v: Vector1, theta: float): Vector1 =
 
 proc rotateSelf*(v: var Vector2, theta: float): var Vector2 {.noinit.} =
   let r = calculateRotate(v.x, v.y, theta)
-  result = v.set(r.a, r.b)
+  result = set(v, r.a, r.b)
 
 proc rotateNew*(v: Vector2, theta: float): Vector2 =
   let r = calculateRotate(v.x, v.y, theta)
@@ -1260,7 +1263,7 @@ proc rotateNew*(v: Vector2, theta: float): Vector2 =
 
 proc rotateXSelf*(v: var Vector3, theta: float): var Vector3 {.noinit.} =
   let r = calculateRotate(v.y, v.z, theta)
-  result = v.set(v.x, r.a, r.b)
+  result = set(v, v.x, r.a, r.b)
 
 proc rotateXNew*(v: Vector3, theta: float): Vector3 =
   let r = calculateRotate(v.y, v.z, theta)
@@ -1268,7 +1271,7 @@ proc rotateXNew*(v: Vector3, theta: float): Vector3 =
 
 proc rotateYSelf*(v: var Vector3, theta: float): var Vector3 {.noinit.} =
   let r = calculateRotate(v.x, v.z, theta)
-  result = v.set(r.a, v.y, r.b)
+  result = set(v, r.a, v.y, r.b)
 
 proc rotateYNew*(v: Vector3, theta: float): Vector3 =
   let r = calculateRotate(v.x, v.z, theta)
@@ -1276,7 +1279,7 @@ proc rotateYNew*(v: Vector3, theta: float): Vector3 =
 
 proc rotateZSelf*(v: var Vector3, theta: float): var Vector3 {.noinit.} =
   let r = calculateRotate(v.x, v.y, theta)
-  result = v.set(r.a, r.b, v.z)
+  result = set(v, r.a, r.b, v.z)
 
 proc rotateZNew*(v: Vector3, theta: float): Vector3 =
   let r = calculateRotate(v.x, v.y, theta)
@@ -1284,7 +1287,7 @@ proc rotateZNew*(v: Vector3, theta: float): Vector3 =
 
 proc rotateXYSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
   let r = calculateRotate(v.z, v.w, theta)
-  result = v.set(v.x, v.y, r.a, r.b)
+  result = set(v, v.x, v.y, r.a, r.b)
 
 proc rotateXYNew*(v: Vector4, theta: float): Vector4 =
   let r = calculateRotate(v.z, v.w, theta)
@@ -1292,7 +1295,7 @@ proc rotateXYNew*(v: Vector4, theta: float): Vector4 =
 
 proc rotateXZSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
   let r = calculateRotate(v.y, v.w, theta)
-  result = v.set(v.x, r.a, v.z, r.b)
+  result = set(v, v.x, r.a, v.z, r.b)
 
 proc rotateXZNew*(v: Vector4, theta: float): Vector4 =
   let r = calculateRotate(v.y, v.w, theta)
@@ -1300,7 +1303,7 @@ proc rotateXZNew*(v: Vector4, theta: float): Vector4 =
 
 proc rotateXWSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
   let r = calculateRotate(v.y, v.z, theta)
-  result = v.set(v.x, r.a, r.b, v.w)
+  result = set(v, v.x, r.a, r.b, v.w)
 
 proc rotateXWNew*(v: Vector4, theta: float): Vector4 =
   let r = calculateRotate(v.y, v.z, theta)
@@ -1308,7 +1311,7 @@ proc rotateXWNew*(v: Vector4, theta: float): Vector4 =
 
 proc rotateYZSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
   let r = calculateRotate(v.x, v.w, theta)
-  result = v.set(r.a, v.y, v.z, r.b)
+  result = set(v, r.a, v.y, v.z, r.b)
 
 proc rotateYZNew*(v: Vector4, theta: float): Vector4 =
   let r = calculateRotate(v.x, v.w, theta)
@@ -1316,7 +1319,7 @@ proc rotateYZNew*(v: Vector4, theta: float): Vector4 =
 
 proc rotateYWSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
   let r = calculateRotate(v.x, v.z, theta)
-  result = v.set(r.a, v.y, r.b, v.w)
+  result = set(v, r.a, v.y, r.b, v.w)
 
 proc rotateYWNew*(v: Vector4, theta: float): Vector4 =
   let r = calculateRotate(v.x, v.y, theta)
@@ -1324,7 +1327,7 @@ proc rotateYWNew*(v: Vector4, theta: float): Vector4 =
 
 proc rotateZWSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
   let r = calculateRotate(v.x, v.y, theta)
-  result = v.set(r.a, r.b, v.z, v.w)
+  result = set(v, r.a, r.b, v.z, v.w)
 
 proc rotateZWNew*(v: Vector4, theta: float): Vector4 =
   let r = calculateRotate(v.x, v.y, theta)
@@ -1534,3 +1537,44 @@ proc max*(a: openArray[Vector]): Vector =
   for v in a:
     if result == nil or v > result:
       result = v
+
+# Miscellaneous
+# NOTE: This is added from the design doc
+# NOTE: All plane operations should be refactored as some point
+
+proc calculatePlane*(v1, v2, v3: Vector3): Vector4 =
+  let cp = cross(subtractNew(v3, v1), subtractNew(v2, v1))
+  result = vector4(cp, -1.0 * dot(cp, v3))
+
+proc areCollinear*(v1, v2, v3: Vector3): bool =
+  result = true
+  let ms = magnitudeSquared(cross(subtractNew(v3, v1), subtractNew(v2, v1)))
+  # if ms > ETA:
+  if ms != 0:
+    result = false
+
+# NOTE: Write generaly areCollinear for array
+
+# This is probably not the most efficient algorithm for coplanarity
+# Finds the first plane, and then each points distance to that plane
+proc arePlanar*(a: openArray[Vector3]): bool =
+  result = true
+  let l = len(a)
+  if l > 3:
+    var
+      collinear = true
+      p = vector4(0.0, 0.0, 0.0, 0.0)
+    for i in 0..<(l - 2):
+      if not areCollinear(a[0], a[1], a[2]):
+        collinear = false
+        p = calculatePlane(a[0], a[1], a[2])
+        break
+    if collinear:
+      return true
+    for i in 3..<l:
+      let d = p.x * a[i].x + p.y * a[i].y + p.z * a[i].z + p.w
+      # NOTE: Refactor if needed to use ETA because of floating point
+      # if d > ETA:
+      if d != 0.0:
+        result = false
+        break

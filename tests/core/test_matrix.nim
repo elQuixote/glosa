@@ -1,20 +1,18 @@
 import ../../src/core/matrix
 import unittest
 
-from math import pow
 from sequtils import zip
 
-const
-  ETA = pow(10.0, -6)
-  TAU = pow(10.0, -3)
+from ../../src/core/constants import
+  ETA
 
-proc compareMatricesWithinTau(m1, m2: Matrix): bool =
+proc compareMatricesWithinHalfEta(m1, m2: Matrix): bool =
   let matrices = zip(m1.matrix, m2.matrix)
   result = true
   for r in matrices:
     let rows = zip(r[0], r[1])
     for cells in rows:
-      if abs(cells[0] - cells[1]) >= TAU:
+      if abs(cells[0] - cells[1]) >= (ETA / 2.0):
         result = false
   if not result:
     checkpoint("m1 was " & $m1)
@@ -90,12 +88,12 @@ suite "Testing Matrix equality":
         0.0, 0.0946135, 0.536325, 0.251461
       )
 
-suite "Testing Matrix determinant":
+suite "Calculating a Matrix determinant":
   proc testDeterminant(m: Matrix, expected: float) {.inline.} =
     let det = determinant(m)
     check:
       det == expected or det - expected < ETA
-  test "Testing Matrix33 determinant":
+  test "Calculating a Matrix33 determinant":
     testDeterminant(
       matrix33(
         0.654598, 0.923056, 0.39427,
@@ -120,7 +118,7 @@ suite "Testing Matrix determinant":
       ),
       -0.309209
     )
-  test "Testing Matrix44 determinant":
+  test "Calculating a Matrix44 determinant":
     testDeterminant(
       matrix44(
         0.842703, 0.397442, 0.567616, 0.166963,
@@ -149,12 +147,12 @@ suite "Testing Matrix determinant":
       -0.0477751
     )
 
-suite "Testing Matrix invert":
+suite "Inverting a Matrix":
   proc testInvert(m, expected: Matrix) {.inline.} =
     let i = invertNew(m)
     check:
-      compareMatricesWithinTau(i, expected)
-  test "Testing Matrix33 invert":
+      compareMatricesWithinHalfEta(i, expected)
+  test "Inverting a Matrix33":
     testInvert(
       matrix33(
         0.970284, 0.402416, 0.306014,
@@ -191,7 +189,7 @@ suite "Testing Matrix invert":
         -0.0805859, -1.86338, 1.72729
       )
     )
-  test "Testing Matrix44 invert":
+  test "Inverting a Matrix44":
     testInvert(
       matrix44(
         0.831218, 0.0194439, 0.915009, 0.449362,
