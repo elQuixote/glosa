@@ -97,8 +97,9 @@ proc getVertices*[Vector](segments: openArray[LineSegment[Vector]], closed: bool
 
 proc collapseVertices[Vector](vertices: openArray[Vector]): seq[Vector] =
   result = @[]
+  let l = len(vertices)
   for i, v in pairs(vertices):
-    if i == 0 or vertices[i - 1] != v:
+    if v != vertices[(i + 1) mod l]:
       add(result, v)
 
 proc areSegmentsValid[Vector](segments: openArray[LineSegment[Vector]]): bool =
