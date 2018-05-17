@@ -132,47 +132,23 @@ proc `$`*[Vector](c: Circle[Vector]): string =
 
 # Transforms
 # Rotate
-proc rotateSelf*[Vector](c: var Circle[Vector], theta: float): var Circle[Vector] {.noinit.} =
+proc rotate*[Vector](c: var Circle[Vector], theta: float): var Circle[Vector] {.noinit.} =
   result = c
-
-proc rotateNew*[Vector](c: Circle[Vector], theta: float): Circle[Vector] =
-  result = c
-
-proc rotate*[Vector](c: Circle[Vector], theta: float): var Circle[Vector] {.noinit.} = rotateSelf(c, theta)
 
 # Scale
-proc scaleSelf*[Vector](c: var Circle[Vector], s: float): var Circle[Vector] {.noinit.} =
+proc scale*[Vector](c: var Circle[Vector], s: float): var Circle[Vector] {.noinit.} =
   c.radius *= s
   result = c
 
-proc scaleNew*[Vector](c: Circle[Vector], s: float): Circle[Vector] =
-  result = copy(c)
-  result.radius *= s
-
-proc scale*[Vector](c: var Circle[Vector], s: float): var Circle[Vector] {.noinit.} = scaleSelf(c, s)
-
 # Translate
-proc translateSelf*[Vector](c: var Circle[Vector], t: float): var Circle[Vector] {.noinit.} =
+proc translate*[Vector](c: var Circle[Vector], t: float): var Circle[Vector] {.noinit.} =
   c.center += t
   result = c
 
-proc translateNew*[Vector](c: Circle[Vector], v: Vector): Circle[Vector] =
-  result = copy(c)
-  result.center += v
-
-proc translate*[Vector](c: var Circle[Vector], t: float): var Circle[Vector] {.noinit.} = translateSelf(c, t)
-
 # Transform
-proc transformSelf*[Vector](c: var Circle[Vector], m : Matrix): var Circle[Vector] {.noinit.} =
-  c.center = transformSelf(c.center, m)
+proc transform*[Vector](c: var Circle[Vector], m : Matrix): var Circle[Vector] {.noinit.} =
+  c.center = transform(c.center, m)
   result = c
-
-proc transformNew*[Vector](c: Circle[Vector], m : Matrix): Circle[Vector] =
-  result = c.copy()
-  c.center = transformNew(c.center, m)
-
-proc transform*[Vector](c: var Circle[Vector], m : Matrix): var Circle[Vector] {.noinit.} = transformSelf(c, m)
-
 
 
 

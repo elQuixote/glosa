@@ -3,7 +3,7 @@ from ./concepts import
   Hash,
   Transform,
   Dimension,
-  Set,
+  # Set,
   # Clear,
   Copy,
   String,
@@ -29,7 +29,7 @@ export
   Hash,
   Transform,
   Dimension,
-  Set,
+  # Set,
   # Clear,
   Copy,
   String,
@@ -112,6 +112,25 @@ proc closestPointTo*[Vector](l: LineSegment[Vector], v: Vector2): Vector2 =
     result = addNew(l.startVertex, multiplySelf(sub, t))
 
 # NOTE: This is added from design doc
+# proc addVertex*[Vector](p: var Polyline[Vector], x, y: float): var Polyline[Vector] {.noinit.} =
+#   if not p.contains(vector2(x,y)):
+#     p.vertices.add(vector2(x, y))
+#   else: raise newException(AccessViolationError, "Attempting to add a vertex which alreaday exists")
+#   result = p
+
+# proc addVertex*[Vector](p: var Polyline[Vector], x, y, z: float): var Polyline[Vector] {.noinit.} =
+#   if not p.contains(vector3(x,y,z)):
+#     p.vertices.add(vector3(x, y, z))
+#   else: raise newException(AccessViolationError, "Attempting to add a vertex which alreaday exists")
+#   result = p
+
+# proc addVertex*[Vector](p: var Polyline[Vector], v: Vector): var Polyline[Vector] {.noinit.} =
+#   if not p.contains(v):
+#     p.vertices.add(v)
+#   else: raise newException(AccessViolationError, "Attempting to add a vertex which alreaday exists")
+#   result = p
+
+# NOTE: This is added from design doc
 # NOTE: Using Nim paradigm (items, fields, pairs, etc)
 iterator vertices*[Vector](p: Polyline[Vector]): Vector =
   for v in p.vertices:
@@ -122,7 +141,7 @@ iterator segments*[Vector](p: Polyline[Vector]): LineSegment[Vector] =
     yield s
 
 # NOTE: This is added from design doc
-proc reverseOrder*[Vector](p: Polyline[Vector]): Polyline[Vector] =
+proc reverse*[Vector](p: Polyline[Vector]): Polyline[Vector] =
   result = polyline(reverse(p.vertices))
 
 # NOTE: This is added from design doc
@@ -169,6 +188,11 @@ proc `!=`*[Vector](p1,p2: Polyline[Vector]): bool =
 proc hash*[Vector](p: Polyline[Vector]): hashes.Hash =
   for v in p.vertices:
     result = !$(result !& hash(v))
+
+# # Clear
+# proc clear*[Vector](p: var Polyline[Vector]): var Polyline[Vector] {.noinit.} =
+#   p.vertices = @[]
+#   result = p
 
 # Dimension
 proc dimension*[Vector](p: Polyline[Vector]): int =
