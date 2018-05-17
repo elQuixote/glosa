@@ -1,5 +1,3 @@
-from sets import OrderedSet
-
 type
   # Vectors
   Vector1* = object
