@@ -38,7 +38,7 @@ proc quaternion*(x, y, z, w: float): Quaternion =
   result.z = z
   result.w = w
 
-proc quaternion(w: float, v: Vector3): Quaternion =
+proc quaternion*(w: float, v: Vector3): Quaternion =
   result.w = w
   result.x = v.x
   result.y = v.y
@@ -103,8 +103,12 @@ proc `$`*(q: Quaternion): string =
 proc magnitude*(q: Quaternion): float =
   result = sqrt(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w)
 
+# Magnitude Squared
+proc magnitudeSquared*(q: Quaternion): float =
+  result = q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w
+
 # Length
-proc length*(q: Quaternion): float = magnitude(q)
+proc length*(q: Quaternion): float = magnitudeSquared(q)
 
 # Addition
 proc addNew*(q: Quaternion, f: float): Quaternion =
