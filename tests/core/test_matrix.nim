@@ -4,7 +4,7 @@ import unittest
 from sequtils import zip
 
 from ../../src/core/constants import
-  ETA
+  EPSILON
 
 proc compareMatricesWithinHalfEta(m1, m2: Matrix): bool =
   let matrices = zip(m1.matrix, m2.matrix)
@@ -12,7 +12,7 @@ proc compareMatricesWithinHalfEta(m1, m2: Matrix): bool =
   for r in matrices:
     let rows = zip(r[0], r[1])
     for cells in rows:
-      if abs(cells[0] - cells[1]) >= (ETA / 2.0):
+      if abs(cells[0] - cells[1]) >= (EPSILON / 2.0):
         result = false
   if not result:
     checkpoint("m1 was " & $m1)
@@ -92,7 +92,7 @@ suite "Calculating a Matrix determinant":
   proc testDeterminant(m: Matrix, expected: float) {.inline.} =
     let det = determinant(m)
     check:
-      det == expected or det - expected < ETA
+      det == expected or det - expected < EPSILON
   test "Calculating a Matrix33 determinant":
     testDeterminant(
       matrix33(

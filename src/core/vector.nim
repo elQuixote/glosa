@@ -42,7 +42,7 @@ export
   InvalidCrossProductError
 
 # from ./constants import
-#   ETA
+#   EPSILON
 
 from ./matrix import
   matrix44,
@@ -1549,7 +1549,7 @@ proc calculatePlane*(v1, v2, v3: Vector3): Vector4 =
 proc areCollinear*(v1, v2, v3: Vector3): bool =
   result = true
   let ms = magnitudeSquared(cross(subtractNew(v3, v1), subtractNew(v2, v1)))
-  # if ms > ETA:
+  # if ms > EPSILON:
   if ms != 0:
     result = false
 
@@ -1573,8 +1573,8 @@ proc arePlanar*(a: openArray[Vector3]): bool =
       return true
     for i in 3..<l:
       let d = p.x * a[i].x + p.y * a[i].y + p.z * a[i].z + p.w
-      # NOTE: Refactor if needed to use ETA because of floating point
-      # if d > ETA:
+      # NOTE: Refactor if needed to use EPSILON because of floating point
+      # if d > EPSILON:
       if d != 0.0:
         result = false
         break

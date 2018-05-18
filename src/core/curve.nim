@@ -32,9 +32,15 @@ export
   InvalidKnotsError,
   InvalidInterpolationError
 
+from math import floor
 from strformat import `&`
 import hashes
 
+from ./Vector import
+  clear,
+  copy
+
+# Helpers
 proc isValidNurbsCurveData[Vector](degree: int, controlPoints: seq[Vector], knots: seq[float]): bool =
   result = true
   let knotsLen = len(knots)
@@ -55,6 +61,107 @@ proc isValidInterpolationPoints[Vector](degree: int, points: seq[Vector]): bool 
     raise newException(InvalidInterpolationError,
       "Less than degree + 1 points given for interpolation")
 
+proc knotSpan[Vector](nc: NurbsCurve[Vector], u: float): int =
+  let n = len(nc.knots) - nc.degree - 2
+  if (u >= nc.knots[n + 1]): # NOTE: Add tolerance/remove equals?
+    return n
+  if (u <= nc.knots[nc.degree]): # NOTE: Add tolerance/remove equals?
+    return nc.degree
+  var
+    l = nc.degree
+    h = n + 1
+  result = floor((l + h) / 2) # result == mid (m)
+  while (u < nc.knots[result] or u >= nc.knots[result + 1]):
+    if (u < nc.knots[result]):
+      h = result
+    else:
+      l = result
+    result = floor((l + h) / 2)
+
+# TODO: Refactor to arrays (maybe change where loop variables are initialized)
+proc basisFunctions[Vector](nc: NurbsCurve[Vector], i: int, u: float): seq[float] =
+  result = newSeq(float, nc.degree + 1) # result = N (basisFunctions)
+  var
+    left = newSeq(float, nc.degree + 1)
+    right = newSeq(float, nc.degree + 1)
+  result[0] = 1.0
+  for j in 1..nc.degree:
+    left[j] = u - nc.knots[i + 1 - j]
+    right[j] = nc.knots[i + j] - u
+    var saved = 0.0
+    for r in 0..<j:
+      var temp = result[r] / (right[r + 1] + left[j - r])
+      result[r] = saved + right[r + 1] * temp
+      saved = left[j - r] * temp
+    result[j] = saved
+
+# TODO: Refactor to arrays (maybe change where loop variables are initialized)
+proc derivativeBasisFunctions[Vector](nc: NurbsCurve[Vector], i: int, u: float): array[2, seq[float]] =
+  let n = len(nc.knots) - nc.degree - 2
+  var
+    ndu = [newSeq(float, nc.degree + 1), newSeq(float, nc.degree + 1)]
+    left = newSeq(float, nc.degree + 1)
+    right = newSeq(float, nc.degree + 1)
+  ndu[0][0] = 1.0
+  for j in 1..nc.degree:
+    left[j] = u - nc.knots[i + 1 - j]
+    right[j] = nc.knots[i + j] - u
+    var saved = 0.0
+    for r in 0..<j:
+      ndu[j][r] = right[r + 1] + left[j - r]
+      var temp = ndu[r][j - 1] / ndu[j][r]
+      ndu[r][j] = saved + right[r + 1] * temp
+      saved = left[j - r] * temp
+    ndu[j][j] = saved
+
+  result = [newSeq(float, n + 1), newSeq(float, nc.degree + 1)] # result = ders
+  for j in 0..nc.degree:
+    result[0][j] = ndu[j][nc.degree]
+  var a = [newSeq(float, 2), newSeq(float, nc.degree + 1)]
+  for r in 0..nc.degree:
+    var
+      s1 = 0
+      s2 = 1
+    a[0][0] = 1.0
+    for k in 1..n:
+      var
+        d = 0.0
+        j1 = 0
+        j2 = 0
+        rk = r - k
+        pk = nc.degree - k
+
+      if (r >= k):
+        a[s2][0] = a[s1][0] / ndu[pk + 1][rk]
+        d = a[s2][0] * ndu[rk][pk]
+
+      if (rk >= -1):
+        j1 = 1
+      else:
+        j1 = -rk
+
+      if (r - 1 <= pk):
+        j2 = k - 1
+      else:
+        j2 = nc.degree - r
+
+      for j in j1..j2:
+        a[s2][j] = (a[s1][j] - a[s1][j - 1]) / ndu[pk + 1][rk + j]
+        d += a[s2][j] * ndu[rk + j][pk]
+
+      if (r <= pk):
+        a[s2][k] = -a[s1][k - 1] / ndu[pk + 1][r]
+        d += a[s2][k] * ndu[r][pk]
+
+      result[k][r] = d
+      swap(s1, s2)
+
+  var acc = nc.degree
+  for k in 1..n:
+    for j in 0..nc.degree:
+      result[k][j] *= acc
+    acc *= nc.degree - k
+
 # Constructors
 # From data
 proc nurbsCurve*[Vector](degree: int, controlPoints: seq[Vector], knots: seq[float]): NurbsCurve[Vector] =
@@ -66,6 +173,14 @@ proc nurbsCurve*[Vector](degree: int, controlPoints: seq[Vector], knots: seq[flo
 proc nurbsCurve*[Vector](degree: int, points: seq[Vector]): NurbsCurve[Vector] =
   if isValidInterpolationPoints(degree, points):
     discard
+
+proc sample*[Vector](nc: NurbsCurve[Vector], u: float): Vector =
+  let
+    span = knotSpan(nc, u)
+    basisFunctions = basisFunctions(nc, span, u)
+  var position = clear(copy(nc.controlPoints[0]))
+  for j in 0..nc.degree:
+    position += basisFunctions[j] * nc.controlPoints[span - nc.degree + j]
 
 proc `==`*[Vector](nc1: NurbsCurve[Vector], nc2: NurbsCurve[Vector]): bool =
   result = true
