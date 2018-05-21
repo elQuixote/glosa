@@ -63,10 +63,11 @@ from ./vector import
   `+=`,
   extend,
   shorten,
-  dot
+  dot,
+  fromSeq
 
-from ./binomial import
-  binGet
+from ./binomial import binGet
+from ./linear import solve, transpose
 
 # Helpers
 # Data Checkers
@@ -233,26 +234,18 @@ proc derivativeBasisFunctions[Vector](nc: NurbsCurve[Vector], i: int, u: float):
       s2 = 1
     a[0][0] = 1.0
     for k in 1..n:
-      var
-        d = 0.0
-        j1 = 0
-        j2 = 0
+      let
         rk = r - k
         pk = nc.degree - k
+      var d = 0.0
 
       if (r >= k):
         a[s2][0] = a[s1][0] / ndu[pk + 1][rk]
         d = a[s2][0] * ndu[rk][pk]
 
-      if (rk >= -1):
-        j1 = 1
-      else:
-        j1 = -rk
-
-      if (r - 1 <= pk):
-        j2 = k - 1
-      else:
-        j2 = nc.degree - r
+      let
+        j1 = if (rk >= -1): 1 else: -rk
+        j2 = if (r - 1 <= pk): k - 1 else: nc.degree - r
 
       for j in j1..j2:
         a[s2][j] = (a[s1][j] - a[s1][j - 1]) / ndu[pk + 1][rk + j]
@@ -286,8 +279,6 @@ proc nurbsCurve*[Vector](degree: int, controlPoints: openArray[Vector], weights,
     result = NurbsCurve(degree: degree, controlPoints: @controlPoints, weights: @weights, knots: @knots)
 
 # From interpolation through points
-# NOTE: NONFUNCTIONAL
-# TODO: LINEAR SYSTEM OF EQUATIONS FUNCTIONS
 proc nurbsCurve*[Vector](points: openArray[Vector], degree: int = 3): NurbsCurve[Vector] =
   if isValidInterpolationPoints(degree, points):
     let pointsL = len(points)
@@ -336,17 +327,13 @@ proc nurbsCurve*[Vector](points: openArray[Vector], degree: int = 3): NurbsCurve
 
     for i in 0..<dim:
       var b = map(points, proc(x: Vector): float = x[i])
-      # NOTE (URGENT): NEED FUNCTIONS TO SOLVE LINEAR SYSTEM OF EQUATIONS
-      # SOLVE(A, b)
-      add(xs, b)
+      add(xs, solve(A, b))
 
-    # NOTE: TRANSPOSE
-    # TRANSPOSE(xs)
-    # let controlPoints = xs
     let controlPoints = seq[Vector]
+    for v in transpose(xs):
+      add(controlPoints, fromSeq(v))
 
     let weights = fill(newSeq[float](len(controlPoints)), 1.0)
-
     result = nurbsCurve(degree, controlPoints, weights, knots)
 
 # Accessors
@@ -430,23 +417,15 @@ proc rationalClosestParameter[Vector](nc: NurbsCurve[Vector], v: Vector): float 
     result = rationalSampleDerivatives(nc, u, 2)
 
   proc n(u: float, e: seq[Vector], d: seq[float]): float =
-    let
-      f = dot(e[1], d)
-      s1 = dot(e[2], d)
-      s2 = dot(e[1], e[1])
-      df = s1 + s2
-    result = u - f / df
+    result = u - dot(e[1], d) / dot(e[2], d) + dot(e[1], e[1])
 
   for i in 0..<maxits:
     let
       e = f(result)
       dif = subtractNew(e[0], v)
       c1v = magnitude(dif)
-      c2n = dot(e[1], dif)
-      c2d = magnitude(e[1]) * c1v
-      c2v = c2n / c2d
       c1 = c1v < EPSILON_ALPHA
-      c2 = abs(c2v) < EPSILON_BETA
+      c2 = abs(dot(e[1], dif) / magnitude(e[1]) * c1v) < EPSILON_BETA
 
     if (c1 and c2):
       break
@@ -466,9 +445,6 @@ proc rationalClosestParameter[Vector](nc: NurbsCurve[Vector], v: Vector): float 
     result = ct
 
 # Non-rational Sampling
-# proc sample*[WeightedVector, Vector](nc: NurbsCurve[WeightedVector], u: float): Vector =
-#   result = dehomogenize(rationalSample(nc, u))
-
 proc sample*[Vector](nc: NurbsCurve[Vector], u: float): Vector =
   result = dehomogenize(rationalSample(nc, u))
 

@@ -78,22 +78,22 @@ proc `[]`*(v: Vector4, i: int): float =
   of 3: result = v.w
   else: assert(false)
 
-proc `[]=`*(v: var Vector1, i: int, value: float): float =
+proc `[]=`*(v: var Vector1, i: int, value: float) =
   case i:
   of 0: v.x = value
   else: assert(false)
-proc `[]=`*(v: var Vector2, i: int, value: float): float =
+proc `[]=`*(v: var Vector2, i: int, value: float) =
   case i:
   of 0: v.x = value
   of 1: v.y = value
   else: assert(false)
-proc `[]=`*(v: var Vector3, i: int, value: float): float =
+proc `[]=`*(v: var Vector3, i: int, value: float) =
   case i:
   of 0: v.x = value
   of 1: v.y = value
   of 2: v.z = value
   else: assert(false)
-proc `[]=`*(v: var Vector4, i: int, value: float): float =
+proc `[]=`*(v: var Vector4, i: int, value: float) =
   case i:
   of 0: v.x = value
   of 1: v.y = value
@@ -1510,6 +1510,28 @@ proc toSeq*(v: Vector3): seq[float] =
 
 proc toSeq*(v: Vector4): seq[float] =
   result = @[v.x, v.y, v.z, v.w]
+
+# From seq (for nurbs)
+# NOTE: Temporary
+proc fromSeq*(s: seq[float]): Vector1 =
+  result = vector1(0.0)
+  for i, v in pairs(s):
+    result[i] = v
+
+proc fromSeq*(s: seq[float]): Vector2 =
+  result = vector2(0.0, 0.0)
+  for i, v in pairs(s):
+    result[i] = v
+
+proc fromSeq*(s: seq[float]): Vector3 =
+  result = vector3(0.0, 0.0, 0.0)
+  for i, v in pairs(s):
+    result[i] = v
+
+proc fromSeq*(s: seq[float]): Vector4 =
+  result = vector4(0.0, 0.0, 0.0, 0.0)
+  for i, v in pairs(s):
+    result[i] = v
 
 # Extend
 # NOTE: Added from design doc

@@ -29,7 +29,7 @@ proc compareVectorToValues(vector: Vector, values: seq[float]): bool =
     checkpoint("vector was " & $vector)
     checkpoint("values were " & $values)
 
-proc compareValuesWithinEta(a, b: float): bool =
+proc compareValuesWithinEpsilon(a, b: float): bool =
   if abs(a - b) >= EPSILON:
     result = false
     checkpoint("a was " & $a)
@@ -37,7 +37,7 @@ proc compareValuesWithinEta(a, b: float): bool =
   else:
     result = true
 
-proc compareVectorsWithinEta(v1, v2: Vector): bool =
+proc compareVectorsWithinEpsilon(v1, v2: Vector): bool =
   let s = zip(v1.toArray(), v2.toArray())
   result = true
   for v in s:
@@ -734,8 +734,8 @@ suite "Calculating the reflection of a Vector":
         v1 = reflectNew(v, n)
         v2 = reflect(v, n)
       check:
-        compareVectorsWithinEta(v1, expected)
-        compareVectorsWithinEta(v2, expected)
+        compareVectorsWithinEpsilon(v1, expected)
+        compareVectorsWithinEpsilon(v2, expected)
         v1 == v2
     block:
       var
@@ -743,7 +743,7 @@ suite "Calculating the reflection of a Vector":
       let
         v2 = reflectSelf(v1, n)
       check:
-        compareVectorsWithinEta(v1, expected)
+        compareVectorsWithinEpsilon(v1, expected)
         v1 == v2
   test "Calculating the reflection of a Vector1":
     testReflectVector(
@@ -779,11 +779,11 @@ suite "Calculating the refraction of a Vector":
       let
         v1 = refractNew(v, n, eta)
         v2 = refract(v, n, eta)
-      if not compareVectorsWithinEta(v1, expected):
+      if not compareVectorsWithinEpsilon(v1, expected):
         checkpoint("eta is " & $eta)
       check:
-        compareVectorsWithinEta(v1, expected)
-        compareVectorsWithinEta(v2, expected)
+        compareVectorsWithinEpsilon(v1, expected)
+        compareVectorsWithinEpsilon(v2, expected)
         v1 == v2
     block:
       var
@@ -791,7 +791,7 @@ suite "Calculating the refraction of a Vector":
       let
         v2 = refractSelf(v1, n, eta)
       check:
-        compareVectorsWithinEta(v1, expected)
+        compareVectorsWithinEpsilon(v1, expected)
         v1 == v2
   test "Calculating the refraction of a Vector1":
     let
@@ -825,7 +825,7 @@ suite "Calculating the angle between Vectors":
     let
       a = angleBetween(v1, v2)
     check:
-      compareValuesWithinEta(a, expected)
+      compareValuesWithinEpsilon(a, expected)
   test "Calculating the angle between Vector1s":
     testAngleBetweenVectors(vector1(2.0), vector1(2.0), 0.0)
   test "Calculating the angle between Vector2s":
