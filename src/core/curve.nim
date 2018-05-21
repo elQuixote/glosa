@@ -44,7 +44,6 @@ from math import floor, pow
 from strformat import `&`
 from algorithm import fill
 from sequtils import concat, map
-import tables
 import hashes
 
 from ./vector import
@@ -52,6 +51,7 @@ from ./vector import
   copy,
   addNew,
   subtractNew,
+  multiplySelf,
   multiplyNew,
   divideSelf,
   divideNew,
@@ -64,6 +64,9 @@ from ./vector import
   extend,
   shorten,
   dot
+
+from ./binomial import
+  binGet
 
 # Helpers
 # Data Checkers
@@ -88,10 +91,6 @@ proc isValidInterpolationPoints[Vector](degree: int, points: openArray[Vector]):
       "Less than degree + 1 points supplied for interpolation")
 
 # Nurbs Utils
-# TODO
-proc bin(n, k: int): float =
-  discard
-
 proc homogenize*(point: Vector1, weight: float): Vector2 =
   result = extend(multiplyNew(point, weight), weight)
 
@@ -395,6 +394,77 @@ proc rationalSampleDerivatives[Vector, WeightedVector](nc: NurbsCurve[Vector], u
     for j in 0..<degree:
       result[k] += multiplyNew(weightedControlPoints[knotSpan - nc.degree + j], derivatives[k][j])
 
+# NOTE: Needs refactor (maxits should probably be a threshold not an interation cap)
+proc rationalClosestParameter[Vector](nc: NurbsCurve[Vector], v: Vector): float =
+  var
+    min = high(float)
+    u = 0.0
+
+  let
+    points = rationalRegularSampleWithParameter(nc, len(nc.controlPoints) * nc.degree)
+    weightedControlPoints = weightedControlPoints(nc)
+
+  for i in 0..<len(points):
+    let
+      u1 = points[i].u
+      u2 = points[i + 1].u
+      p1 = points[i].v
+      p2 = points[i].v
+      proj = closestPointWithParameter(v, p1, p2, u1, u2)
+      d = magnitude(subtractNew(v, proj.v))
+    if (d < min):
+      min = d
+      u = proj
+
+  const
+    MAX_ITERATIONS = 5
+    EPSILON_ALPHA = pow(10, -4)
+    EPSILON_BETA = pow(5, -5)
+  let
+    minu = nc.knots[0]
+    maxu = nc.knots[^1]
+    closed = magnitudeSquared(subtractNew(weightedControlPoints[0], weightedControlPoints[^1])) < EPSILON
+  result = u
+
+  proc f(u: float): seq[Vector] =
+    result = rationalSampleDerivatives(nc, u, 2)
+
+  proc n(u: float, e: seq[Vector], d: seq[float]): float =
+    let
+      f = dot(e[1], d)
+      s1 = dot(e[2], d)
+      s2 = dot(e[1], e[1])
+      df = s1 + s2
+    result = u - f / df
+
+  for i in 0..<maxits:
+    let
+      e = f(result)
+      dif = subtractNew(e[0], v)
+      c1v = magnitude(dif)
+      c2n = dot(e[1], dif)
+      c2d = magnitude(e[1]) * c1v
+      c2v = c2n / c2d
+      c1 = c1v < EPSILON_ALPHA
+      c2 = abs(c2v) < EPSILON_BETA
+
+    if (c1 and c2):
+      break
+
+    var ct = n(result, e, dif)
+
+    if (ct < minu):
+      ct = if closed: maxu - (ct - minu) else: minu
+    elif (ct > maxu):
+      ct = if closed: minu + (ct - maxu) else: maxu
+
+    let c3v = magnitude(multiplySelf(subtractNew(ct, result), e[1]))
+
+    if (c3v < EPSILON_ALPHA):
+      break
+
+    result = ct
+
 # Non-rational Sampling
 # proc sample*[WeightedVector, Vector](nc: NurbsCurve[WeightedVector], u: float): Vector =
 #   result = dehomogenize(rationalSample(nc, u))
@@ -427,57 +497,29 @@ proc sampleDerivative*[Vector](nc: NurbsCurve[Vector], u: float, n: int = 1): se
   for k in 0..<n:
     var v = copy(derivatives[k])
     for i in 1..<k:
-      v -= multiplyNew(result[k - i], bin(k, i) * wderivatives[i])
+      v -= multiplyNew(result[k - i], binGet(k, i) * wderivatives[i])
     weightedResult[k] = divideSelf(v, wderivatives[0])
   result = dehomogenize(weightedResult)
 
-# NOTE: Needs refactor (maxits should probably be a threshold not an interation cap)
-# proc closestParam*[Vector](nc: NurbsCurve[Vector], v: Vector): float =
-#   var
-#     min = high(float)
-#     u = 0.0
+proc closestParameter*[Vector](nc: NurbsCurve[Vector], v: Vector): float =
+  result = rationalClosestParameter(nc, v)
 
-#   let points = sampleRegularlyWithParameter(nc, len(nc.controlPoints) * nc.degree)
-
-#   for i in 0..<len(points):
-#     let
-#       u1 = points[i].u
-#       u2 = points[i + 1].u
-#       p1 = points[i].v
-#       p2 = points[i].v
-#       proj = closestPointWithParameter(v, p1, p2, u1, u2)
-#       d = magnitude(subtractNew(v, proj.v))
-#     if (d < min):
-#       min = d
-#       u = proj
-
-#   const
-#     MAX_ITERATIONS = 5
-#     EPSILON_ALPHA = pow(10, -4)
-#     EPSILON_BETA = pow(5, -5)
-#   let
-#     minu = nc.knots[0]
-#     maxu = nc.knots[^1]
-#     closed = magnitudeSquared(subtractNew(nc.controlPoints[0], nc.controlPoints[^1])) < EPSILON
-#   var cu = u
-
-#   proc f(u: float): seq[Vector] =
-#     result =
+proc closestPoint*[Vector](nc: NurbsCurve[Vector], v: Vector): Vector =
+  result = sample(closestParameter(nc, v))
 
 proc `==`*[Vector](nc1: NurbsCurve[Vector], nc2: NurbsCurve[Vector]): bool =
-  let
-    wcp1 = weightedControlPoints(nc1)
-    wcp2 = weightedControlPoints(nc2)
   result = true
   if (nc1.degree != nc2.degree) or
-    (len(wcp1) != len(wcp2)) or
+    (len(nc1.controlPoints) != len(nc2.controlPoints)) or
       (len(nc1.knots) != len(nc2.knots)):
     return false
-  for i, v in wcp1:
-    if (v != wcp2[i]):
-      return false
   for i, v in nc1.knots:
     if (v != nc2.knots[i]):
+      return false
+  for i, v in nc1.controlPoints:
+    if (nc1.weights[i] != nc2.weights[i]):
+      return false
+    if (v != nc2.controlPoints[i]):
       return false
 
 proc `!=`*[Vector](nc1: NurbsCurve[Vector], nc2: NurbsCurve[Vector]): bool =
