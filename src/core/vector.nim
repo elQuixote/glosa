@@ -1511,6 +1511,28 @@ proc toSeq*(v: Vector3): seq[float] =
 proc toSeq*(v: Vector4): seq[float] =
   result = @[v.x, v.y, v.z, v.w]
 
+# Extend
+# NOTE: Added from design doc
+proc extend*(v: Vector1, y: float): Vector2 =
+  result = vector2(v, y)
+
+proc extend*(v: Vector2, z: float): Vector3 =
+  result = vector3(v, z)
+
+proc extend*(v: Vector3, w: float): Vector4 =
+  result = vector4(v, w)
+
+# Shorten
+# NOTE: Added from design doc
+proc shorten*(v: Vector2): Vector1 =
+  result = vector1(v)
+
+proc shorten*(v: Vector3): Vector2 =
+  result = vector2(v)
+
+proc shorten*(v: Vector4): Vector3 =
+  result = vector3(v)
+
 # String
 # NOTE: Changed from design doc
 proc `$`*(v: Vector1): string =

@@ -58,7 +58,10 @@ from ./vector import
   dot,
   addNew,
   subtractNew,
+  multiplyNew,
   multiplySelf,
+  divideNew,
+  magnitude,
   magnitudeSquared,
   rotate,
   scale,
@@ -124,15 +127,23 @@ proc polyline*[Vector](segments: openArray[LineSegment[Vector]]): Polyline[Vecto
   result.segments = @segments
 
 # NOTE: This is added from design doc
-proc closestPointTo*[Vector](l: LineSegment[Vector], v: Vector2): Vector2 =
-  var sub = subtractNew(l.endVertex, l.startVertex)
-  let t = dot(subtractNew(v, l.startVertex), sub) / magnitudeSquared(sub)
+# NOTE: Move all segment operations into a new file
+proc closestPoint*[Vector](startVertex, endVertex, v: Vector): Vector =
+  let
+    sub = subtractNew(endVertex, startVertex)
+    mag = magnitude(sub)
+  if mag == 0.0:
+    return startVertex
+  let t = dot(subtractNew(v, startVertex), sub) / mag
   if t < 0.0:
-    result = l.startVertex
-  elif t > 1.0:
-    result = l.endVertex
+    result = startVertex
+  elif t > mag:
+    result = endVertex
   else:
-    result = addNew(l.startVertex, multiplySelf(sub, t))
+    result = addNew(startVertex, multiplyNew(divideNew(sub, mag), t))
+
+proc closestPoint*[Vector](l: LineSegment[Vector], v: Vector): Vector =
+  result = closestPoint(l.startVertex, l.endVertex, v)
 
 # NOTE: This is added from design doc
 # proc addVertex*[Vector](p: var Polyline[Vector], x, y: float): var Polyline[Vector] {.noinit.} =
@@ -273,8 +284,8 @@ proc closestPoint*[Vector](p: Polyline[Vector], v: Vector): Vector =
     var minDist = high(float)
     for s in p.segments:
       var
-        closestVec = s.closestPointTo(v)
-        dist = closestVec.distanceToSquared(v)
+        closestVec = closestPoint(s, v)
+        dist = distanceToSquared(closestVec, v)
       if (dist < minDist):
         result = closestVec
         minDist = dist

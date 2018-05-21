@@ -32,6 +32,7 @@ type
   NurbsCurve*[Vector] = object
     degree*: int
     controlPoints*: seq[Vector]
+    weights*: seq[float]
     knots*: seq[float]
 
   # Polygon
