@@ -342,21 +342,25 @@ proc set*(v: var Vector4, n: float): var Vector4 {.noinit.} =
 # NOTE: Replaces random() constructor from design doc
 proc randomize*(v: var Vector1, maxX: float = 1.0): var Vector1 {.noinit.} =
   v.x = rand(maxX)
+  result = v
 
 proc randomize*(v: var Vector2, maxX, maxY: float = 1.0): var Vector2 {.noinit.} =
   v.x = rand(maxX)
   v.y = rand(maxX)
+  result = v
 
 proc randomize*(v: var Vector3, maxX, maxY, maxZ: float = 1.0): var Vector3 {.noinit.} =
   v.x = rand(maxX)
   v.y = rand(maxY)
   v.z = rand(maxZ)
+  result = v
 
 proc randomize*(v: var Vector4, maxX, maxY, maxZ, maxW: float = 1.0): var Vector4 {.noinit.} =
   v.x = rand(maxX)
   v.y = rand(maxY)
   v.z = rand(maxZ)
   v.w = rand(maxW)
+  result = v
 
 # Clear
 proc clear*(v: var Vector1): var Vector1 = set(v, 0.0)
