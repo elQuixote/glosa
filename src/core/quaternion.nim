@@ -108,7 +108,7 @@ proc magnitudeSquared*(q: Quaternion): float =
   result = q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w
 
 # Length
-proc length*(q: Quaternion): float = magnitudeSquared(q)
+proc length*(q: Quaternion): float = magnitude(q)
 
 # Addition
 proc addNew*(q: Quaternion, f: float): Quaternion =
