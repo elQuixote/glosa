@@ -64,7 +64,11 @@ from ./vector import
   extend,
   shorten,
   dot,
-  fromSeq
+  fromSeq,
+  transform,
+  rotate,
+  scale,
+  translate
 
 from ./binomial import binGet
 from ./linear import solve, transpose
@@ -149,6 +153,26 @@ proc weight*(point: Vector4): float =
 
 proc weights*[Vector](points: openArray[Vector]): float =
   result = map(points, proc(v: Vector): float = weight(v))
+
+# Equality
+proc `==`*[Vector](nc1: NurbsCurve[Vector], nc2: NurbsCurve[Vector]): bool =
+  result = true
+  if (nc1.degree != nc2.degree) or
+    (len(nc1.controlPoints) != len(nc2.controlPoints)) or
+      (len(nc1.knots) != len(nc2.knots)):
+    return false
+  for i, v in nc1.knots:
+    if (v != nc2.knots[i]):
+      return false
+  for i, v in nc1.controlPoints:
+    if (nc1.weights[i] != nc2.weights[i]):
+      return false
+    if (v != nc2.controlPoints[i]):
+      return false
+
+# Non Equality
+proc `!=`*[Vector](nc1: NurbsCurve[Vector], nc2: NurbsCurve[Vector]): bool =
+  result = not (nc1 == nc2)
 
 # NOTE: Move all segment operations into a new file
 proc closestPointWithParameter[Vector](v, startVertex, endVertex: Vector, ustart, uend: float): tuple[u: float, v: Vector] =
@@ -276,7 +300,7 @@ proc nurbsCurve*[Vector](degree: int, weightedControlPoints: openArray[Vector], 
 # From weights
 proc nurbsCurve*[Vector](degree: int, controlPoints: openArray[Vector], weights, knots: openArray[float]): NurbsCurve[Vector] =
   if isValidNurbsCurveData(degree, controlPoints, knots):
-    result = NurbsCurve(degree: degree, controlPoints: @controlPoints, weights: @weights, knots: @knots)
+    result = NurbsCurve[Vector](degree: degree, controlPoints: @controlPoints, weights: @weights, knots: @knots)
 
 # From interpolation through points
 proc nurbsCurve*[Vector](points: openArray[Vector], degree: int = 3): NurbsCurve[Vector] =
@@ -483,24 +507,63 @@ proc closestParameter*[Vector](nc: NurbsCurve[Vector], v: Vector): float =
 proc closestPoint*[Vector](nc: NurbsCurve[Vector], v: Vector): Vector =
   result = sample(closestParameter(nc, v))
 
-proc `==`*[Vector](nc1: NurbsCurve[Vector], nc2: NurbsCurve[Vector]): bool =
-  result = true
-  if (nc1.degree != nc2.degree) or
-    (len(nc1.controlPoints) != len(nc2.controlPoints)) or
-      (len(nc1.knots) != len(nc2.knots)):
-    return false
-  for i, v in nc1.knots:
-    if (v != nc2.knots[i]):
-      return false
-  for i, v in nc1.controlPoints:
-    if (nc1.weights[i] != nc2.weights[i]):
-      return false
-    if (v != nc2.controlPoints[i]):
-      return false
+# Transforms
+proc transform*[Vector, Matrix](nc: NurbsCurve[Vector], m: Matrix): Vector =
+  var controlPoints = nc.controlPoints
+  for i, p in pairs(controlPoints):
+    controlPoints[i] = transform(p, m)
+  result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
 
-proc `!=`*[Vector](nc1: NurbsCurve[Vector], nc2: NurbsCurve[Vector]): bool =
-  result = not (nc1 == nc2)
+proc rotate*(nc: NurbsCurve[Vector2], theta: float): NurbsCurve[Vector2] =
+  var controlPoints = nc.controlPoints
+  for i, p in pairs(controlPoints):
+    var pcopy = copy(p)
+    controlPoints[i] = rotate(pcopy, theta)
+  result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
 
+proc rotate*(nc: NurbsCurve[Vector3], axis: Vector3, theta: float): NurbsCurve[Vector3] =
+  var controlPoints = nc.controlPoints
+  for i, p in pairs(controlPoints):
+    var pcopy = copy(p)
+    controlPoints[i] = rotate(pcopy, axis, theta)
+  result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
+
+proc scale*[Vector](nc: NurbsCurve[Vector], s: float): NurbsCurve[Vector] =
+  var controlPoints = nc.controlPoints
+  for i, p in pairs(controlPoints):
+    var pcopy = copy(p)
+    controlPoints[i] = scale(pcopy, s)
+  result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
+
+proc scale*(nc: NurbsCurve[Vector2], sx, sy: float): NurbsCurve[Vector2] =
+  var controlPoints = nc.controlPoints
+  for i, p in pairs(controlPoints):
+    var pcopy = copy(p)
+    controlPoints[i] = scale(pcopy, sx, sy)
+  result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
+
+proc scale*(nc: NurbsCurve[Vector3], sx, sy, sz: float): NurbsCurve[Vector3] =
+  var controlPoints = nc.controlPoints
+  for i, p in pairs(controlPoints):
+    var pcopy = copy(p)
+    controlPoints[i] = scale(pcopy, sx, sy, sz)
+  result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
+
+proc scale*(nc: NurbsCurve[Vector4], sx, sy, sz, sw: float): NurbsCurve[Vector4] =
+  var controlPoints = nc.controlPoints
+  for i, p in pairs(controlPoints):
+    var pcopy = copy(p)
+    controlPoints[i] = scale(pcopy, sx, sy, sz, sw)
+  result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
+
+proc translate*[Vector](nc: NurbsCurve[Vector], v: Vector): NurbsCurve[Vector] =
+  var controlPoints = nc.controlPoints
+  for i, p in pairs(controlPoints):
+    var pcopy = copy(p)
+    controlPoints[i] = translate(pcopy, v)
+  result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
+
+# Hash
 proc hash*[Vector](nc: NurbsCurve[Vector]): hashes.Hash =
   let wcp = weightedControlPoints(nc)
   result = !$(result !& hash(nc.degree))
@@ -509,13 +572,16 @@ proc hash*[Vector](nc: NurbsCurve[Vector]): hashes.Hash =
   for i, v in nc.knots:
     result = result !& hash(v)
 
+# Dimension
 proc dimension*[Vector](nc: NurbsCurve[Vector]): int =
   if len(nc.controlPoints) != 0:
     result = dimension(nc.vertices[0])
 
+# Copy
 proc copy*[Vector](nc: NurbsCurve[Vector]): NurbsCurve[Vector] =
   result = NurbsCurve(degree: nc.degree, controlPoints: var nc.controlPoints, weights: var nc.weights, knots: var nc.knots)
 
+# String
 proc `$`*[Vector](nc: NurbsCurve[Vector]): string =
   result = "{ degree: " & nc.degree
   if len(nc.controlPoints) > 0:
