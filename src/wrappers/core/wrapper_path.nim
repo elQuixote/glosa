@@ -57,6 +57,6 @@ proc polyline_Net*(s: Polyline[Vector3]): Polyline_Net =
 #   verts.add(1.0)
 #   verts.add(2.0)
 
-proc createPolyline2*(verts: openArray[cdouble]): ptr seq[cdouble] {.cdecl, exportc, dynlib.} = 
-  var a = @verts
-  result = addr a
+proc createPolyline2*(verts: openArray[cdouble]): seq[cdouble] {.cdecl, exportc, dynlib.} = 
+  #setupForeignThreadGc()
+  result = @verts
