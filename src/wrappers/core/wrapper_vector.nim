@@ -215,4 +215,4 @@ proc max_v4*(a: openArray[Vector4]): Vector4 {.cdecl, exportc, dynlib.} = max(a)
 proc calculatePlane_v4*(v1, v2, v3: Vector3): Vector4 {.cdecl, exportc, dynlib.} = calculatePlane(v1, v2, v3)
 
 proc areCollinear_v*(v1, v2, v3: Vector3): bool {.cdecl, exportc, dynlib.} = areCollinear(v1, v2, v3)
-proc araPlanar_v*(a: openArray[Vector3]): bool {.cdecl, exportc, dynlib.} = arePlanar(a)
+proc arePlanar_v*(a: openArray[Vector3]): bool {.cdecl, exportc, dynlib.} = arePlanar(a)
