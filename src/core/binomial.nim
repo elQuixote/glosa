@@ -56,4 +56,3 @@ proc binGet*(n, k: int): float =
     result *= (float) nmut
     result /= (float) d
     binMemoize(n0, d, result)
-

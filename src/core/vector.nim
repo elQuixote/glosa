@@ -1513,23 +1513,16 @@ proc toSeq*(v: Vector4): seq[float] =
 
 # From seq (for nurbs)
 # NOTE: Temporary
-proc fromSeq*(s: seq[float]): Vector1 =
-  result = vector1(0.0)
-  for i, v in pairs(s):
-    result[i] = v
-
-proc fromSeq*(s: seq[float]): Vector2 =
-  result = vector2(0.0, 0.0)
-  for i, v in pairs(s):
-    result[i] = v
-
-proc fromSeq*(s: seq[float]): Vector3 =
-  result = vector3(0.0, 0.0, 0.0)
-  for i, v in pairs(s):
-    result[i] = v
-
-proc fromSeq*(s: seq[float]): Vector4 =
-  result = vector4(0.0, 0.0, 0.0, 0.0)
+proc fromSeq*(s: seq[float]): Vector =
+  case len(s):
+    of 1:
+      result = vector1(0.0)
+    of 2:
+      result = vector2(0.0)
+    of 3:
+      result = vector3(0.0)
+    else:
+      result = vector4(0.0)
   for i, v in pairs(s):
     result[i] = v
 

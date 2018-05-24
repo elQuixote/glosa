@@ -316,7 +316,8 @@ proc nurbsCurve*[Vector](points: openArray[Vector], degree: int = 3): NurbsCurve
       us[i] = us[i] / max
 
     var
-      knotsStart = fill(newSeq[float](degree + 1), 0.0)
+      knotsStart: seq[float] = newSeq[float](degree + 1)
+      knotsStart = fill(knotsStart, 0.0)
       s = 1
       e = usL - degree
 
@@ -331,7 +332,8 @@ proc nurbsCurve*[Vector](points: openArray[Vector], degree: int = 3): NurbsCurve
       lst = 0
       ld = pointsL - (degree + 1)
     var
-      knots = concat(knotsStart, fill(newSeq[float](degree + 1)), 1.0)
+      knots: seq[float] = newSeq[float](degree + 1)
+      knots = concat(knotsStart, fill(knots, 1.0))
       A: seq[seq[float]] = @[]
     for u in us:
       let
