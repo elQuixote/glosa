@@ -54,6 +54,7 @@ from math import sin, cos, arctan2, arccos, sqrt
 from random import rand
 from strformat import `&`
 import hashes
+import json
 
 proc `[]`*(v: Vector1, i: int): float =
   case i:
@@ -1578,3 +1579,28 @@ proc arePlanar*(a: openArray[Vector3]): bool =
       if d != 0.0:
         result = false
         break
+
+# JSON
+proc vectorFromJsonNode*[Vector](jsonNode: JsonNode): Vector =
+  let elems = getElems(jsonNode)
+  try:
+    case len(elems):
+      of 1:
+        result = vector1(toFloat(elems[0]))
+      of 2:
+        result = vector2(toFloat(elems[0]), toFloat(elems[1]))
+      of 3:
+        result = vector3(toFloat(elems[0]), toFloat(elems[1]), toFloat(elems[2]))
+      of 4:
+        result = vector4(toFloat(elems[0]), toFloat(elems[1]), toFloat(elems[2]), toFloat(elems[3]))
+      else:
+        raise newException(InvalidJsonError)
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+proc vectorFromJson*[Vector](jsonString: string): Vector =
+  result = vectorFromJsonNode(parseJson(jsonString))
+
+proc toJson*[Vector](v: Vector): string =
+  result = $v

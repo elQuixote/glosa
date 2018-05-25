@@ -25,7 +25,8 @@ from ./types import
   Polygon
 
 from ./errors import
-  InvalidSegmentsError
+  InvalidSegmentsError,
+  InvalidJsonError
 
 export
   Equals,
@@ -47,11 +48,15 @@ export
 from math import arctan2, arccos, sqrt, TAU, PI
 from strformat import `&`
 from algorithm import reverse
+from sequtils import map
 import hashes
+import json
 
 from ./vector import
+  vector1,
   vector2,
   vector3,
+  vector4,
   clear,
   copy,
   dimension,
@@ -64,7 +69,10 @@ from ./vector import
   scale,
   translate,
   transform,
-  distanceToSquared
+  distanceToSquared,
+  vectorFromJsonNode,
+  vectorFromJson,
+  toJson
 
 # Constuctors
 # NOTE: This is added from design doc
@@ -312,3 +320,39 @@ proc transform*[Vector](p: var Polyline[Vector], m: Matrix): var Polyline[Vector
   for i, x in pairs(p.vertices):
     p.vertices[i] = transform(x, m)
   result = p
+
+# JSON
+proc lineSegmentFromJsonNode*[Vector](jsonNode: JsonNode): LineSegment[Vector] =
+  try:
+    let
+      startVertex = getElems(jsonNode["startVertex"])
+      endVertex = getElems(jsonNode["endVertex"])
+    result = lineSegment(vectorFromJsonNode(startVertex), vectorFromJsonNode(endVertex))
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+proc lineSegmentFromJson*[Vector](jsonString: string): LineSegment[Vector] =
+  result = lineSegmentFromJsonNode(parseJson(jsonString))
+
+proc polylineFromJsonNode*[Vector](jsonNode: JsonNode): Polyline[Vector] =
+  try:
+    if contains(jsonNode, "vertices"):
+      let
+        elems = getElems(jsonNode["vertices"])
+        closed = getBool(jsonNode["closed"])
+        vertices = map(elems, proc (n: jsonNode): Vector = vectorFromJsonNode(n))
+      result = polyline(vertices, closed)
+    elif contains(jsonNode, "segments"):
+      let
+        elems = getElems(jsonNode["segments"])
+        segments = map(elems, proc (n: jsonNode): LineSegment[Vector] = lineSegmentFromJsonNode(n))
+      result = polyline(segments)
+    else:
+      raise newException(InvalidJsonError)
+  except:
+    raise newException(InvalidJsonError,
+      "JSON does not contain 'vertices' or 'segments'")
+
+proc polylineFromJson*[Vector](jsonString: string): Polyline[Vector] =
+  result = polylineFromJsonNode(parseJson(jsonString))
