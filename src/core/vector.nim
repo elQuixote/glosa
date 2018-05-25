@@ -1530,6 +1530,18 @@ proc `$`*(v: Vector3): string =
 proc `$`*(v: Vector4): string =
   result = &"[{v.x}, {v.y}, {v.z}, {v.w}]"
 
+proc toJsonString*(v: Vector1): string =
+  result = &"[x: {v.x}]"
+
+proc toJsonString*(v: Vector2): string =
+  result = &"[x: {v.x}, y: {v.y}]"
+
+proc toJsonString*(v: Vector3): string =
+  result = &"[x: {v.x}, y: {v.y}, z: {v.z}]"
+
+proc toJsonString*(v: Vector4): string =
+  result = &"[x: {v.x}, y: {v.y}, z: {v.z}, w: {v.w}]"
+
 # Batch comparisons
 proc min*(a: openArray[Vector]): Vector =
   result = nil
@@ -1606,4 +1618,4 @@ proc vectorFromJson*[Vector](jsonString: string): Vector =
   result = vectorFromJsonNode(parseJson(jsonString))
 
 proc toJson*[Vector](v: Vector): string =
-  result = $v
+  result = toJsonString(v)
