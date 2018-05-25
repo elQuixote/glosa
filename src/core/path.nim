@@ -352,7 +352,7 @@ proc polylineFromJsonNode*[Vector](jsonNode: JsonNode): Polyline[Vector] =
       raise newException(InvalidJsonError)
   except:
     raise newException(InvalidJsonError,
-      "JSON does not contain 'vertices' or 'segments'")
+      "JSON is formatted incorrectly")
 
 proc polylineFromJson*[Vector](jsonString: string): Polyline[Vector] =
   result = polylineFromJsonNode(parseJson(jsonString))
