@@ -1586,17 +1586,16 @@ proc arePlanar*(a: openArray[Vector3]): bool =
 
 # JSON
 proc vectorFromJsonNode*[Vector](jsonNode: JsonNode): Vector =
-  let elems = getElems(jsonNode)
   try:
-    case len(elems):
+    case len(jsonNode):
       of 1:
-        result = vector1(toFloat(elems[0]))
+        result = vector1(toFloat(jsonNode["x"]))
       of 2:
-        result = vector2(toFloat(elems[0]), toFloat(elems[1]))
+        result = vector2(toFloat(jsonNode["x"]), toFloat(jsonNode["y"]))
       of 3:
-        result = vector3(toFloat(elems[0]), toFloat(elems[1]), toFloat(elems[2]))
+        result = vector3(toFloat(jsonNode["x"]), toFloat(jsonNode["y"]), toFloat(jsonNode["z"]))
       of 4:
-        result = vector4(toFloat(elems[0]), toFloat(elems[1]), toFloat(elems[2]), toFloat(elems[3]))
+        result = vector4(toFloat(jsonNode["x"]), toFloat(jsonNode["y"]), toFloat(jsonNode["z"]), toFloat(jsonNode["w"]))
       else:
         raise newException(InvalidJsonError)
   except:
