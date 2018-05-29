@@ -70,8 +70,10 @@ from ./vector import
   translate,
   transform,
   distanceToSquared,
-  vectorFromJsonNode,
-  vectorFromJson,
+  vector1FromJsonNode,
+  vector2FromJsonNode,
+  vector3FromJsonNode,
+  vector4FromJsonNode,
   toJson
 
 # Constuctors
@@ -322,37 +324,162 @@ proc transform*[Vector](p: var Polyline[Vector], m: Matrix): var Polyline[Vector
   result = p
 
 # JSON
-proc lineSegmentFromJsonNode*[Vector](jsonNode: JsonNode): LineSegment[Vector] =
+proc lineSegment1FromJsonNode*(jsonNode: JsonNode): LineSegment[Vector1] =
   try:
     let
-      startVertex = getElems(jsonNode["startVertex"])
-      endVertex = getElems(jsonNode["endVertex"])
-    result = lineSegment(vectorFromJsonNode(startVertex), vectorFromJsonNode(endVertex))
+      startVertex = jsonNode["startVertex"]
+      endVertex = jsonNode["endVertex"]
+    result = lineSegment(vector1FromJsonNode(startVertex), vector1FromJsonNode(endVertex))
   except:
     raise newException(InvalidJsonError,
       "JSON is formatted incorrectly")
 
-proc lineSegmentFromJson*[Vector](jsonString: string): LineSegment[Vector] =
-  result = lineSegmentFromJsonNode(parseJson(jsonString))
+proc lineSegment2FromJsonNode*(jsonNode: JsonNode): LineSegment[Vector2] =
+  try:
+    let
+      startVertex = jsonNode["startVertex"]
+      endVertex = jsonNode["endVertex"]
+    result = lineSegment(vector2FromJsonNode(startVertex), vector2FromJsonNode(endVertex))
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
 
-proc polylineFromJsonNode*[Vector](jsonNode: JsonNode): Polyline[Vector] =
+proc lineSegment3FromJsonNode*(jsonNode: JsonNode): LineSegment[Vector3] =
+  try:
+    let
+      startVertex = jsonNode["startVertex"]
+      endVertex = jsonNode["endVertex"]
+    result = lineSegment(vector3FromJsonNode(startVertex), vector3FromJsonNode(endVertex))
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+proc lineSegment4FromJsonNode*(jsonNode: JsonNode): LineSegment[Vector4] =
+  try:
+    let
+      startVertex = jsonNode["startVertex"]
+      endVertex = jsonNode["endVertex"]
+    result = lineSegment(vector4FromJsonNode(startVertex), vector4FromJsonNode(endVertex))
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+proc lineSegment1FromJson*(jsonString: string): LineSegment[Vector1] =
+  result = lineSegment1FromJsonNode(parseJson(jsonString))
+
+proc lineSegment2FromJson*(jsonString: string): LineSegment[Vector2] =
+  result = lineSegment2FromJsonNode(parseJson(jsonString))
+
+proc lineSegment3FromJson*(jsonString: string): LineSegment[Vector3] =
+  result = lineSegment3FromJsonNode(parseJson(jsonString))
+
+proc lineSegment4FromJson*(jsonString: string): LineSegment[Vector4] =
+  result = lineSegment4FromJsonNode(parseJson(jsonString))
+
+proc toJson*(l: LineSegment[Vector1]): string =
+  result = "{\"startVertex\":" & toJson(l.startVertex) & ",\"endVertex:\"" & toJson(l.endVertex) & "}"
+
+proc toJson*(l: LineSegment[Vector2]): string =
+  result = "{\"startVertex\":" & toJson(l.startVertex) & ",\"endVertex:\"" & toJson(l.endVertex) & "}"
+
+proc toJson*(l: LineSegment[Vector3]): string =
+  result = "{\"startVertex\":" & toJson(l.startVertex) & ",\"endVertex:\"" & toJson(l.endVertex) & "}"
+
+proc toJson*(l: LineSegment[Vector4]): string =
+  result = "{\"startVertex\":" & toJson(l.startVertex) & ",\"endVertex:\"" & toJson(l.endVertex) & "}"
+
+proc polyline1FromJsonNode*(jsonNode: JsonNode): Polyline[Vector1] =
   try:
     if contains(jsonNode, "vertices"):
       let
         elems = getElems(jsonNode["vertices"])
         closed = getBool(jsonNode["closed"])
-        vertices = map(elems, proc (n: jsonNode): Vector = vectorFromJsonNode(n))
+        vertices = map(elems, proc(n: JsonNode): Vector1 = vector1FromJsonNode(n))
       result = polyline(vertices, closed)
     elif contains(jsonNode, "segments"):
       let
         elems = getElems(jsonNode["segments"])
-        segments = map(elems, proc (n: jsonNode): LineSegment[Vector] = lineSegmentFromJsonNode(n))
+        segments = map(elems, proc(n: JsonNode): LineSegment[Vector1] = lineSegment1FromJsonNode(n))
       result = polyline(segments)
     else:
-      raise newException(InvalidJsonError)
+      raise newException(InvalidJsonError,
+        "Incorrect JSON arguments")
   except:
     raise newException(InvalidJsonError,
       "JSON is formatted incorrectly")
 
-proc polylineFromJson*[Vector](jsonString: string): Polyline[Vector] =
-  result = polylineFromJsonNode(parseJson(jsonString))
+proc polyline2FromJsonNode*(jsonNode: JsonNode): Polyline[Vector2] =
+  try:
+    if contains(jsonNode, "vertices"):
+      let
+        elems = getElems(jsonNode["vertices"])
+        closed = getBool(jsonNode["closed"])
+        vertices = map(elems, proc(n: JsonNode): Vector2 = vector2FromJsonNode(n))
+      result = polyline(vertices, closed)
+    elif contains(jsonNode, "segments"):
+      let
+        elems = getElems(jsonNode["segments"])
+        segments = map(elems, proc(n: JsonNode): LineSegment[Vector2] = lineSegment2FromJsonNode(n))
+      result = polyline(segments)
+    else:
+      raise newException(InvalidJsonError,
+        "Incorrect JSON arguments")
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+proc polyline3FromJsonNode*(jsonNode: JsonNode): Polyline[Vector3] =
+  try:
+    if contains(jsonNode, "vertices"):
+      let
+        elems = getElems(jsonNode["vertices"])
+        closed = getBool(jsonNode["closed"])
+        vertices = map(elems, proc(n: JsonNode): Vector3 = vector3FromJsonNode(n))
+      result = polyline(vertices, closed)
+    elif contains(jsonNode, "segments"):
+      let
+        elems = getElems(jsonNode["segments"])
+        segments = map(elems, proc(n: JsonNode): LineSegment[Vector3] = lineSegment3FromJsonNode(n))
+      result = polyline(segments)
+    else:
+      raise newException(InvalidJsonError,
+        "Incorrect JSON arguments")
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+proc polyline4FromJsonNode*(jsonNode: JsonNode): Polyline[Vector4] =
+  try:
+    if contains(jsonNode, "vertices"):
+      let
+        elems = getElems(jsonNode["vertices"])
+        closed = getBool(jsonNode["closed"])
+        vertices = map(elems, proc(n: JsonNode): Vector4 = vector4FromJsonNode(n))
+      result = polyline(vertices, closed)
+    elif contains(jsonNode, "segments"):
+      let
+        elems = getElems(jsonNode["segments"])
+        segments = map(elems, proc(n: JsonNode): LineSegment[Vector4] = lineSegment4FromJsonNode(n))
+      result = polyline(segments)
+    else:
+      raise newException(InvalidJsonError,
+        "Incorrect JSON arguments")
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+proc polyline1FromJson*(jsonString: string): Polyline[Vector1] =
+  result = polyline1FromJsonNode(parseJson(jsonString))
+
+proc polyline2FromJson*(jsonString: string): Polyline[Vector2] =
+  result = polyline2FromJsonNode(parseJson(jsonString))
+
+proc polyline3FromJson*(jsonString: string): Polyline[Vector3] =
+  result = polyline3FromJsonNode(parseJson(jsonString))
+
+proc polyline4FromJson*(jsonString: string): Polyline[Vector4] =
+  result = polyline4FromJsonNode(parseJson(jsonString))
+
+# proc toJson*[Vector](p: Polyline[Vector]): string =
+#   result = "{\"vertices\":["
+#   for v in p.vertices:

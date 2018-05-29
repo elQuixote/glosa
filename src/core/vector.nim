@@ -1597,25 +1597,38 @@ proc arePlanar*(a: openArray[Vector3]): bool =
         break
 
 # JSON
-proc vectorFromJsonNode*[Vector](jsonNode: JsonNode): Vector =
-  try:
-    case len(jsonNode):
-      of 1:
-        result = vector1(toFloat(jsonNode["x"]))
-      of 2:
-        result = vector2(toFloat(jsonNode["x"]), toFloat(jsonNode["y"]))
-      of 3:
-        result = vector3(toFloat(jsonNode["x"]), toFloat(jsonNode["y"]), toFloat(jsonNode["z"]))
-      of 4:
-        result = vector4(toFloat(jsonNode["x"]), toFloat(jsonNode["y"]), toFloat(jsonNode["z"]), toFloat(jsonNode["w"]))
-      else:
-        raise newException(InvalidJsonError)
-  except:
-    raise newException(InvalidJsonError,
-      "JSON is formatted incorrectly")
+proc vector1FromJsonNode*(jsonNode: JsonNode): Vector1 =
+  result = vector1(getFloat(jsonNode["x"]))
 
-proc vectorFromJson*[Vector](jsonString: string): Vector =
-  result = vectorFromJsonNode(parseJson(jsonString))
+proc vector2FromJsonNode*(jsonNode: JsonNode): Vector2 =
+  result = vector2(getFloat(jsonNode["x"]), getFloat(jsonNode["y"]))
 
-proc toJson*[Vector](v: Vector): string =
+proc vector3FromJsonNode*(jsonNode: JsonNode): Vector3 =
+  result = vector3(getFloat(jsonNode["x"]), getFloat(jsonNode["y"]), getFloat(jsonNode["z"]))
+
+proc vector4FromJsonNode*(jsonNode: JsonNode): Vector4 =
+  result = vector4(getFloat(jsonNode["x"]), getFloat(jsonNode["y"]), getFloat(jsonNode["z"]), getFloat(jsonNode["w"]))
+
+proc vector1FromJson*(jsonString: string): Vector1 =
+  result = vector1FromJsonNode(parseJson(jsonString))
+
+proc vector2FromJson*(jsonString: string): Vector2 =
+  result = vector2FromJsonNode(parseJson(jsonString))
+
+proc vector3FromJson*(jsonString: string): Vector3 =
+  result = vector3FromJsonNode(parseJson(jsonString))
+
+proc vector4FromJson*(jsonString: string): Vector4 =
+  result = vector4FromJsonNode(parseJson(jsonString))
+
+proc toJson*(v: Vector1): string =
+  result = toJsonString(v)
+
+proc toJson*(v: Vector2): string =
+  result = toJsonString(v)
+
+proc toJson*(v: Vector3): string =
+  result = toJsonString(v)
+
+proc toJson*(v: Vector4): string =
   result = toJsonString(v)
