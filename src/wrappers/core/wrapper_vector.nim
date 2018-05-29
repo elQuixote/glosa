@@ -41,7 +41,8 @@ proc toArray_v2*(v: Vector2, a: var array[2, cdouble]): void {.cdecl, exportc, d
   a[1] = a2[1]
 proc stringify_v2*(v: Vector2): cstring {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
-  $v
+  result = $v
+  tearDownForeignThreadGc()
 proc toVector3_v2*(v1: Vector2, z: cdouble = 0.0): Vector3 {.cdecl, exportc, dynlib.} = vector3(v1, z)
 proc toVector4_v2*(v1: Vector2, z, w: cdouble = 0.0): Vector4 {.cdecl, exportc, dynlib.} = vector4(v1, z, w)
 proc fromArray_v2*(a: array[2, cdouble]): Vector2 {.cdecl, exportc, dynlib.} = vector2(a)
@@ -106,7 +107,8 @@ proc toArray_v3*(v: Vector3, a: var array[3, cdouble]): void {.cdecl, exportc, d
   a[2] = a2[2]
 proc stringify_v3*(v: Vector3): cstring {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
-  $v
+  result = $v
+  tearDownForeignThreadGc()
 proc toVector2_v3*(v: Vector3): Vector2 {.cdecl, exportc, dynlib.} = vector2(v)
 proc toVector4_v3*(v: Vector3, w: cdouble = 0.0): Vector4 {.cdecl, exportc, dynlib.} = vector4(v, w)
 proc fromArray_v3*(a: array[3, cdouble]): Vector3 {.cdecl, exportc, dynlib.} = vector3(a)
@@ -179,7 +181,8 @@ proc toArray_v4*(v: Vector4, a: var array[4, cdouble]): void {.cdecl, exportc, d
   a[3] = a2[3]
 proc stringify_v4*(v: Vector4): cstring {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
-  $v
+  result = $v
+  tearDownForeignThreadGc()
 proc toVector2*(v: Vector4): Vector2 {.cdecl, exportc, dynlib.} = vector2(v)
 proc toVector3*(v: Vector4): Vector3 {.cdecl, exportc, dynlib.} = vector3(v)
 proc fromArray_v4*(a: array[4, cdouble]): Vector4 {.cdecl, exportc, dynlib.} = vector4(a)

@@ -17,7 +17,8 @@ proc equals_quat*(q1, q2: Quaternion): bool {.cdecl, exportc, dynlib.} = q1 == q
 proc hash_quat*(q: Quaternion): int {.cdecl, exportc, dynlib.} = hash(q)
 proc stringify_quat*(q: Quaternion): cstring {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
-  $q
+  result = $q
+  tearDownForeignThreadGc()
 proc magnitudeSquared_quat*(q: Quaternion): cdouble {.cdecl, exportc, dynlib.} = length(q)
 proc length_quat*(q: Quaternion): cdouble {.cdecl, exportc, dynlib.} = length(q)
 proc addNew_quat*(q1, q2: Quaternion): Quaternion {.cdecl, exportc, dynlib.} = addNew(q1, q2)

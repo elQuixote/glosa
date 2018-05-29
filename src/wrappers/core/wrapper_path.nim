@@ -69,5 +69,5 @@ import json
 proc polyline_p*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
   result = toJson(polyline3FromJson($s))
-
+  tearDownForeignThreadGc()
 
