@@ -481,7 +481,7 @@ proc toJson*(p: Polyline[Vector1]): string =
   let ls = len(p.segments)
   for i, s in pairs(p.segments):
     result &= toJson(s)
-    if i != (lv - 1):
+    if i != (ls - 1):
       result &= ","
     else:
       result &= "]"
@@ -500,7 +500,7 @@ proc toJson*(p: Polyline[Vector2]): string =
   let ls = len(p.segments)
   for i, s in pairs(p.segments):
     result &= toJson(s)
-    if i != (lv - 1):
+    if i != (ls - 1):
       result &= ","
     else:
       result &= "]"
@@ -519,7 +519,7 @@ proc toJson*(p: Polyline[Vector3]): string =
   let ls = len(p.segments)
   for i, s in pairs(p.segments):
     result &= toJson(s)
-    if i != (lv - 1):
+    if i != (ls - 1):
       result &= ","
     else:
       result &= "]"
@@ -538,7 +538,7 @@ proc toJson*(p: Polyline[Vector4]): string =
   let ls = len(p.segments)
   for i, s in pairs(p.segments):
     result &= toJson(s)
-    if i != (lv - 1):
+    if i != (ls - 1):
       result &= ","
     else:
       result &= "]"
