@@ -326,40 +326,32 @@ proc transform*[Vector](p: var Polyline[Vector], m: Matrix): var Polyline[Vector
 # JSON
 proc lineSegment1FromJsonNode*(jsonNode: JsonNode): LineSegment[Vector1] =
   try:
-    let
-      startVertex = jsonNode["startVertex"]
-      endVertex = jsonNode["endVertex"]
-    result = lineSegment(vector1FromJsonNode(startVertex), vector1FromJsonNode(endVertex))
+    result = lineSegment(vector1FromJsonNode(jsonNode["startVertex"]),
+      vector1FromJsonNode(jsonNode["endVertex"]))
   except:
     raise newException(InvalidJsonError,
       "JSON is formatted incorrectly")
 
 proc lineSegment2FromJsonNode*(jsonNode: JsonNode): LineSegment[Vector2] =
   try:
-    let
-      startVertex = jsonNode["startVertex"]
-      endVertex = jsonNode["endVertex"]
-    result = lineSegment(vector2FromJsonNode(startVertex), vector2FromJsonNode(endVertex))
+    result = lineSegment(vector2FromJsonNode(jsonNode["startVertex"]),
+      vector2FromJsonNode(jsonNode["endVertex"]))
   except:
     raise newException(InvalidJsonError,
       "JSON is formatted incorrectly")
 
 proc lineSegment3FromJsonNode*(jsonNode: JsonNode): LineSegment[Vector3] =
   try:
-    let
-      startVertex = jsonNode["startVertex"]
-      endVertex = jsonNode["endVertex"]
-    result = lineSegment(vector3FromJsonNode(startVertex), vector3FromJsonNode(endVertex))
+    result = lineSegment(vector3FromJsonNode(jsonNode["startVertex"]),
+      vector3FromJsonNode(jsonNode["endVertex"]))
   except:
     raise newException(InvalidJsonError,
       "JSON is formatted incorrectly")
 
 proc lineSegment4FromJsonNode*(jsonNode: JsonNode): LineSegment[Vector4] =
   try:
-    let
-      startVertex = jsonNode["startVertex"]
-      endVertex = jsonNode["endVertex"]
-    result = lineSegment(vector4FromJsonNode(startVertex), vector4FromJsonNode(endVertex))
+    result = lineSegment(vector4FromJsonNode(jsonNode["startVertex"]),
+      vector4FromJsonNode(jsonNode["endVertex"]))
   except:
     raise newException(InvalidJsonError,
       "JSON is formatted incorrectly")
@@ -377,30 +369,47 @@ proc lineSegment4FromJson*(jsonString: string): LineSegment[Vector4] =
   result = lineSegment4FromJsonNode(parseJson(jsonString))
 
 proc toJson*(l: LineSegment[Vector1]): string =
-  result = "{\"startVertex\":" & toJson(l.startVertex) & ",\"endVertex:\"" & toJson(l.endVertex) & "}"
+  result = "{\"startVertex\":" & toJson(l.startVertex) & ",\"endVertex\":" & toJson(l.endVertex) & "}"
 
 proc toJson*(l: LineSegment[Vector2]): string =
-  result = "{\"startVertex\":" & toJson(l.startVertex) & ",\"endVertex:\"" & toJson(l.endVertex) & "}"
+  result = "{\"startVertex\":" & toJson(l.startVertex) & ",\"endVertex\":" & toJson(l.endVertex) & "}"
 
 proc toJson*(l: LineSegment[Vector3]): string =
-  result = "{\"startVertex\":" & toJson(l.startVertex) & ",\"endVertex:\"" & toJson(l.endVertex) & "}"
+  result = "{\"startVertex\":" & toJson(l.startVertex) & ",\"endVertex\":" & toJson(l.endVertex) & "}"
 
 proc toJson*(l: LineSegment[Vector4]): string =
-  result = "{\"startVertex\":" & toJson(l.startVertex) & ",\"endVertex:\"" & toJson(l.endVertex) & "}"
+  result = "{\"startVertex\":" & toJson(l.startVertex) & ",\"endVertex\":" & toJson(l.endVertex) & "}"
+
+proc mapVector1Vertices(vertices: JsonNode): seq[Vector1] =
+  result = map(getElems(vertices), proc(n: JsonNode): Vector1 = vector1FromJsonNode(n))
+
+proc mapVector2Vertices(vertices: JsonNode): seq[Vector2] =
+  result = map(getElems(vertices), proc(n: JsonNode): Vector2 = vector2FromJsonNode(n))
+
+proc mapVector3Vertices(vertices: JsonNode): seq[Vector3] =
+  result = map(getElems(vertices), proc(n: JsonNode): Vector3 = vector3FromJsonNode(n))
+
+proc mapVector4Vertices(vertices: JsonNode): seq[Vector4] =
+  result = map(getElems(vertices), proc(n: JsonNode): Vector4 = vector4FromJsonNode(n))
+
+proc mapVector1Segments(segments: JsonNode): seq[LineSegment[Vector1]] =
+  result = map(getElems(segments), proc(n: JsonNode): LineSegment[Vector1] = lineSegment1FromJsonNode(n))
+
+proc mapVector2Segments(segments: JsonNode): seq[LineSegment[Vector2]] =
+  result = map(getElems(segments), proc(n: JsonNode): LineSegment[Vector2] = lineSegment2FromJsonNode(n))
+
+proc mapVector3Segments(segments: JsonNode): seq[LineSegment[Vector3]] =
+  result = map(getElems(segments), proc(n: JsonNode): LineSegment[Vector3] = lineSegment3FromJsonNode(n))
+
+proc mapVector4Segments(segments: JsonNode): seq[LineSegment[Vector4]] =
+  result = map(getElems(segments), proc(n: JsonNode): LineSegment[Vector4] = lineSegment4FromJsonNode(n))
 
 proc polyline1FromJsonNode*(jsonNode: JsonNode): Polyline[Vector1] =
   try:
     if contains(jsonNode, "vertices"):
-      let
-        elems = getElems(jsonNode["vertices"])
-        closed = getBool(jsonNode["closed"])
-        vertices = map(elems, proc(n: JsonNode): Vector1 = vector1FromJsonNode(n))
-      result = polyline(vertices, closed)
+      result = polyline(mapVector1Vertices(jsonNode["vertices"]), getBool(jsonNode["closed"]))
     elif contains(jsonNode, "segments"):
-      let
-        elems = getElems(jsonNode["segments"])
-        segments = map(elems, proc(n: JsonNode): LineSegment[Vector1] = lineSegment1FromJsonNode(n))
-      result = polyline(segments)
+      result = polyline(mapVector1Segments(jsonNode["segments"]))
     else:
       raise newException(InvalidJsonError,
         "Incorrect JSON arguments")
@@ -411,16 +420,9 @@ proc polyline1FromJsonNode*(jsonNode: JsonNode): Polyline[Vector1] =
 proc polyline2FromJsonNode*(jsonNode: JsonNode): Polyline[Vector2] =
   try:
     if contains(jsonNode, "vertices"):
-      let
-        elems = getElems(jsonNode["vertices"])
-        closed = getBool(jsonNode["closed"])
-        vertices = map(elems, proc(n: JsonNode): Vector2 = vector2FromJsonNode(n))
-      result = polyline(vertices, closed)
+      result = polyline(mapVector2Vertices(jsonNode["vertices"]), getBool(jsonNode["closed"]))
     elif contains(jsonNode, "segments"):
-      let
-        elems = getElems(jsonNode["segments"])
-        segments = map(elems, proc(n: JsonNode): LineSegment[Vector2] = lineSegment2FromJsonNode(n))
-      result = polyline(segments)
+      result = polyline(mapVector2Segments(jsonNode["segments"]))
     else:
       raise newException(InvalidJsonError,
         "Incorrect JSON arguments")
@@ -431,16 +433,9 @@ proc polyline2FromJsonNode*(jsonNode: JsonNode): Polyline[Vector2] =
 proc polyline3FromJsonNode*(jsonNode: JsonNode): Polyline[Vector3] =
   try:
     if contains(jsonNode, "vertices"):
-      let
-        elems = getElems(jsonNode["vertices"])
-        closed = getBool(jsonNode["closed"])
-        vertices = map(elems, proc(n: JsonNode): Vector3 = vector3FromJsonNode(n))
-      result = polyline(vertices, closed)
+      result = polyline(mapVector3Vertices(jsonNode["vertices"]), getBool(jsonNode["closed"]))
     elif contains(jsonNode, "segments"):
-      let
-        elems = getElems(jsonNode["segments"])
-        segments = map(elems, proc(n: JsonNode): LineSegment[Vector3] = lineSegment3FromJsonNode(n))
-      result = polyline(segments)
+      result = polyline(mapVector3Segments(jsonNode["segments"]))
     else:
       raise newException(InvalidJsonError,
         "Incorrect JSON arguments")
@@ -451,16 +446,9 @@ proc polyline3FromJsonNode*(jsonNode: JsonNode): Polyline[Vector3] =
 proc polyline4FromJsonNode*(jsonNode: JsonNode): Polyline[Vector4] =
   try:
     if contains(jsonNode, "vertices"):
-      let
-        elems = getElems(jsonNode["vertices"])
-        closed = getBool(jsonNode["closed"])
-        vertices = map(elems, proc(n: JsonNode): Vector4 = vector4FromJsonNode(n))
-      result = polyline(vertices, closed)
+      result = polyline(mapVector4Vertices(jsonNode["vertices"]), getBool(jsonNode["closed"]))
     elif contains(jsonNode, "segments"):
-      let
-        elems = getElems(jsonNode["segments"])
-        segments = map(elems, proc(n: JsonNode): LineSegment[Vector4] = lineSegment4FromJsonNode(n))
-      result = polyline(segments)
+      result = polyline(mapVector4Segments(jsonNode["segments"]))
     else:
       raise newException(InvalidJsonError,
         "Incorrect JSON arguments")
@@ -480,6 +468,78 @@ proc polyline3FromJson*(jsonString: string): Polyline[Vector3] =
 proc polyline4FromJson*(jsonString: string): Polyline[Vector4] =
   result = polyline4FromJsonNode(parseJson(jsonString))
 
-# proc toJson*[Vector](p: Polyline[Vector]): string =
-#   result = "{\"vertices\":["
-#   for v in p.vertices:
+proc toJson*(p: Polyline[Vector1]): string =
+  result = "{\"vertices\":["
+  let lv = len(p.vertices)
+  for i, v in pairs(p.vertices):
+    result &= toJson(v)
+    if i != (lv - 1):
+      result &= ","
+    else:
+      result &= "]"
+  result &= ",\"segments\":["
+  let ls = len(p.segments)
+  for i, s in pairs(p.segments):
+    result &= toJson(s)
+    if i != (lv - 1):
+      result &= ","
+    else:
+      result &= "]"
+  result &= ",\"closed\":" & $isClosed(p) & "}"
+
+proc toJson*(p: Polyline[Vector2]): string =
+  result = "{\"vertices\":["
+  let lv = len(p.vertices)
+  for i, v in pairs(p.vertices):
+    result &= toJson(v)
+    if i != (lv - 1):
+      result &= ","
+    else:
+      result &= "]"
+  result &= ",\"segments\":["
+  let ls = len(p.segments)
+  for i, s in pairs(p.segments):
+    result &= toJson(s)
+    if i != (lv - 1):
+      result &= ","
+    else:
+      result &= "]"
+  result &= ",\"closed\":" & $isClosed(p) & "}"
+
+proc toJson*(p: Polyline[Vector3]): string =
+  result = "{\"vertices\":["
+  let lv = len(p.vertices)
+  for i, v in pairs(p.vertices):
+    result &= toJson(v)
+    if i != (lv - 1):
+      result &= ","
+    else:
+      result &= "]"
+  result &= ",\"segments\":["
+  let ls = len(p.segments)
+  for i, s in pairs(p.segments):
+    result &= toJson(s)
+    if i != (lv - 1):
+      result &= ","
+    else:
+      result &= "]"
+  result &= ",\"closed\":" & $isClosed(p) & "}"
+
+proc toJson*(p: Polyline[Vector4]): string =
+  result = "{\"vertices\":["
+  let lv = len(p.vertices)
+  for i, v in pairs(p.vertices):
+    result &= toJson(v)
+    if i != (lv - 1):
+      result &= ","
+    else:
+      result &= "]"
+  result &= ",\"segments\":["
+  let ls = len(p.segments)
+  for i, s in pairs(p.segments):
+    result &= toJson(s)
+    if i != (lv - 1):
+      result &= ","
+    else:
+      result &= "]"
+  result &= ",\"closed\":" & $isClosed(p) & "}"
