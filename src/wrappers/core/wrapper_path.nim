@@ -68,6 +68,7 @@ import json
 
 proc polyline_p*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
-  let p: Polyline[Vector3] = polylineFromJson[Vector3](s)
+  $polyline3FromJson($s)
+
 
 
