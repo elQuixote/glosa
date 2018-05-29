@@ -15,6 +15,10 @@ from ./concepts import
   Matrix
 
 from ./types import
+  Vector1,
+  Vector2,
+  Vector3,
+  Vector4,
   Polygon,
   Polyline,
   LineSegment
@@ -22,7 +26,8 @@ from ./types import
 from ./errors import
   InvalidPolylineError,
   InvalidSegmentsError,
-  InvalidVerticesError
+  InvalidVerticesError,
+  InvalidJsonError
 
 export
   Equals,
@@ -46,6 +51,7 @@ export
 from math import arctan2, arccos, sqrt, TAU, PI
 from strformat import `&`
 import hashes
+import json
 
 from ./vector import
   vector2,
@@ -67,7 +73,12 @@ from ./path import
   rotate,
   scale,
   translate,
-  transform
+  transform,
+  polyline1FromJsonNode,
+  polyline2FromJsonNode,
+  polyline3FromJsonNode,
+  polyline4FromJsonNode,
+  toJson
 
 # Constuctors
 proc polygon*[Vector](polyline: Polyline[Vector]): Polygon[Vector] =
@@ -248,3 +259,56 @@ proc translate*[Vector](p: var Polygon[Vector], v: Vector): var Polygon[Vector] 
 proc transform*[Vector](p: var Polygon[Vector], m : Matrix): var Polygon[Vector] {.noinit.} =
   p.polyline = transform(p.polyline, m)
   result = p
+
+# JSON
+proc polygon1FromJsonNode*(jsonNode: JsonNode): Polygon[Vector1] =
+  try:
+    result = polygon(polyline1FromJsonNode(jsonNode["polyline"]))
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+proc polygon2FromJsonNode*(jsonNode: JsonNode): Polygon[Vector2] =
+  try:
+    result = polygon(polyline2FromJsonNode(jsonNode["polyline"]))
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+proc polygon3FromJsonNode*(jsonNode: JsonNode): Polygon[Vector3] =
+  try:
+    result = polygon(polyline3FromJsonNode(jsonNode["polyline"]))
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+proc polygon4FromJsonNode*(jsonNode: JsonNode): Polygon[Vector4] =
+  try:
+    result = polygon(polyline4FromJsonNode(jsonNode["polyline"]))
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+proc polygon1FromJson*(jsonString: string): Polygon[Vector1] =
+  result = polygon1FromJsonNode(parseJson(jsonString))
+
+proc polygon2FromJson*(jsonString: string): Polygon[Vector2] =
+  result = polygon2FromJsonNode(parseJson(jsonString))
+
+proc polygon3FromJson*(jsonString: string): Polygon[Vector3] =
+  result = polygon3FromJsonNode(parseJson(jsonString))
+
+proc polygon4FromJson*(jsonString: string): Polygon[Vector4] =
+  result = polygon4FromJsonNode(parseJson(jsonString))
+
+proc toJson*(p: Polygon[Vector1]): string =
+  result = "{\"polyline\":" & toJson(p.polyline) & "}"
+
+proc toJson*(p: Polygon[Vector2]): string =
+  result = "{\"polyline\":" & toJson(p.polyline) & "}"
+
+proc toJson*(p: Polygon[Vector3]): string =
+  result = "{\"polyline\":" & toJson(p.polyline) & "}"
+
+proc toJson*(p: Polygon[Vector4]): string =
+  result = "{\"polyline\":" & toJson(p.polyline) & "}"

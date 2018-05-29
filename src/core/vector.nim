@@ -1572,6 +1572,12 @@ proc areCollinear*(v1, v2, v3: Vector3): bool =
 
 # NOTE: Write generaly areCollinear for array
 
+proc arePlanar*(a: openArray[Vector1]): bool =
+  result = true
+
+proc arePlanar*(a: openArray[Vector2]): bool =
+  result = true
+
 # This is probably not the most efficient algorithm for coplanarity
 # Finds the first plane, and then each points distance to that plane
 proc arePlanar*(a: openArray[Vector3]): bool =
@@ -1595,6 +1601,10 @@ proc arePlanar*(a: openArray[Vector3]): bool =
       if d != 0.0:
         result = false
         break
+
+# TODO: Write 4D arePlanar (and areCollinear) algorithms
+proc arePlanar*(a: openArray[Vector4]): bool =
+  discard
 
 # JSON
 proc vector1FromJsonNode*(jsonNode: JsonNode): Vector1 =

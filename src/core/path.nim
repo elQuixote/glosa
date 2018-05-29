@@ -292,35 +292,61 @@ proc closestPoint*[Vector](p: Polyline[Vector], v: Vector): Vector =
 # Transforms
 # Rotate
 proc rotate*[Vector](p: var Polyline[Vector], theta: float): var Polyline[Vector] {.noinit.} =
-  for i, x in pairs(p.vertices):
-    p.vertices[i] = rotate(x, theta)
+  for i in 0..<len(p.vertices):
+    p.vertices[i] = rotate(p.vertices[i], theta)
+  for i in 0..<len(p.segments):
+    p.segments[i].startVertex = rotate(p.segments[i].startVertex, theta)
+    p.segments[i].endVertex = rotate(p.segments[i].endVertex, theta)
   result = p
 # Scale
 proc scale*[Vector](p: var Polyline[Vector], s: float): var Polyline[Vector] {.noinit.} =
-  for i, x in pairs(p.vertices):
-    p.vertices[i] = scale(x, s)
+  for i in 0..<len(p.vertices):
+    p.vertices[i] = scale(p.vertices[i], s)
+  for i in 0..<len(p.segments):
+    p.segments[i].startVertex = scale(p.segments[i].startVertex, s)
+    p.segments[i].endVertex = scale(p.segments[i].endVertex, s)
   result = p
 
-proc scale*[Vector2](p: var Polyline[Vector2], sx, sy: float): var Polyline[Vector2] {.noinit.} =
-  for i, x in pairs(p.vertices):
-    p.vertices[i] = scale(x, sx, sy)
+proc scale*(p: var Polyline[Vector2], sx, sy: float): var Polyline[Vector2] {.noinit.} =
+  for i in 0..<len(p.vertices):
+    p.vertices[i] = scale(p.vertices[i], sx, sy)
+  for i in 0..<len(p.segments):
+    p.segments[i].startVertex = scale(p.segments[i].startVertex, sx, sy)
+    p.segments[i].endVertex = scale(p.segments[i].endVertex, sx, sy)
   result = p
 
-proc scale*[Vector3](p: var Polyline[Vector3], sx, sy, sz: float): var Polyline[Vector3] {.noinit.} =
-  for i, x in pairs(p.vertices):
-    p.vertices[i] = scale(x, sx, sy, sz)
+proc scale*(p: var Polyline[Vector3], sx, sy, sz: float): var Polyline[Vector3] {.noinit.} =
+  for i in 0..<len(p.vertices):
+    p.vertices[i] = scale(p.vertices[i], sx, sy, sz)
+  for i in 0..<len(p.segments):
+    p.segments[i].startVertex = scale(p.segments[i].startVertex, sx, sy, sz)
+    p.segments[i].endVertex = scale(p.segments[i].endVertex, sx, sy, sz)
+  result = p
+
+proc scale*(p: var Polyline[Vector4], sx, sy, sz, sw: float): var Polyline[Vector4] {.noinit.} =
+  for i in 0..<len(p.vertices):
+    p.vertices[i] = scale(p.vertices[i], sx, sy, sz, sw)
+  for i in 0..<len(p.segments):
+    p.segments[i].startVertex = scale(p.segments[i].startVertex, sx, sy, sz, sw)
+    p.segments[i].endVertex = scale(p.segments[i].endVertex, sx, sy, sz, sw)
   result = p
 
 # Translate
 proc translate*[Vector](p: var Polyline[Vector], v: Vector): var Polyline[Vector] {.noinit.} =
-  for i, x in pairs(p.vertices):
-    p.vertices[i] = translate(x, v)
+  for i in 0..<len(p.vertices):
+    p.vertices[i] = translate(p.vertices[i], v)
+  for i in 0..<len(p.segments):
+    p.segments[i].startVertex = translate(p.segments[i].startVertex, v)
+    p.segments[i].endVertex = translate(p.segments[i].endVertex, v)
   result = p
 
 # Transform(Matrix)
 proc transform*[Vector](p: var Polyline[Vector], m: Matrix): var Polyline[Vector] {.noinit.} =
-  for i, x in pairs(p.vertices):
-    p.vertices[i] = transform(x, m)
+  for i in 0..<len(p.vertices):
+    p.vertices[i] = transform(p.vertices[i], m)
+  for i in 0..<len(p.segments):
+    p.segments[i].startVertex = transform(p.segments[i].startVertex, m)
+    p.segments[i].endVertex = transform(p.segments[i].endVertex, m)
   result = p
 
 # JSON
