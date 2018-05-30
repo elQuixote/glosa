@@ -49,6 +49,7 @@ proc areClosed_v4_vertices*(s: cstring): bool {.cdecl, exportc, dynlib.} =
   result = areClosed(polyline4FromJson($s).vertices)
   tearDownForeignThreadGc()
 
+# Constructors
 proc polyline_v1*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
   result = toJson(polyline1FromJson($s))
@@ -69,6 +70,23 @@ proc polyline_v4*(s: cstring): cstring {.cdecl, exportc, dynlib.} =
   result = toJson(polyline4FromJson($s))
   tearDownForeignThreadGc()
 
+# Operations
+proc isClosed_v2_polyline*(s: cstring): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = isClosed(polyline2FromJson($s))
+  tearDownForeignThreadGc()
+
+proc isClosed_v3_polyline*(s: cstring): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = isClosed(polyline3FromJson($s))
+  tearDownForeignThreadGc()
+
+proc isClosed_v4_polyline*(s: cstring): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = isClosed(polyline4FromJson($s))
+  tearDownForeignThreadGc()
+
+# Transforms
 proc scale_v2_polyline*(s: cstring, sx, sy: cdouble): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
   var p = polyline2FromJson($s)
