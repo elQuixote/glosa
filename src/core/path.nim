@@ -243,7 +243,7 @@ proc dimension*[Vector](p: Polyline[Vector]): int =
 
 # Copy
 proc copy*[Vector](p: Polyline[Vector]): Polyline[Vector] =
-  result = Polyline(vertices: var p.vertices, segments: var p.segments)
+  result = Polyline[Vector](vertices: p.vertices, segments: p.segments)
 
 # String
 proc `$`*[Vector](p: Polyline[Vector]): string =
