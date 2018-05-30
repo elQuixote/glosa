@@ -364,7 +364,6 @@ proc nurbsCurve*[Vector](points: openArray[Vector], degree: int = 3): NurbsCurve
       add(xs, solve(A, b))
 
     let sxs = shape(xs)
-
     var controlPoints = newSeq[Vector](len(sxs))
     for i, v in pairs(sxs):
       fillFromSeq(controlPoints[i], v)
