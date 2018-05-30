@@ -272,20 +272,56 @@ proc closestPoint_v4_polyline*(s: cstring, v: Vector4): Vector4 {.cdecl, exportc
   tearDownForeignThreadGc()
   
 # Transforms
-proc scale_v2_polyline*(s: cstring, sx, sy: cdouble): cstring {.cdecl, exportc, dynlib.} = 
+proc rotate_v2_polyline*(s: cstring, theta: cdouble): cstring {.cdecl, exportc, noinit, dynlib.} = 
+  setupForeignThreadGc()
+  var p = polyline2FromJson($s)
+  result = toJson(rotate(p, theta))
+  tearDownForeignThreadGc()
+
+proc rotate_v3_polyline*(s: cstring, theta: cdouble): cstring {.cdecl, exportc, noinit, dynlib.} = 
+  setupForeignThreadGc()
+  var p = polyline3FromJson($s)
+  result = toJson(rotate(p, theta))
+  tearDownForeignThreadGc()
+
+proc rotate_v4_polyline*(s: cstring, theta: cdouble): cstring {.cdecl, exportc, noinit, dynlib.} = 
+  setupForeignThreadGc()
+  var p = polyline4FromJson($s)
+  result = toJson(rotate(p, theta))
+  tearDownForeignThreadGc()
+
+proc scale_v2_polyline*(s: cstring, sx, sy: cdouble): cstring {.cdecl, exportc, noinit, dynlib.} = 
   setupForeignThreadGc()
   var p = polyline2FromJson($s)
   result = toJson(scale(p, sx, sy))
   tearDownForeignThreadGc()
 
-proc scale_v3_polyline*(s: cstring, sx, sy, sz: cdouble): cstring {.cdecl, exportc, dynlib.} = 
+proc scale_v3_polyline*(s: cstring, sx, sy, sz: cdouble): cstring {.cdecl, exportc, noinit, dynlib.} = 
   setupForeignThreadGc()
   var p = polyline3FromJson($s)
   result = toJson(scale(p, sx, sy, sz))
   tearDownForeignThreadGc()
 
-proc scale_v4_polyline*(s: cstring, sx, sy, sz, sw: cdouble): cstring {.cdecl, exportc, dynlib.} = 
+proc scale_v4_polyline*(s: cstring, sx, sy, sz, sw: cdouble): cstring {.cdecl, exportc, noinit, dynlib.} = 
   setupForeignThreadGc()
   var p = polyline4FromJson($s)
   result = toJson(scale(p, sx, sy, sz, sw))
+  tearDownForeignThreadGc()
+
+proc translate_v2_polyline*(s: cstring, v: Vector2): cstring {.cdecl, exportc, noinit, dynlib.} = 
+  setupForeignThreadGc()
+  var p = polyline2FromJson($s)
+  result = toJson(translate(p, v))
+  tearDownForeignThreadGc()
+
+proc translate_v3_polyline*(s: cstring, v: Vector3): cstring {.cdecl, exportc, noinit, dynlib.} = 
+  setupForeignThreadGc()
+  var p = polyline3FromJson($s)
+  result = toJson(translate(p, v))
+  tearDownForeignThreadGc()
+
+proc translate_v4_polyline*(s: cstring, v: Vector4): cstring {.cdecl, exportc, noinit, dynlib.} = 
+  setupForeignThreadGc()
+  var p = polyline4FromJson($s)
+  result = toJson(translate(p, v))
   tearDownForeignThreadGc()
