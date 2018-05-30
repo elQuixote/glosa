@@ -86,6 +86,21 @@ proc isClosed_v4_polyline*(s: cstring): bool {.cdecl, exportc, dynlib.} =
   result = isClosed(polyline4FromJson($s))
   tearDownForeignThreadGc()
 
+proc reverse_v2_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(reverse(polyline2FromJson($s)))
+  tearDownForeignThreadGc()
+
+proc reverse_v3_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(reverse(polyline3FromJson($s)))
+  tearDownForeignThreadGc()
+
+proc reverse_v4_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(reverse(polyline4FromJson($s)))
+  tearDownForeignThreadGc()
+
 # Transforms
 proc scale_v2_polyline*(s: cstring, sx, sy: cdouble): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()

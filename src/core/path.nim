@@ -178,8 +178,13 @@ proc isClosed*[Vector](p: Polyline[Vector]): bool =
   result = p.segments[0].startVertex == p.segments[^1].endVertex
 
 # NOTE: This is added from design doc
-proc reverse*[Vector](p: Polyline[Vector]): Polyline[Vector] =
-  result = polyline(reverse(p.vertices))
+proc reverse*[Vector](p: var Polyline[Vector]): var Polyline[Vector] =
+  #result = polyline(reverse(p.vertices))
+  var list = newSeq[Vector](len(p.vertices))
+  for i, x in p.vertices:
+    list[p.vertices.high-i] = x
+  p.vertices = list 
+  result = p
 
 # NOTE: This is added from design doc
 proc contains*[Vector](p: Polyline[Vector], v: Vector): bool =
