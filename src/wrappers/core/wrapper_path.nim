@@ -195,6 +195,21 @@ proc copy_v4_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} =
   result = toJson(copy(polyline4FromJson($s)))
   tearDownForeignThreadGc()
 
+proc stringify_v2_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = $polyline2FromJson($s)
+  tearDownForeignThreadGc()
+
+proc stringify_v3_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = $polyline3FromJson($s)
+  tearDownForeignThreadGc()
+
+proc stringify_v4_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = $polyline4FromJson($s)
+  tearDownForeignThreadGc()
+
 # Transforms
 proc scale_v2_polyline*(s: cstring, sx, sy: cdouble): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
