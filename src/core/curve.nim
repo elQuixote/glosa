@@ -60,10 +60,12 @@ from ./vector import
   dimension,
   `[]`,
   `[]=`,
+  `-=`,
   `+=`,
   extend,
   shorten,
   dot,
+  toSeq,
   fillFromSeq,
   transform,
   rotate,
@@ -105,19 +107,20 @@ proc homogenize*(point: Vector2, weight: float): Vector3 =
 proc homogenize*(point: Vector3, weight: float): Vector4 =
   result = extend(multiplyNew(point, weight), weight)
 
-proc homogenize*[Vector, WeightedVector](points: openArray[Vector], weights: openArray[float]): seq[WeightedVector] =
-  result = @[]
-  for i in 0..<len(points):
-    add(result, homogenize(points[i], weights[i]))
+proc calculateHomogenized[Vector, WeightedVector](points: openArray[Vector], weights: openArray[float]): seq[WeightedVector] =
+  let pointsL = len(points)
+  result = newSeq[WeightedVector](pointsL)
+  for i in 0..<pointsL:
+    result[i] = homogenize(points[i], weights[i])
 
 proc homogenize*(points: openArray[Vector1], weights: openArray[float]): seq[Vector2] =
-  result = homogenize[Vector1, Vector2](points, weights)
+  result = calculateHomogenized[Vector1, Vector2](points, weights)
 
 proc homogenize*(points: openArray[Vector2], weights: openArray[float]): seq[Vector3] =
-  result = homogenize[Vector2, Vector3](points, weights)
+  result = calculateHomogenized[Vector2, Vector3](points, weights)
 
 proc homogenize*(points: openArray[Vector3], weights: openArray[float]): seq[Vector4] =
-  result = homogenize[Vector3, Vector4](points, weights)
+  result = calculateHomogenized[Vector3, Vector4](points, weights)
 
 proc dehomogenize*(point: Vector2): Vector1 =
   result = shorten(divideNew(point, point.y))
@@ -128,19 +131,20 @@ proc dehomogenize*(point: Vector3): Vector2 =
 proc dehomogenize*(point: Vector4): Vector3 =
   result = shorten(divideNew(point, point.w))
 
-proc dehomogenize*[WeightedVector, Vector](points: openArray[WeightedVector]): seq[Vector] =
-  result = @[]
-  for i in 0..<len(points):
-    add(result, dehomogenize(points[i]))
+proc calculateDehomogenized[WeightedVector, Vector](points: openArray[WeightedVector]): seq[Vector] =
+  let pointsL = len(points)
+  result = newSeq[Vector](pointsL)
+  for i in 0..<pointsL:
+    result[i] = dehomogenize(points[i])
 
 proc dehomogenize*(points: openArray[Vector2]): seq[Vector1] =
-  result = dehomogenize[Vector2, Vector1](points)
+  result = calculateDehomogenized[Vector2, Vector1](points)
 
 proc dehomogenize*(points: openArray[Vector3]): seq[Vector2] =
-  result = dehomogenize[Vector3, Vector2](points)
+  result = calculateDehomogenized[Vector3, Vector2](points)
 
 proc dehomogenize*(points: openArray[Vector4]): seq[Vector3] =
-  result = dehomogenize[Vector4, Vector3](points)
+  result = calculateDehomogenized[Vector4, Vector3](points)
 
 proc weight*(point: Vector2): float =
   result = point.y
@@ -151,7 +155,7 @@ proc weight*(point: Vector3): float =
 proc weight*(point: Vector4): float =
   result = point.w
 
-proc weights*[Vector](points: openArray[Vector]): float =
+proc weights*[Vector](points: openArray[Vector]): seq[float] =
   result = map(points, proc(v: Vector): float = weight(v))
 
 # Equality
@@ -176,18 +180,19 @@ proc `!=`*[Vector](nc1: NurbsCurve[Vector], nc2: NurbsCurve[Vector]): bool =
 
 # NOTE: Move all segment operations into a new file
 proc closestPointWithParameter[Vector](v, startVertex, endVertex: Vector, ustart, uend: float): tuple[u: float, v: Vector] =
-  let
-    sub = subtractNew(endVertex, startVertex)
-    mag = magnitude(sub)
-  if mag == 0.0:
+  var sub = subtractNew(endVertex, startVertex)
+  let l = magnitude(sub)
+  if l == 0.0:
     return (u: ustart, v: startVertex)
-  let t = dot(subtractNew(v, startVertex), sub) / mag
+  let
+    r = divideSelf(sub, l)
+    t = dot(subtractNew(v, startVertex), r)
   if t < 0.0:
     result = (u: ustart, v: startVertex)
-  elif t > mag:
+  elif t > l:
     result = (u: uend, v: endVertex)
   else:
-    result = (u: ustart + ((uend - ustart) * t / mag), v: addNew(startVertex, multiplyNew(divideNew(sub, mag), t)))
+    result = (u: ustart + (uend - ustart) * t / l, v: addNew(startVertex, multiplyNew(r, t)))
 
 proc knotSpan[Vector](n, degree: int, u: float, knots: openArray[Vector]): int =
   if (u >= knots[n + 1]): # NOTE: Add tolerance/remove equals?
@@ -232,9 +237,10 @@ proc basisFunctions[Vector](nc: NurbsCurve[Vector], i: int, u: float): seq[float
 proc derivativeBasisFunctions[Vector](nc: NurbsCurve[Vector], i: int, u: float): seq[seq[float]] =
   let n = len(nc.knots) - nc.degree - 2
   var
-    ndu = [newSeq(float, nc.degree + 1), newSeq(float, nc.degree + 1)]
-    left = newSeq(float, nc.degree + 1)
-    right = newSeq(float, nc.degree + 1)
+    ndu = newSeq[seq[float]](nc.degree + 1)
+    left = newSeq[float](nc.degree + 1)
+    right = newSeq[float](nc.degree + 1)
+  fill(ndu, newSeq[float](nc.degree + 1))
   ndu[0][0] = 1.0
   for j in 1..nc.degree:
     left[j] = u - nc.knots[i + 1 - j]
@@ -247,11 +253,12 @@ proc derivativeBasisFunctions[Vector](nc: NurbsCurve[Vector], i: int, u: float):
       saved = left[j - r] * temp
     ndu[j][j] = saved
 
-  result = fill(newSeq[seq[float]](n + 1), newSeq[float](nc.degree + 1)) # result = ders
+  result = newSeq[seq[float]](n + 1)
+  fill(result, newSeq[float](nc.degree + 1)) # result = ders
   for j in 0..nc.degree:
     result[0][j] = ndu[j][nc.degree]
 
-  var a = [newSeq[float](2), newSeq[float](nc.degree + 1)]
+  var a = @[newSeq[float](nc.degree + 1), newSeq[float](nc.degree + 1)]
   for r in 0..nc.degree:
     var
       s1 = 0
@@ -285,7 +292,7 @@ proc derivativeBasisFunctions[Vector](nc: NurbsCurve[Vector], i: int, u: float):
   var acc = nc.degree
   for k in 1..n:
     for j in 0..nc.degree:
-      result[k][j] *= acc
+      result[k][j] *= (float) acc
     acc *= nc.degree - k
 
 # Constructors
@@ -367,11 +374,18 @@ proc nurbsCurve*[Vector](points: openArray[Vector], degree: int = 3): NurbsCurve
     result = nurbsCurve(degree, controlPoints, weights, knots)
 
 # Accessors
-proc weightedControlPoints*[Vector, WeightedVector](nc: NurbsCurve[Vector]): seq[WeightedVector] =
+# TODO: Revert to generics
+proc weightedControlPoints*(nc: NurbsCurve[Vector1]): seq[Vector2] =
+  result = homogenize(nc.controlPoints, nc.weights)
+
+proc weightedControlPoints*(nc: NurbsCurve[Vector2]): seq[Vector3] =
+  result = homogenize(nc.controlPoints, nc.weights)
+
+proc weightedControlPoints*(nc: NurbsCurve[Vector3]): seq[Vector4] =
   result = homogenize(nc.controlPoints, nc.weights)
 
 # Rational Sampling (with weights)
-proc rationalSample[Vector, WeightedVector](nc: NurbsCurve[Vector], u: float): WeightedVector =
+proc calculateRationalSample[Vector, WeightedVector](nc: NurbsCurve[Vector], u: float): WeightedVector =
   let
     span = knotSpan(nc, u)
     basisFunctions = basisFunctions(nc, span, u)
@@ -381,109 +395,97 @@ proc rationalSample[Vector, WeightedVector](nc: NurbsCurve[Vector], u: float): W
   for j in 0..nc.degree:
     result += multiplyNew(weightedControlPoints[span - nc.degree + j], basisFunctions[j])
 
-proc rationalRegularSampleWithParameter[Vector, WeightedVector](nc: NurbsCurve[Vector], ustart, uend: float, n: int): seq[tuple[u: float, v: WeightedVector]] =
-  result = @[]
-  let span = (ustart - uend) / (n - 1)
-  for i in 0..<n:
-    let u = ustart + span * i
-    add(result, (u: u, v: rationalSample[Vector, WeightedVector](curve, u)))
+proc rationalSample*(nc: NurbsCurve[Vector1], u: float): Vector2 =
+  result = calculateRationalSample[Vector1, Vector2](nc, u)
 
-proc rationalRegularSampleWithParameter[Vector, WeightedVector](nc: NurbsCurve[Vector], n: int): seq[tuple[u: float, v: WeightedVector]] =
-  result = rationalRegularSampleWithParameter[Vector, WeightedVector](nc, nc.knot[0], nc.knot[^1], n)
+proc rationalSample*(nc: NurbsCurve[Vector2], u: float): Vector3 =
+  result = calculateRationalSample[Vector2, Vector3](nc, u)
 
-proc rationalRegularSample[Vector, WeightedVector](nc: NurbsCurve[Vector], ustart, uend: float, n: int): seq[WeightedVector] =
-  result = map(rationalRegularSampleWithParameter[Vector, WeightedVector](nc, nc.knot[0], nc.knot[^1], n),
+proc rationalSample*(nc: NurbsCurve[Vector3], u: float): Vector4 =
+  result = calculateRationalSample[Vector3, Vector4](nc, u)
+
+proc calculateRationalRegularSampleWithParameter[Vector, WeightedVector](nc: NurbsCurve[Vector], ustart, uend: float, n: int): seq[tuple[u: float, v: WeightedVector]] =
+  result = newSeq[tuple[u: float, v: WeightedVector]](n)
+  let
+    num = if n < 1: 2 else: n
+    span = (uend - ustart) / ((float) num - 1)
+  for i in 0..<num:
+    let u = ustart + span * (float) i
+    result[i] = (u: u, v: rationalSample(nc, u))
+
+proc rationalRegularSampleWithParameter(nc: NurbsCurve[Vector1], ustart, uend: float, n: int): seq[tuple[u: float, v: Vector2]] =
+  result = calculateRationalRegularSampleWithParameter[Vector1, Vector2](nc, ustart, uend, n)
+
+proc rationalRegularSampleWithParameter(nc: NurbsCurve[Vector2], ustart, uend: float, n: int): seq[tuple[u: float, v: Vector3]] =
+  result = calculateRationalRegularSampleWithParameter[Vector2, Vector3](nc, ustart, uend, n)
+
+proc rationalRegularSampleWithParameter(nc: NurbsCurve[Vector3], ustart, uend: float, n: int): seq[tuple[u: float, v: Vector4]] =
+  result = calculateRationalRegularSampleWithParameter[Vector3, Vector4](nc, ustart, uend, n)
+
+proc rationalRegularSampleWithParameter*(nc: NurbsCurve[Vector1], n: int): seq[tuple[u: float, v: Vector2]] =
+  result = rationalRegularSampleWithParameter(nc, nc.knots[0], nc.knots[^1], n)
+
+proc rationalRegularSampleWithParameter*(nc: NurbsCurve[Vector2], n: int): seq[tuple[u: float, v: Vector3]] =
+  result = rationalRegularSampleWithParameter(nc, nc.knots[0], nc.knots[^1], n)
+
+proc rationalRegularSampleWithParameter*(nc: NurbsCurve[Vector3], n: int): seq[tuple[u: float, v: Vector4]] =
+  result = rationalRegularSampleWithParameter(nc, nc.knots[0], nc.knots[^1], n)
+
+proc calculateRationalRegularSample[Vector, WeightedVector](nc: NurbsCurve[Vector], ustart, uend: float, n: int): seq[WeightedVector] =
+  result = map(rationalRegularSampleWithParameter[Vector, WeightedVector](nc, nc.knots[0], nc.knots[^1], n),
     proc(x: tuple[u: float, v: WeightedVector]): WeightedVector = x.v)
 
-proc rationalRegularSample[Vector, WeightedVector](nc: NurbsCurve[Vector], n: int): seq[WeightedVector] =
-  result = rationalRegularSample[Vector, WeightedVector](nc, nc.knot[0], nc.knot[^1], n)
+proc rationalRegularSample(nc: NurbsCurve[Vector1], ustart, uend: float, n: int): seq[Vector2] =
+  result = calculateRationalRegularSample[Vector1, Vector2](nc, ustart, uend, n)
 
-proc rationalSampleDerivatives[Vector, WeightedVector](nc: NurbsCurve[Vector], u: float, n: int): seq[WeightedVector] =
+proc rationalRegularSample(nc: NurbsCurve[Vector2], ustart, uend: float, n: int): seq[Vector3] =
+  result = calculateRationalRegularSample[Vector2, Vector3](nc, ustart, uend, n)
+
+proc rationalRegularSample(nc: NurbsCurve[Vector3], ustart, uend: float, n: int): seq[Vector4] =
+  result = calculateRationalRegularSample[Vector3, Vector4](nc, ustart, uend, n)
+
+proc rationalRegularSample*(nc: NurbsCurve[Vector1], n: int): seq[Vector2] =
+  result = rationalRegularSample(nc, nc.knots[0], nc.knots[^1], n)
+
+proc rationalRegularSample*(nc: NurbsCurve[Vector2], n: int): seq[Vector3] =
+  result = rationalRegularSample(nc, nc.knots[0], nc.knots[^1], n)
+
+proc rationalRegularSample*(nc: NurbsCurve[Vector3], n: int): seq[Vector4] =
+  result = rationalRegularSample(nc, nc.knots[0], nc.knots[^1], n)
+
+proc calculateRationalSampleDerivatives[Vector, WeightedVector](nc: NurbsCurve[Vector], u: float, n: int): seq[WeightedVector] =
   let
     weightedControlPoints = weightedControlPoints(nc)
     dim = dimension(weightedControlPoints[0])
-    du = min(n, nc.degree)
+    du = if n < nc.degree: n else: nc.degree
     knotSpan = knotSpan(nc, u)
     derivatives = derivativeBasisFunctions(nc, knotSpan, u)
-  result = newSeq[Vector](du)
-  for k in 0..<du:
-    result[k] = clear(copy(weightedControlPoints[0]))
-    for j in 0..<degree:
+  result = newSeq[WeightedVector](n + 1)
+  for k in 0..du:
+    var kcopy = copy(weightedControlPoints[0])
+    result[k] = clear(kcopy)
+    for j in 0..nc.degree:
       result[k] += multiplyNew(weightedControlPoints[knotSpan - nc.degree + j], derivatives[k][j])
 
-# NOTE: Needs refactor (maxits should probably be a threshold not an interation cap)
-proc rationalClosestParameter[Vector](nc: NurbsCurve[Vector], v: Vector): float =
-  var
-    min = high(float)
-    u = 0.0
+proc rationalSampleDerivatives*(nc: NurbsCurve[Vector1], u: float, n: int): seq[Vector2] =
+  result = calculateRationalSampleDerivatives[Vector1, Vector2](nc, u, n)
 
-  let
-    points = rationalRegularSampleWithParameter(nc, len(nc.controlPoints) * nc.degree)
-    weightedControlPoints = weightedControlPoints(nc)
+proc rationalSampleDerivatives*(nc: NurbsCurve[Vector2], u: float, n: int): seq[Vector3] =
+  result = calculateRationalSampleDerivatives[Vector2, Vector3](nc, u, n)
 
-  for i in 0..<len(points):
-    let
-      u1 = points[i].u
-      u2 = points[i + 1].u
-      p1 = points[i].v
-      p2 = points[i].v
-      proj = closestPointWithParameter(v, p1, p2, u1, u2)
-      d = magnitude(subtractNew(v, proj.v))
-    if (d < min):
-      min = d
-      u = proj
-
-  const
-    MAX_ITERATIONS = 5
-    EPSILON_ALPHA = pow(10, -4)
-    EPSILON_BETA = pow(5, -5)
-  let
-    minu = nc.knots[0]
-    maxu = nc.knots[^1]
-    closed = magnitudeSquared(subtractNew(weightedControlPoints[0], weightedControlPoints[^1])) < EPSILON
-  result = u
-
-  proc f(u: float): seq[Vector] =
-    result = rationalSampleDerivatives(nc, u, 2)
-
-  proc n(u: float, e: seq[Vector], d: seq[float]): float =
-    result = u - dot(e[1], d) / dot(e[2], d) + dot(e[1], e[1])
-
-  for i in 0..<maxits:
-    let
-      e = f(result)
-      dif = subtractNew(e[0], v)
-      c1v = magnitude(dif)
-      c1 = c1v < EPSILON_ALPHA
-      c2 = abs(dot(e[1], dif) / magnitude(e[1]) * c1v) < EPSILON_BETA
-
-    if (c1 and c2):
-      break
-
-    var ct = n(result, e, dif)
-
-    if (ct < minu):
-      ct = if closed: maxu - (ct - minu) else: minu
-    elif (ct > maxu):
-      ct = if closed: minu + (ct - maxu) else: maxu
-
-    let c3v = magnitude(multiplySelf(subtractNew(ct, result), e[1]))
-
-    if (c3v < EPSILON_ALPHA):
-      break
-
-    result = ct
+proc rationalSampleDerivatives*(nc: NurbsCurve[Vector3], u: float, n: int): seq[Vector4] =
+  result = calculateRationalSampleDerivatives[Vector3, Vector4](nc, u, n)
 
 # Non-rational Sampling
 proc sample*[Vector](nc: NurbsCurve[Vector], u: float): Vector =
   result = dehomogenize(rationalSample(nc, u))
 
 proc regularSampleWithParameter*[Vector](nc: NurbsCurve[Vector], ustart, uend: float, n: int): seq[tuple[u: float, v: Vector]] =
-  result = @[]
+  result = newSeq[tuple[u: float, v: Vector]](n)
   let span = (ustart - uend) / (n - 1)
   for i in 0..<n:
     let u = ustart + span * i
-    add(result, (u: u, v: sample(curve, u)))
+    result[i] = (u: u, v: sample(curve, u))
 
 proc regularSampleWithParameter*[Vector](nc: NurbsCurve[Vector], n: int): seq[tuple[u: float, v: Vector]] =
   result = regularSampleWithParameter(nc, nc.knot[0], nc.knot[^1], n)
@@ -495,17 +497,88 @@ proc regularSample*[Vector](nc: NurbsCurve[Vector], ustart, uend: float, n: int)
 proc regularSample*[Vector](nc: NurbsCurve[Vector], n: int): seq[Vector] =
   result = regularSample(nc, nc.knot[0], nc.knot[^1], n)
 
-proc sampleDerivative*[Vector](nc: NurbsCurve[Vector], u: float, n: int = 1): seq[Vector] =
+proc sampleDerivatives*[Vector](nc: NurbsCurve[Vector], u: float, n: int = 1): seq[Vector] =
   let
     derivatives = rationalSampleDerivatives(nc, u, n)
     wderivatives = weights(derivatives)
-  var weightedResult = fill(newSeq[Vector](n), clear(copy(derivatives[0])))
-  for k in 0..<n:
+  var weightedResult = derivatives
+  for i in 0..n:
+    weightedResult[i] = clear(weightedResult[i])
+  for k in 0..n:
     var v = copy(derivatives[k])
-    for i in 1..<k:
-      v -= multiplyNew(result[k - i], binGet(k, i) * wderivatives[i])
+    for i in 1..k:
+      v -= multiplyNew(weightedResult[k - i], binGet(k, i) * wderivatives[i])
     weightedResult[k] = divideSelf(v, wderivatives[0])
-  result = dehomogenize(weightedResult)
+  result = newSeq[Vector](n)
+  for i in 0..<n:
+    result[i] = shorten(weightedResult[i])
+
+# NOTE: Needs refactor (maxits should probably be a threshold not an interation cap)
+proc calculateRationalClosestParameter[Vector, WeightedVector](nc: NurbsCurve[Vector], v: Vector): float =
+  var
+    min = high(float)
+    u = 0.0
+
+  let
+    points = rationalRegularSampleWithParameter(nc, len(nc.controlPoints) * nc.degree)
+    weightedControlPoints = weightedControlPoints(nc)
+    wv = extend(v, 1.0)
+
+  for i in 0..<(len(points) - 1):
+    let
+      u1 = points[i].u
+      u2 = points[i + 1].u
+      p1 = dehomogenize(points[i].v)
+      p2 = dehomogenize(points[i + 1].v)
+      proj = closestPointWithParameter(v, p1, p2, u1, u2)
+      d = magnitude(subtractNew(v, proj.v))
+    if (d < min):
+      min = d
+      u = proj.u
+
+  const
+    MAX_ITERATIONS = 5
+    EPSILON_ALPHA = pow(10.0, -4)
+    EPSILON_BETA = pow(5.0, -5)
+  let
+    minu = nc.knots[0]
+    maxu = nc.knots[^1]
+    closed = magnitudeSquared(subtractNew(weightedControlPoints[0], weightedControlPoints[^1])) < EPSILON
+  result = u
+
+  for i in 0..<MAX_ITERATIONS:
+    var e = rationalSampleDerivatives(nc, result, 2)
+    let
+      dif = subtractNew(e[0], wv)
+      mdif = magnitude(dif)
+      c1 = mdif < EPSILON_ALPHA
+      c2 = abs(dot(e[1], dif) / magnitude(e[1]) * mdif) < EPSILON_BETA
+
+    if (c1 and c2):
+      break
+
+    var ct = result - dot(e[1], dif) / (dot(e[2], dif) + dot(e[1], e[1]))
+
+    if (ct < minu):
+      ct = if closed: maxu - (ct - minu) else: minu
+    elif (ct > maxu):
+      ct = if closed: minu + (ct - maxu) else: maxu
+
+    let m = magnitude(multiplySelf(e[1], ct - result))
+
+    if (m < EPSILON_ALPHA):
+      break
+
+    result = ct
+
+proc rationalClosestParameter*(nc: NurbsCurve[Vector1], v: Vector1): float =
+  result = calculateRationalClosestParameter[Vector1, Vector2](nc, v)
+
+proc rationalClosestParameter*(nc: NurbsCurve[Vector2], v: Vector2): float =
+  result = calculateRationalClosestParameter[Vector2, Vector3](nc, v)
+
+proc rationalClosestParameter*(nc: NurbsCurve[Vector3], v: Vector3): float =
+  result = calculateRationalClosestParameter[Vector3, Vector4](nc, v)
 
 proc closestParameter*[Vector](nc: NurbsCurve[Vector], v: Vector): float =
   result = rationalClosestParameter(nc, v)
@@ -516,57 +589,50 @@ proc closestPoint*[Vector](nc: NurbsCurve[Vector], v: Vector): Vector =
 # Transforms
 proc transform*[Vector, Matrix](nc: NurbsCurve[Vector], m: Matrix): Vector =
   var controlPoints = nc.controlPoints
-  for i, p in pairs(controlPoints):
-    controlPoints[i] = transform(p, m)
+  for i in 0..<len(controlPoints):
+    controlPoints[i] = transform(controlPoints[i], m)
   result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
 
 proc rotate*(nc: NurbsCurve[Vector2], theta: float): NurbsCurve[Vector2] =
   var controlPoints = nc.controlPoints
-  for i, p in pairs(controlPoints):
-    var pcopy = copy(p)
-    controlPoints[i] = rotate(pcopy, theta)
+  for i in 0..<len(controlPoints):
+    controlPoints[i] = rotate(controlPoints[i], theta)
   result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
 
 proc rotate*(nc: NurbsCurve[Vector3], axis: Vector3, theta: float): NurbsCurve[Vector3] =
   var controlPoints = nc.controlPoints
-  for i, p in pairs(controlPoints):
-    var pcopy = copy(p)
-    controlPoints[i] = rotate(pcopy, axis, theta)
+  for i in 0..<len(controlPoints):
+    controlPoints[i] = rotate(controlPoints[i], axis, theta)
   result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
 
 proc scale*[Vector](nc: NurbsCurve[Vector], s: float): NurbsCurve[Vector] =
   var controlPoints = nc.controlPoints
-  for i, p in pairs(controlPoints):
-    var pcopy = copy(p)
-    controlPoints[i] = scale(pcopy, s)
+  for i in 0..<len(controlPoints):
+    controlPoints[i] = scale(controlPoints[i], s)
   result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
 
 proc scale*(nc: NurbsCurve[Vector2], sx, sy: float): NurbsCurve[Vector2] =
   var controlPoints = nc.controlPoints
-  for i, p in pairs(controlPoints):
-    var pcopy = copy(p)
-    controlPoints[i] = scale(pcopy, sx, sy)
+  for i in 0..<len(controlPoints):
+    controlPoints[i] = scale(controlPoints[i], sx, sy)
   result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
 
 proc scale*(nc: NurbsCurve[Vector3], sx, sy, sz: float): NurbsCurve[Vector3] =
   var controlPoints = nc.controlPoints
-  for i, p in pairs(controlPoints):
-    var pcopy = copy(p)
-    controlPoints[i] = scale(pcopy, sx, sy, sz)
+  for i in 0..<len(controlPoints):
+    controlPoints[i] = scale(controlPoints[i], sx, sy, sz)
   result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
 
 proc scale*(nc: NurbsCurve[Vector4], sx, sy, sz, sw: float): NurbsCurve[Vector4] =
   var controlPoints = nc.controlPoints
-  for i, p in pairs(controlPoints):
-    var pcopy = copy(p)
-    controlPoints[i] = scale(pcopy, sx, sy, sz, sw)
+  for i in 0..<len(controlPoints):
+    controlPoints[i] = scale(controlPoints[i], sx, sy, sz, sw)
   result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
 
 proc translate*[Vector](nc: NurbsCurve[Vector], v: Vector): NurbsCurve[Vector] =
   var controlPoints = nc.controlPoints
-  for i, p in pairs(controlPoints):
-    var pcopy = copy(p)
-    controlPoints[i] = translate(pcopy, v)
+  for i in 0..<len(controlPoints):
+    controlPoints[i] = translate(controlPoints[i], v)
   result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
 
 # Hash

@@ -660,15 +660,15 @@ proc `-`*(v1, v2: Vector2): Vector2 = subtractNew(v1, v2)
 proc `-`*(v1, v2: Vector3): Vector3 = subtractNew(v1, v2)
 proc `-`*(v1, v2: Vector4): Vector4 = subtractNew(v1, v2)
 
-proc `-`*(v1: Vector1, f: float): Vector1 = subtractNew(v1, f)
-proc `-`*(v1: Vector2, f: float): Vector2 = subtractNew(v1, f)
-proc `-`*(v1: Vector3, f: float): Vector3 = subtractNew(v1, f)
-proc `-`*(v1: Vector4, f: float): Vector4 = subtractNew(v1, f)
+proc `-`*(v: Vector1, f: float): Vector1 = subtractNew(v, f)
+proc `-`*(v: Vector2, f: float): Vector2 = subtractNew(v, f)
+proc `-`*(v: Vector3, f: float): Vector3 = subtractNew(v, f)
+proc `-`*(v: Vector4, f: float): Vector4 = subtractNew(v, f)
 
-proc `-`*(f: float, v1: Vector1): Vector1 = addNew(inverse(v1), f)
-proc `-`*(f: float, v1: Vector2): Vector2 = addNew(inverse(v1), f)
-proc `-`*(f: float, v1: Vector3): Vector3 = addNew(inverse(v1), f)
-proc `-`*(f: float, v1: Vector4): Vector4 = addNew(inverse(v1), f)
+proc `-`*(f: float, v: Vector1): Vector1 = addNew(inverse(v), f)
+proc `-`*(f: float, v: Vector2): Vector2 = addNew(inverse(v), f)
+proc `-`*(f: float, v: Vector3): Vector3 = addNew(inverse(v), f)
+proc `-`*(f: float, v: Vector4): Vector4 = addNew(inverse(v), f)
 
 # NOTE: This is added from design doc
 proc `-=`*(v1: var Vector1, v2: Vector1) = discard subtractSelf(v1, v2)
