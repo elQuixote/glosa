@@ -45,20 +45,20 @@ type
     radius*: float
 
   # Half Edge Mesh
-  Vertex*[Vector] = object
+  MeshVertex*[Vector] = object
     discard
 
-  Edge*[Vector] = object
+  MeshEdge*[Vector] = object
     discard
 
-  Face*[Vector] = object
+  MeshFace*[Vector] = object
     discard
 
   HalfEdge*[Vector] = object
     discard
 
   HalfEdgeMesh*[Vector] = object
-    vertices*: seq[Vertex[Vector]]
-    edges*: seq[Edge[Vector]]
-    faces*: seq[Face[Vector]]
+    vertices*: seq[MeshVertex[Vector]]
+    edges*: seq[MeshEdge[Vector]]
+    faces*: seq[MeshFace[Vector]]
     halfEdges*: seq[HalfEdge[Vector]]
