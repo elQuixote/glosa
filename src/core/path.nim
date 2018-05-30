@@ -293,7 +293,11 @@ proc toPolygon*[Vector](p: Polyline[Vector]): Polygon[Vector] =
 # Closest Point
 proc closestPoint*[Vector](p: Polyline[Vector], v: Vector): Vector =
   if len(p.vertices) > 0:
-    result = clear(copy(p.vertices[0]))
+    var v1 = p.vertices[0]
+    var v2 = v1.copy()
+    var v3 = v2.clear()
+    result = v3
+    #result = clear(copy(p.vertices[0]))
     var minDist = high(float)
     for s in p.segments:
       var
