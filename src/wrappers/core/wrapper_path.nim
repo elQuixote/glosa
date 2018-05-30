@@ -1,6 +1,5 @@
 import ../../core/path
 import ../../core/vector
-#from ../../core/vector import Vector2, Vector3, Vector4
 import json
 import ../../core/polygon
 from ../../core/matrix import Matrix44, Matrix33
@@ -73,7 +72,7 @@ proc polyline_v4*(s: cstring): cstring {.cdecl, exportc, dynlib.} =
   result = toJson(polyline4FromJson($s))
   tearDownForeignThreadGc()
 
-# Operations
+# IsClosed
 proc isClosed_v2_polyline*(s: cstring): bool {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
   result = isClosed(polyline2FromJson($s))
@@ -89,6 +88,7 @@ proc isClosed_v4_polyline*(s: cstring): bool {.cdecl, exportc, dynlib.} =
   result = isClosed(polyline4FromJson($s))
   tearDownForeignThreadGc()
 
+# Reverse
 proc reverse_v2_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
   var p = polyline2FromJson($s)
@@ -107,6 +107,7 @@ proc reverse_v4_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} =
   result = toJson(reverse(p))
   tearDownForeignThreadGc()
 
+# Contains
 # NOTE: Contains is causing a segfault when chained with other wrapper procs in .net
 proc contains_v2_polyline*(s: cstring, v: Vector2): bool {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
@@ -123,6 +124,7 @@ proc contains_v4_polyline*(s: cstring, v: Vector4): bool {.cdecl, exportc, dynli
   result = contains(polyline4FromJson($s), v)
   tearDownForeignThreadGc()
 
+# ContainsPoint
 proc containsPoint_v2_polyline*(s: cstring, v: Vector2): bool {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
   result = containsPoint(polyline2FromJson($s), v)
@@ -138,6 +140,7 @@ proc containsPoint_v4_polyline*(s: cstring, v: Vector4): bool {.cdecl, exportc, 
   result = containsPoint(polyline4FromJson($s), v)
   tearDownForeignThreadGc()
 
+# Equality
 proc equals_v2_polyline*(s1, s2: cstring): bool {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
   result = polyline2FromJson($s1) == polyline2FromJson($s2)
@@ -153,6 +156,7 @@ proc equals_v4_polyline*(s1, s2: cstring): bool {.cdecl, exportc, dynlib.} =
   result = polyline4FromJson($s1) == polyline4FromJson($s2)
   tearDownForeignThreadGc()
 
+# Hash
 proc hash_v2_polyline*(s: cstring): int {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
   result = hash(polyline2FromJson($s))
@@ -168,6 +172,7 @@ proc hash_v4_polyline*(s: cstring): int {.cdecl, exportc, dynlib.} =
   result = hash(polyline4FromJson($s))
   tearDownForeignThreadGc()
 
+# Dimension
 proc dimension_v2_polyline*(s: cstring): int {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
   result = dimension(polyline2FromJson($s))
@@ -183,6 +188,7 @@ proc dimension_v4_polyline*(s: cstring): int {.cdecl, exportc, dynlib.} =
   result = dimension(polyline4FromJson($s))
   tearDownForeignThreadGc()
 
+# Copy
 proc copy_v2_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
   result = toJson(copy(polyline2FromJson($s)))
@@ -198,6 +204,7 @@ proc copy_v4_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} =
   result = toJson(copy(polyline4FromJson($s)))
   tearDownForeignThreadGc()
 
+# Stringify
 proc stringify_v2_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
   result = $polyline2FromJson($s)
@@ -213,6 +220,7 @@ proc stringify_v4_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} =
   result = $polyline4FromJson($s)
   tearDownForeignThreadGc()
 
+# Average
 proc average_v2_polyline*(s: cstring): Vector2 {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
   result = average(polyline2FromJson($s))
@@ -228,6 +236,7 @@ proc average_v4_polyline*(s: cstring): Vector4 {.cdecl, exportc, dynlib.} =
   result = average(polyline4FromJson($s))
   tearDownForeignThreadGc()
 
+# ClosestVertex
 proc closestVertex_v2_polyline*(s: cstring, v: Vector2): Vector2 {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
   result = closestVertex(polyline2FromJson($s), v)
@@ -243,6 +252,7 @@ proc closestVertex_v4_polyline*(s: cstring, v: Vector4): Vector4 {.cdecl, export
   result = closestVertex(polyline4FromJson($s), v)
   tearDownForeignThreadGc()
 
+# ToPolygon
 proc toPolygon_v2_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
   result = toJson(toPolygon(polyline2FromJson($s)))
@@ -258,6 +268,7 @@ proc toPolygon_v4_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} =
   result = toJson(toPolygon(polyline4FromJson($s)))
   tearDownForeignThreadGc()
 
+# ClosestPoint
 proc closestPoint_v2_polyline*(s: cstring, v: Vector2): Vector2 {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
   result = closestPoint(polyline2FromJson($s), v)
@@ -274,6 +285,7 @@ proc closestPoint_v4_polyline*(s: cstring, v: Vector4): Vector4 {.cdecl, exportc
   tearDownForeignThreadGc()
   
 # Transforms
+# Rotate
 proc rotate_v2_polyline*(s: cstring, theta: cdouble): cstring {.cdecl, exportc, noinit, dynlib.} = 
   setupForeignThreadGc()
   var p = polyline2FromJson($s)
@@ -292,6 +304,7 @@ proc rotate_v4_polyline*(s: cstring, b1, b2: Vector4, theta: cdouble, b3, b4: Ve
   result = toJson(rotate(p, b1, b2, theta, b3, b4, phi))
   tearDownForeignThreadGc()
 
+# Scale
 proc scale_v2_polyline*(s: cstring, sx, sy: cdouble): cstring {.cdecl, exportc, noinit, dynlib.} = 
   setupForeignThreadGc()
   var p = polyline2FromJson($s)
@@ -310,6 +323,7 @@ proc scale_v4_polyline*(s: cstring, sx, sy, sz, sw: cdouble): cstring {.cdecl, e
   result = toJson(scale(p, sx, sy, sz, sw))
   tearDownForeignThreadGc()
 
+# Translate
 proc translate_v2_polyline*(s: cstring, v: Vector2): cstring {.cdecl, exportc, noinit, dynlib.} = 
   setupForeignThreadGc()
   var p = polyline2FromJson($s)
@@ -328,6 +342,7 @@ proc translate_v4_polyline*(s: cstring, v: Vector4): cstring {.cdecl, exportc, n
   result = toJson(translate(p, v))
   tearDownForeignThreadGc()
 
+# Transform
 proc transform_v2_polyline*(s: cstring, m: Matrix33): cstring {.cdecl, exportc, noinit, dynlib.} = 
   setupForeignThreadGc()
   var p = polyline2FromJson($s)
