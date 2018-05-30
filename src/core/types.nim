@@ -43,3 +43,22 @@ type
   Circle*[Vector] = object
     center*: Vector
     radius*: float
+
+  # Half Edge Mesh
+  Vertex*[Vector] = object
+    discard
+
+  Edge*[Vector] = object
+    discard
+
+  Face*[Vector] = object
+    discard
+
+  HalfEdge*[Vector] = object
+    discard
+
+  HalfEdgeMesh*[Vector] = object
+    vertices*: seq[Vertex[Vector]]
+    edges*: seq[Edge[Vector]]
+    faces*: seq[Face[Vector]]
+    halfEdges*: seq[HalfEdge[Vector]]
