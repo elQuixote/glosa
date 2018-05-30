@@ -1511,20 +1511,22 @@ proc toSeq*(v: Vector3): seq[float] =
 proc toSeq*(v: Vector4): seq[float] =
   result = @[v.x, v.y, v.z, v.w]
 
+proc calculateFill[Vector](v: var Vector, s: seq[float]): void =
+  for i, val in pairs(s):
+    v[i] = val
+
 # From seq (for nurbs)
-# NOTE: Temporary
-proc fromSeq*(s: seq[float]): Vector =
-  case len(s):
-    of 1:
-      result = vector1(0.0)
-    of 2:
-      result = vector2(0.0)
-    of 3:
-      result = vector3(0.0)
-    else:
-      result = vector4(0.0)
-  for i, v in pairs(s):
-    result[i] = v
+proc fillFromSeq*(v: var Vector1, s: seq[float]): void  =
+  calculateFill(v, s)
+
+proc fillFromSeq*(v: var Vector2, s: seq[float]): void =
+  calculateFill(v, s)
+
+proc fillFromSeq*(v: var Vector3, s: seq[float]): void =
+  calculateFill(v, s)
+
+proc fillFromSeq*(v: var Vector4, s: seq[float]): void =
+  calculateFill(v, s)
 
 # Extend
 # NOTE: Added from design doc

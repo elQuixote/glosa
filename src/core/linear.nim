@@ -51,9 +51,16 @@ proc solve*(a: seq[seq[float]], b: seq[float]): seq[float] =
   result = luSolve(lu(a), b)
 
 # NOTE: This proc especially needs to move
-proc transpose*(a: seq[seq[float]]): seq[seq[float]] =
+proc transpose*[T](a: seq[seq[T]]): seq[seq[T]] =
   let n = len(a)
   result = a
   for i in 0..<n:
     for j in 0..<n:
       result[i][j] = a[j][i]
+
+# Swaps row major to col major (and vice versa)
+proc shape*[T](a: seq[seq[T]]): seq[seq[T]] =
+  result = newSeq[seq[T]](len(a[0]))
+  for i in 0..<len(a):
+    for j in 0..<len(a[i]):
+      add(result[j], a[i][j])

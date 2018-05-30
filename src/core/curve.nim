@@ -64,14 +64,14 @@ from ./vector import
   extend,
   shorten,
   dot,
-  fromSeq,
+  fillFromSeq,
   transform,
   rotate,
   scale,
   translate
 
 from ./binomial import binGet
-from ./linear import solve, transpose
+from ./linear import solve, transpose, shape
 
 # Helpers
 # Data Checkers
@@ -210,6 +210,13 @@ proc knotSpan[Vector](nc: NurbsCurve[Vector], u: float): int =
 
 # TODO: Refactor to arrays (maybe change where loop variables are initialized)
 proc basisFunctions[Vector](i, degree: int, u: float, knots: openArray[Vector]): seq[float] =
+  echo "-----"
+  echo $i
+  echo $degree
+  echo $u
+  for v in knots:
+    echo $v
+  echo "-----"
   result = newSeq[float](degree + 1) # result = N (basisFunctions)
   var
     left = newSeq[float](degree + 1)
@@ -317,9 +324,9 @@ proc nurbsCurve*[Vector](points: openArray[Vector], degree: int = 3): NurbsCurve
 
     var
       knotsStart: seq[float] = newSeq[float](degree + 1)
-      knotsStart = fill(knotsStart, 0.0)
       s = 1
       e = usL - degree
+    fill(knotsStart, 0.0)
 
     for i in s..<e:
       var weightedSum = 0.0
@@ -328,13 +335,14 @@ proc nurbsCurve*[Vector](points: openArray[Vector], degree: int = 3): NurbsCurve
       add(knotsStart, (1 / degree) * weightedSum)
 
     let
-      n = pointsL + 1
+      n = pointsL - 1
       lst = 0
       ld = pointsL - (degree + 1)
     var
       knots: seq[float] = newSeq[float](degree + 1)
-      knots = concat(knotsStart, fill(knots, 1.0))
       A: seq[seq[float]] = @[]
+    fill(knots, 1.0)
+    knots = concat(knotsStart, knots)
     for u in us:
       let
         span = knotSpan(n, degree, u, knots)
@@ -347,19 +355,22 @@ proc nurbsCurve*[Vector](points: openArray[Vector], degree: int = 3): NurbsCurve
 
     let
       dim = dimension(points[0])
-      mult1 = knots[degree + 1] / degree
-      mult2 = (1 - knots[knots.length - degree - 2]) / degree
+      mult1 = knots[degree + 1] / (float) degree
+      mult2 = (1 - knots[len(knots) - degree - 2]) / (float) degree
     var xs: seq[seq[float]] = @[]
 
     for i in 0..<dim:
       var b = map(points, proc(x: Vector): float = x[i])
       add(xs, solve(A, b))
 
-    let controlPoints = seq[Vector]
-    for v in transpose(xs):
-      add(controlPoints, fromSeq(v))
+    let sxs = shape(xs)
 
-    let weights = fill(newSeq[float](len(controlPoints)), 1.0)
+    var controlPoints = newSeq[Vector](len(sxs))
+    for i, v in pairs(sxs):
+      fillFromSeq(controlPoints[i], v)
+
+    var weights = newSeq[float](len(controlPoints))
+    fill(weights, 1.0)
     result = nurbsCurve(degree, controlPoints, weights, knots)
 
 # Accessors
@@ -585,7 +596,7 @@ proc copy*[Vector](nc: NurbsCurve[Vector]): NurbsCurve[Vector] =
 
 # String
 proc `$`*[Vector](nc: NurbsCurve[Vector]): string =
-  result = "{ degree: " & nc.degree
+  result = "{ degree: " & $nc.degree
   if len(nc.controlPoints) > 0:
     result &= ", controlPoints: [" & $nc.controlPoints[0]
     for v in nc.controlPoints[1..^1]:
