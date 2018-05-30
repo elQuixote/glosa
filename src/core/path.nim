@@ -288,7 +288,7 @@ proc toPolyline*[Vector](p: Polyline[Vector]): Polyline[Vector] =
 
 # To Polygon
 proc toPolygon*[Vector](p: Polyline[Vector]): Polygon[Vector] =
-  result = Polygon(vertices: var p.vertices)
+  result = Polygon[Vector](polyline: p)
 
 # Closest Point
 proc closestPoint*[Vector](p: Polyline[Vector], v: Vector): Vector =

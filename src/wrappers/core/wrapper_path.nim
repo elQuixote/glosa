@@ -1,6 +1,7 @@
 import ../../core/path
 import ../../core/vector
 import json
+import ../../core/polygon
 
 type
   LineSegment_Net* = object
@@ -240,6 +241,21 @@ proc closestVertex_v4_polyline*(s: cstring, v: Vector4): Vector4 {.cdecl, export
   result = closestVertex(polyline4FromJson($s), v)
   tearDownForeignThreadGc()
 
+proc toPolygon_v2_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(toPolygon(polyline2FromJson($s)))
+  tearDownForeignThreadGc()
+
+proc toPolygon_v3_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(toPolygon(polyline3FromJson($s)))
+  tearDownForeignThreadGc()
+
+proc toPolygon_v4_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(toPolygon(polyline4FromJson($s)))
+  tearDownForeignThreadGc()
+  
 # Transforms
 proc scale_v2_polyline*(s: cstring, sx, sy: cdouble): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
