@@ -2,24 +2,38 @@ import ../../core/path
 import ../../core/vector
 import json
 
-# type
-#   LineSegment_Net* = object
-#     startPoint*: Vector3
-#     endPoint*: Vector3
+type
+  LineSegment_Net* = object
+    startPoint*: Vector3
+    endPoint*: Vector3
 
-#   Polyline_Net* = object
-#     vertices*: seq[Vector3]
-#     segments*: seq[LineSegment_Net]
+proc lineSegment_Net*(s: LineSegment_Net): LineSegment[Vector3] = 
+  result = LineSegment[Vector3](startVertex: s.startPoint, endVertex: s.endPoint)
 
-# proc lineSegment_Net*(s: LineSegment_Net): LineSegment[Vector3] = 
-#   result = LineSegment[Vector3](startVertex: s.startPoint, endVertex: s.endPoint)
+proc lineSegment_Net*(s: LineSegment[Vector3]): LineSegment_Net = 
+  result = LineSegment_Net(startPoint: s.startVertex, endPoint: s.endVertex)
 
-# proc lineSegment_Net*(s: LineSegment[Vector3]): LineSegment_Net = 
-#   result = LineSegment_Net(startPoint: s.startVertex, endPoint: s.endVertex)
+# ***************************************
+#     LineSegment Proc Wrappers
+# ***************************************
+proc areClosed_v2_segment*(s: cstring): bool {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  var p = polyline2FromJson($s)
+  result = p.segments.areClosed()
+  tearDownForeignThreadGc()
 
-# # ***************************************
-# #     LineSegment Proc Wrappers
-# # ***************************************
+proc areClosed_v3_segment*(s: cstring): bool {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  var p = polyline3FromJson($s)
+  result = p.segments.areClosed()
+  tearDownForeignThreadGc()
+
+proc areClosed_v4_segment*(s: cstring): bool {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  var p = polyline4FromJson($s)
+  result = p.segments.areClosed()
+  tearDownForeignThreadGc()
+
 # proc segmentFromVectors*(v1,v2: Vector3): LineSegment_Net {.cdecl, exportc, dynlib.} = lineSegment_Net(lineSegment(v1, v2))
 
 # proc arrayToSegments(segments: openArray[LineSegment_Net]): seq[LineSegment[Vector3]] =
@@ -66,6 +80,9 @@ import json
 #   setupForeignThreadGc()
 #   verts[0] = 100.00
 
+# ***************************************
+#     Polyline Proc Wrappers
+# ***************************************
 proc polyline_v1*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
   result = toJson(polyline1FromJson($s))
