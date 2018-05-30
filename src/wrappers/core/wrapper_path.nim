@@ -180,6 +180,21 @@ proc dimension_v4_polyline*(s: cstring): int {.cdecl, exportc, dynlib.} =
   result = dimension(polyline4FromJson($s))
   tearDownForeignThreadGc()
 
+proc copy_v2_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(copy(polyline2FromJson($s)))
+  tearDownForeignThreadGc()
+
+proc copy_v3_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(copy(polyline3FromJson($s)))
+  tearDownForeignThreadGc()
+
+proc copy_v4_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(copy(polyline4FromJson($s)))
+  tearDownForeignThreadGc()
+
 # Transforms
 proc scale_v2_polyline*(s: cstring, sx, sy: cdouble): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
