@@ -255,6 +255,21 @@ proc toPolygon_v4_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
   result = toJson(toPolygon(polyline4FromJson($s)))
   tearDownForeignThreadGc()
+
+proc closestPoint_v2_polyline*(s: cstring, v: Vector2): Vector2 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = closestPoint(polyline2FromJson($s), v)
+  tearDownForeignThreadGc()
+
+proc closestPoint_v3_polyline*(s: cstring, v: Vector3): Vector3 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = closestPoint(polyline3FromJson($s), v)
+  tearDownForeignThreadGc()
+
+proc closestPoint_v4_polyline*(s: cstring, v: Vector4): Vector4 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = closestPoint(polyline4FromJson($s), v)
+  tearDownForeignThreadGc()
   
 # Transforms
 proc scale_v2_polyline*(s: cstring, sx, sy: cdouble): cstring {.cdecl, exportc, dynlib.} = 
