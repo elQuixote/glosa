@@ -257,7 +257,12 @@ proc `$`*[Vector](p: Polyline[Vector]): string =
 # NOTE: This is added from design doc
 proc average*[Vector](p: Polyline[Vector]): Vector =
   if len(p.vertices) > 0:
-    result = clear(copy(p.vertices[0]))
+    var v1 = p.vertices[0]
+    var v2 = v1.copy()
+    var v3 = v2.clear()
+    result = v3
+    # chaining below was triggering type mismatch: got <Vector2> error
+    #result = clear(copy(p.vertices[0]))
     for i in 0..<len(p.vertices):
       result += p.vertices[i]
     result /= (float) len(p.vertices)

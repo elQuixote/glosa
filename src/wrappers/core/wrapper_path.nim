@@ -210,6 +210,21 @@ proc stringify_v4_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} =
   result = $polyline4FromJson($s)
   tearDownForeignThreadGc()
 
+proc average_v2_polyline*(s: cstring): Vector2 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = average(polyline2FromJson($s))
+  tearDownForeignThreadGc()
+
+proc average_v3_polyline*(s: cstring): Vector2 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = average(polyline3FromJson($s))
+  tearDownForeignThreadGc()
+
+proc average_v4_polyline*(s: cstring): Vector2 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = average(polyline4FromJson($s))
+  tearDownForeignThreadGc()
+
 # Transforms
 proc scale_v2_polyline*(s: cstring, sx, sy: cdouble): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
