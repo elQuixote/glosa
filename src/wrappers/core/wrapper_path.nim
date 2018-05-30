@@ -325,3 +325,21 @@ proc translate_v4_polyline*(s: cstring, v: Vector4): cstring {.cdecl, exportc, n
   var p = polyline4FromJson($s)
   result = toJson(translate(p, v))
   tearDownForeignThreadGc()
+
+proc transform_v2_polyline*(s: cstring, m: Matrix33): cstring {.cdecl, exportc, noinit, dynlib.} = 
+  setupForeignThreadGc()
+  var p = polyline2FromJson($s)
+  result = toJson(transform(p, m))
+  tearDownForeignThreadGc()
+
+proc transform_v3_polyline*(s: cstring, m: Matrix44): cstring {.cdecl, exportc, noinit, dynlib.} = 
+  setupForeignThreadGc()
+  var p = polyline3FromJson($s)
+  result = toJson(transform(p, m))
+  tearDownForeignThreadGc()
+
+proc transform_v4_polyline*(s: cstring, m: Matrix44): cstring {.cdecl, exportc, noinit, dynlib.} = 
+  setupForeignThreadGc()
+  var p = polyline4FromJson($s)
+  result = toJson(transform(p, m))
+  tearDownForeignThreadGc()
