@@ -7,5 +7,10 @@ type
   InvalidSegmentsError* = object of Exception
   InvalidVerticesError* = object of Exception
 
+  # Curves
+  InvalidDegreeError* = object of Exception
+  InvalidKnotsError* = object of Exception
+  InvalidInterpolationError* = object of Exception
+  
   # JSON
   InvalidJsonError* = object of Exception

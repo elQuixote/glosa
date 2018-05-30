@@ -42,7 +42,7 @@ export
   InvalidCrossProductError
 
 # from ./constants import
-#   ETA
+#   EPSILON
 
 from ./matrix import
   matrix44,
@@ -79,22 +79,22 @@ proc `[]`*(v: Vector4, i: int): float =
   of 3: result = v.w
   else: assert(false)
 
-proc `[]=`*(v: var Vector1, i: int, value: float): float =
+proc `[]=`*(v: var Vector1, i: int, value: float) =
   case i:
   of 0: v.x = value
   else: assert(false)
-proc `[]=`*(v: var Vector2, i: int, value: float): float =
+proc `[]=`*(v: var Vector2, i: int, value: float) =
   case i:
   of 0: v.x = value
   of 1: v.y = value
   else: assert(false)
-proc `[]=`*(v: var Vector3, i: int, value: float): float =
+proc `[]=`*(v: var Vector3, i: int, value: float) =
   case i:
   of 0: v.x = value
   of 1: v.y = value
   of 2: v.z = value
   else: assert(false)
-proc `[]=`*(v: var Vector4, i: int, value: float): float =
+proc `[]=`*(v: var Vector4, i: int, value: float) =
   case i:
   of 0: v.x = value
   of 1: v.y = value
@@ -665,15 +665,15 @@ proc `-`*(v1, v2: Vector2): Vector2 = subtractNew(v1, v2)
 proc `-`*(v1, v2: Vector3): Vector3 = subtractNew(v1, v2)
 proc `-`*(v1, v2: Vector4): Vector4 = subtractNew(v1, v2)
 
-proc `-`*(v1: Vector1, f: float): Vector1 = subtractNew(v1, f)
-proc `-`*(v1: Vector2, f: float): Vector2 = subtractNew(v1, f)
-proc `-`*(v1: Vector3, f: float): Vector3 = subtractNew(v1, f)
-proc `-`*(v1: Vector4, f: float): Vector4 = subtractNew(v1, f)
+proc `-`*(v: Vector1, f: float): Vector1 = subtractNew(v, f)
+proc `-`*(v: Vector2, f: float): Vector2 = subtractNew(v, f)
+proc `-`*(v: Vector3, f: float): Vector3 = subtractNew(v, f)
+proc `-`*(v: Vector4, f: float): Vector4 = subtractNew(v, f)
 
-proc `-`*(f: float, v1: Vector1): Vector1 = addNew(inverse(v1), f)
-proc `-`*(f: float, v1: Vector2): Vector2 = addNew(inverse(v1), f)
-proc `-`*(f: float, v1: Vector3): Vector3 = addNew(inverse(v1), f)
-proc `-`*(f: float, v1: Vector4): Vector4 = addNew(inverse(v1), f)
+proc `-`*(f: float, v: Vector1): Vector1 = addNew(inverse(v), f)
+proc `-`*(f: float, v: Vector2): Vector2 = addNew(inverse(v), f)
+proc `-`*(f: float, v: Vector3): Vector3 = addNew(inverse(v), f)
+proc `-`*(f: float, v: Vector4): Vector4 = addNew(inverse(v), f)
 
 # NOTE: This is added from design doc
 proc `-=`*(v1: var Vector1, v2: Vector1) = discard subtractSelf(v1, v2)
@@ -1516,6 +1516,45 @@ proc toSeq*(v: Vector3): seq[float] =
 proc toSeq*(v: Vector4): seq[float] =
   result = @[v.x, v.y, v.z, v.w]
 
+proc calculateFill[Vector](v: var Vector, s: seq[float]): void =
+  for i, val in pairs(s):
+    v[i] = val
+
+# From seq (for nurbs)
+proc fillFromSeq*(v: var Vector1, s: seq[float]): void  =
+  calculateFill(v, s)
+
+proc fillFromSeq*(v: var Vector2, s: seq[float]): void =
+  calculateFill(v, s)
+
+proc fillFromSeq*(v: var Vector3, s: seq[float]): void =
+  calculateFill(v, s)
+
+proc fillFromSeq*(v: var Vector4, s: seq[float]): void =
+  calculateFill(v, s)
+
+# Extend
+# NOTE: Added from design doc
+proc extend*(v: Vector1, y: float): Vector2 =
+  result = vector2(v, y)
+
+proc extend*(v: Vector2, z: float): Vector3 =
+  result = vector3(v, z)
+
+proc extend*(v: Vector3, w: float): Vector4 =
+  result = vector4(v, w)
+
+# Shorten
+# NOTE: Added from design doc
+proc shorten*(v: Vector2): Vector1 =
+  result = vector1(v)
+
+proc shorten*(v: Vector3): Vector2 =
+  result = vector2(v)
+
+proc shorten*(v: Vector4): Vector3 =
+  result = vector3(v)
+
 # String
 # NOTE: Changed from design doc
 proc `$`*(v: Vector1): string =
@@ -1566,7 +1605,7 @@ proc calculatePlane*(v1, v2, v3: Vector3): Vector4 =
 proc areCollinear*(v1, v2, v3: Vector3): bool =
   result = true
   let ms = magnitudeSquared(cross(subtractNew(v3, v1), subtractNew(v2, v1)))
-  # if ms > ETA:
+  # if ms > EPSILON:
   if ms != 0:
     result = false
 
@@ -1596,8 +1635,8 @@ proc arePlanar*(a: openArray[Vector3]): bool =
       return true
     for i in 3..<l:
       let d = p.x * a[i].x + p.y * a[i].y + p.z * a[i].z + p.w
-      # NOTE: Refactor if needed to use ETA because of floating point
-      # if d > ETA:
+      # NOTE: Refactor if needed to use EPSILON because of floating point
+      # if d > EPSILON:
       if d != 0.0:
         result = false
         break
