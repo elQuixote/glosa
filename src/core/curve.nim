@@ -210,13 +210,6 @@ proc knotSpan[Vector](nc: NurbsCurve[Vector], u: float): int =
 
 # TODO: Refactor to arrays (maybe change where loop variables are initialized)
 proc basisFunctions[Vector](i, degree: int, u: float, knots: openArray[Vector]): seq[float] =
-  echo "-----"
-  echo $i
-  echo $degree
-  echo $u
-  for v in knots:
-    echo $v
-  echo "-----"
   result = newSeq[float](degree + 1) # result = N (basisFunctions)
   var
     left = newSeq[float](degree + 1)
