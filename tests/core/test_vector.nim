@@ -6,7 +6,7 @@ from math import pow, sqrt, PI
 from sequtils import zip, toSeq
 
 from ../../src/core/constants import
-  ETA
+  EPSILON
 
 # Vector testing utilities
 proc compareVectorToValue(vector: Vector, value: float): bool =
@@ -29,19 +29,19 @@ proc compareVectorToValues(vector: Vector, values: seq[float]): bool =
     checkpoint("vector was " & $vector)
     checkpoint("values were " & $values)
 
-proc compareValuesWithinEta(a, b: float): bool =
-  if abs(a - b) >= ETA:
+proc compareValuesWithinEpsilon(a, b: float): bool =
+  if abs(a - b) >= EPSILON:
     result = false
     checkpoint("a was " & $a)
     checkpoint("b was " & $b)
   else:
     result = true
 
-proc compareVectorsWithinEta(v1, v2: Vector): bool =
+proc compareVectorsWithinEpsilon(v1, v2: Vector): bool =
   let s = zip(v1.toArray(), v2.toArray())
   result = true
   for v in s:
-    if abs(v[0] - v[1]) >= ETA:
+    if abs(v[0] - v[1]) >= EPSILON:
       result = false
   if not result:
     checkpoint("v1 was " & $v1)
@@ -631,9 +631,9 @@ suite "Calculating the heading of a Vector":
       heading(v1) == PI_OVER_FOUR_RADS
       headingXY(v1) == PI_OVER_FOUR_RADS
       heading(v1) == headingXY(v1)
-      abs(heading(v2) - PI_OVER_SIX_RADS) < ETA
-      abs(headingXY(v2) - PI_OVER_SIX_RADS) < ETA
-      abs(heading(v2) - headingXY(v2)) < ETA
+      abs(heading(v2) - PI_OVER_SIX_RADS) < EPSILON
+      abs(headingXY(v2) - PI_OVER_SIX_RADS) < EPSILON
+      abs(heading(v2) - headingXY(v2)) < EPSILON
   test "Calculating the heading of a Vector3":
     let
       v1 = vector3(2.0)
@@ -647,10 +647,10 @@ suite "Calculating the heading of a Vector":
       heading(v1) == headingXY(v1)
       headingXZ(v1) == PI_OVER_FOUR_RADS
       headingYZ(v1) == PI_OVER_FOUR_RADS
-      abs(heading(v2) - PI_OVER_SIX_RADS) < ETA
-      abs(headingXY(v2) - PI_OVER_SIX_RADS) < ETA
-      abs(heading(v2) - headingXY(v2)) < ETA
-      abs(headingXZ(v2) - PI_OVER_SIX_RADS) < ETA
+      abs(heading(v2) - PI_OVER_SIX_RADS) < EPSILON
+      abs(headingXY(v2) - PI_OVER_SIX_RADS) < EPSILON
+      abs(heading(v2) - headingXY(v2)) < EPSILON
+      abs(headingXZ(v2) - PI_OVER_SIX_RADS) < EPSILON
       headingYZ(v2) == PI_OVER_FOUR_RADS
   test "Calculating the heading of a Vector4":
     let
@@ -669,14 +669,14 @@ suite "Calculating the heading of a Vector":
       headingYZ(v1) == PI_OVER_FOUR_RADS
       headingYW(v1) == PI_OVER_FOUR_RADS
       headingZW(v1) == PI_OVER_FOUR_RADS
-      abs(heading(v2) - PI_OVER_SIX_RADS) < ETA
-      abs(headingXY(v2) - PI_OVER_SIX_RADS) < ETA
-      abs(heading(v2) - headingXY(v2)) < ETA
-      abs(headingXZ(v2) - PI_OVER_SIX_RADS) < ETA
+      abs(heading(v2) - PI_OVER_SIX_RADS) < EPSILON
+      abs(headingXY(v2) - PI_OVER_SIX_RADS) < EPSILON
+      abs(heading(v2) - headingXY(v2)) < EPSILON
+      abs(headingXZ(v2) - PI_OVER_SIX_RADS) < EPSILON
       headingXW(v2) == PI_OVER_FOUR_RADS
       headingYZ(v2) == PI_OVER_FOUR_RADS
-      abs(headingYW(v2) - PI_OVER_THREE_RADS) < ETA
-      abs(headingZW(v2) - PI_OVER_THREE_RADS) < ETA
+      abs(headingYW(v2) - PI_OVER_THREE_RADS) < EPSILON
+      abs(headingZW(v2) - PI_OVER_THREE_RADS) < EPSILON
 
 suite "Calculating the magnitude and length of a Vector":
   proc testVectorMagnitudeAndLength(v1: Vector, expected: float) =
@@ -734,8 +734,8 @@ suite "Calculating the reflection of a Vector":
         v1 = reflectNew(v, n)
         v2 = reflect(v, n)
       check:
-        compareVectorsWithinEta(v1, expected)
-        compareVectorsWithinEta(v2, expected)
+        compareVectorsWithinEpsilon(v1, expected)
+        compareVectorsWithinEpsilon(v2, expected)
         v1 == v2
     block:
       var
@@ -743,7 +743,7 @@ suite "Calculating the reflection of a Vector":
       let
         v2 = reflectSelf(v1, n)
       check:
-        compareVectorsWithinEta(v1, expected)
+        compareVectorsWithinEpsilon(v1, expected)
         v1 == v2
   test "Calculating the reflection of a Vector1":
     testReflectVector(
@@ -779,11 +779,11 @@ suite "Calculating the refraction of a Vector":
       let
         v1 = refractNew(v, n, eta)
         v2 = refract(v, n, eta)
-      if not compareVectorsWithinEta(v1, expected):
+      if not compareVectorsWithinEpsilon(v1, expected):
         checkpoint("eta is " & $eta)
       check:
-        compareVectorsWithinEta(v1, expected)
-        compareVectorsWithinEta(v2, expected)
+        compareVectorsWithinEpsilon(v1, expected)
+        compareVectorsWithinEpsilon(v2, expected)
         v1 == v2
     block:
       var
@@ -791,7 +791,7 @@ suite "Calculating the refraction of a Vector":
       let
         v2 = refractSelf(v1, n, eta)
       check:
-        compareVectorsWithinEta(v1, expected)
+        compareVectorsWithinEpsilon(v1, expected)
         v1 == v2
   test "Calculating the refraction of a Vector1":
     let
@@ -825,7 +825,7 @@ suite "Calculating the angle between Vectors":
     let
       a = angleBetween(v1, v2)
     check:
-      compareValuesWithinEta(a, expected)
+      compareValuesWithinEpsilon(a, expected)
   test "Calculating the angle between Vector1s":
     testAngleBetweenVectors(vector1(2.0), vector1(2.0), 0.0)
   test "Calculating the angle between Vector2s":
