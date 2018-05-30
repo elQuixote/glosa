@@ -15,6 +15,10 @@ from ./concepts import
   Matrix
 
 from ./types import
+  Vector1,
+  Vector2,
+  Vector3,
+  Vector4,
   Circle
 
 export
@@ -35,6 +39,7 @@ export
 from math import arctan2, arccos, sqrt, TAU, PI
 from strformat import `&`
 import hashes
+import json
 
 from ./vector import
   vector2,
@@ -46,23 +51,28 @@ from ./vector import
   clear,
   copy,
   interpolateTo,
-  magnitude
+  magnitude,
+  vector1FromJsonNode,
+  vector2FromJsonNode,
+  vector3FromJsonNode,
+  vector4FromJsonNode,
+  toJson
 
 # const
 #   UNIT_CIRCLE_2D = Circle(center: Vector2(x: 0.0, y: 0.0), radius: 1.0)
 #   UNIT_CIRCLE_3D = Circle(center: Vector3(x: 0.0, y: 0.0, z: 0.0), radius: 1.0)
 
 # Constructors
-proc circle*[Vector](v: Vector, r: float): Circle =
+proc circle*[Vector](v: Vector, r: float): Circle[Vector] =
   result.center = v
   result.radius = r
 
 # From individual coordinates
-proc circle*[Vector](x, y, r: float): Circle =
+proc circle*[Vector](x, y, r: float): Circle[Vector] =
   result.center = vector2(x, y)
   result.radius = r
 
-proc circle*[Vector](x, y, z, r: float): Circle =
+proc circle*[Vector](x, y, z, r: float): Circle[Vector] =
   result.center = vector3(x, y, z)
   result.radius = r
 
@@ -150,5 +160,39 @@ proc transform*[Vector](c: var Circle[Vector], m : Matrix): var Circle[Vector] {
   c.center = transform(c.center, m)
   result = c
 
+# JSON
+proc circle1FromJsonNode*(jsonNode: JsonNode): Circle[Vector1] =
+  result = circle(vector1FromJsonNode(jsonNode["center"]), getFloat(jsonNode["radius"]))
 
+proc circle2FromJsonNode*(jsonNode: JsonNode): Circle[Vector2] =
+  result = circle(vector2FromJsonNode(jsonNode["center"]), getFloat(jsonNode["radius"]))
 
+proc circle3FromJsonNode*(jsonNode: JsonNode): Circle[Vector3] =
+  result = circle(vector3FromJsonNode(jsonNode["center"]), getFloat(jsonNode["radius"]))
+
+proc circle4FromJsonNode*(jsonNode: JsonNode): Circle[Vector4] =
+  result = circle(vector4FromJsonNode(jsonNode["center"]), getFloat(jsonNode["radius"]))
+
+proc circle1FromJson*(jsonString: string): Circle[Vector1] =
+  result = circle1FromJsonNode(parseJson(jsonString))
+
+proc circle2FromJson*(jsonString: string): Circle[Vector2] =
+  result = circle2FromJsonNode(parseJson(jsonString))
+
+proc circle3FromJson*(jsonString: string): Circle[Vector3] =
+  result = circle3FromJsonNode(parseJson(jsonString))
+
+proc circle4FromJson*(jsonString: string): Circle[Vector4] =
+  result = circle4FromJsonNode(parseJson(jsonString))
+
+proc toJson*(c: Circle[Vector1]): string =
+  result = "{\"center\":" & toJson(c.center) & ",\"radius\":" & $c.radius & "}"
+
+proc toJson*(c: Circle[Vector2]): string =
+  result = "{\"center\":" & toJson(c.center) & ",\"radius\":" & $c.radius & "}"
+
+proc toJson*(c: Circle[Vector3]): string =
+  result = "{\"center\":" & toJson(c.center) & ",\"radius\":" & $c.radius & "}"
+
+proc toJson*(c: Circle[Vector4]): string =
+  result = "{\"center\":" & toJson(c.center) & ",\"radius\":" & $c.radius & "}"

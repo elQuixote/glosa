@@ -54,6 +54,7 @@ from math import sin, cos, arctan2, arccos, sqrt
 from random import rand
 from strformat import `&`
 import hashes
+import json
 
 proc `[]`*(v: Vector1, i: int): float =
   case i:
@@ -342,21 +343,25 @@ proc set*(v: var Vector4, n: float): var Vector4 {.noinit.} =
 # NOTE: Replaces random() constructor from design doc
 proc randomize*(v: var Vector1, maxX: float = 1.0): var Vector1 {.noinit.} =
   v.x = rand(maxX)
+  result = v
 
 proc randomize*(v: var Vector2, maxX, maxY: float = 1.0): var Vector2 {.noinit.} =
   v.x = rand(maxX)
   v.y = rand(maxX)
+  result = v
 
 proc randomize*(v: var Vector3, maxX, maxY, maxZ: float = 1.0): var Vector3 {.noinit.} =
   v.x = rand(maxX)
   v.y = rand(maxY)
   v.z = rand(maxZ)
+  result = v
 
 proc randomize*(v: var Vector4, maxX, maxY, maxZ, maxW: float = 1.0): var Vector4 {.noinit.} =
   v.x = rand(maxX)
   v.y = rand(maxY)
   v.z = rand(maxZ)
   v.w = rand(maxW)
+  result = v
 
 # Clear
 proc clear*(v: var Vector1): var Vector1 = set(v, 0.0)
@@ -1564,6 +1569,18 @@ proc `$`*(v: Vector3): string =
 proc `$`*(v: Vector4): string =
   result = &"[{v.x}, {v.y}, {v.z}, {v.w}]"
 
+proc toJsonString*(v: Vector1): string =
+  result = &"{{\"x\":{v.x}}}"
+
+proc toJsonString*(v: Vector2): string =
+  result = &"{{\"x\":{v.x},\"y\":{v.y}}}"
+
+proc toJsonString*(v: Vector3): string =
+  result = &"{{\"x\":{v.x},\"y\":{v.y},\"z\":{v.z}}}"
+
+proc toJsonString*(v: Vector4): string =
+  result = &"{{\"x\":{v.x},\"y\":{v.y},\"z\":{v.z},\"w\":{v.w}}}"
+
 # Batch comparisons
 proc min*(a: openArray[Vector]): Vector =
   result = nil
@@ -1594,6 +1611,12 @@ proc areCollinear*(v1, v2, v3: Vector3): bool =
 
 # NOTE: Write generaly areCollinear for array
 
+proc arePlanar*(a: openArray[Vector1]): bool =
+  result = true
+
+proc arePlanar*(a: openArray[Vector2]): bool =
+  result = true
+
 # This is probably not the most efficient algorithm for coplanarity
 # Finds the first plane, and then each points distance to that plane
 proc arePlanar*(a: openArray[Vector3]): bool =
@@ -1617,3 +1640,44 @@ proc arePlanar*(a: openArray[Vector3]): bool =
       if d != 0.0:
         result = false
         break
+
+# TODO: Write 4D arePlanar (and areCollinear) algorithms
+proc arePlanar*(a: openArray[Vector4]): bool =
+  discard
+
+# JSON
+proc vector1FromJsonNode*(jsonNode: JsonNode): Vector1 =
+  result = vector1(getFloat(jsonNode["x"]))
+
+proc vector2FromJsonNode*(jsonNode: JsonNode): Vector2 =
+  result = vector2(getFloat(jsonNode["x"]), getFloat(jsonNode["y"]))
+
+proc vector3FromJsonNode*(jsonNode: JsonNode): Vector3 =
+  result = vector3(getFloat(jsonNode["x"]), getFloat(jsonNode["y"]), getFloat(jsonNode["z"]))
+
+proc vector4FromJsonNode*(jsonNode: JsonNode): Vector4 =
+  result = vector4(getFloat(jsonNode["x"]), getFloat(jsonNode["y"]), getFloat(jsonNode["z"]), getFloat(jsonNode["w"]))
+
+proc vector1FromJson*(jsonString: string): Vector1 =
+  result = vector1FromJsonNode(parseJson(jsonString))
+
+proc vector2FromJson*(jsonString: string): Vector2 =
+  result = vector2FromJsonNode(parseJson(jsonString))
+
+proc vector3FromJson*(jsonString: string): Vector3 =
+  result = vector3FromJsonNode(parseJson(jsonString))
+
+proc vector4FromJson*(jsonString: string): Vector4 =
+  result = vector4FromJsonNode(parseJson(jsonString))
+
+proc toJson*(v: Vector1): string =
+  result = toJsonString(v)
+
+proc toJson*(v: Vector2): string =
+  result = toJsonString(v)
+
+proc toJson*(v: Vector3): string =
+  result = toJsonString(v)
+
+proc toJson*(v: Vector4): string =
+  result = toJsonString(v)

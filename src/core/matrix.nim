@@ -139,7 +139,7 @@ proc matrix44*(
   result.matrix[3][2] = m32
   result.matrix[3][3] = m33
 
-proc matrix33*(v1, v2, v3: Vector3): Matrix44 =
+proc matrix33*(v1, v2, v3: Vector3): Matrix33 =
   result.matrix[0][0] = v1.x
   result.matrix[0][1] = v2.x
   result.matrix[0][2] = v3.x
