@@ -215,14 +215,29 @@ proc average_v2_polyline*(s: cstring): Vector2 {.cdecl, exportc, dynlib.} =
   result = average(polyline2FromJson($s))
   tearDownForeignThreadGc()
 
-proc average_v3_polyline*(s: cstring): Vector2 {.cdecl, exportc, dynlib.} = 
+proc average_v3_polyline*(s: cstring): Vector3 {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
   result = average(polyline3FromJson($s))
   tearDownForeignThreadGc()
 
-proc average_v4_polyline*(s: cstring): Vector2 {.cdecl, exportc, dynlib.} = 
+proc average_v4_polyline*(s: cstring): Vector4 {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
   result = average(polyline4FromJson($s))
+  tearDownForeignThreadGc()
+
+proc closestVertex_v2_polyline*(s: cstring, v: Vector2): Vector2 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = closestVertex(polyline2FromJson($s), v)
+  tearDownForeignThreadGc()
+
+proc closestVertex_v3_polyline*(s: cstring, v: Vector3): Vector3 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = closestVertex(polyline3FromJson($s), v)
+  tearDownForeignThreadGc()
+
+proc closestVertex_v4_polyline*(s: cstring, v: Vector4): Vector4 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = closestVertex(polyline4FromJson($s), v)
   tearDownForeignThreadGc()
 
 # Transforms
