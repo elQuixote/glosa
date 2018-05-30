@@ -20,7 +20,8 @@ from ./types import
 from ./errors import
   InvalidDegreeError,
   InvalidKnotsError,
-  InvalidInterpolationError
+  InvalidInterpolationError,
+  InvalidJsonError
 
 from ./constants import
   EPSILON
@@ -70,10 +71,14 @@ from ./vector import
   transform,
   rotate,
   scale,
-  translate
+  translate,
+  vector2FromJsonNode,
+  vector3FromJsonNode,
+  toJson
 
 from ./binomial import binGet
 from ./linear import solve, transpose, shape
+import json
 
 # Helpers
 # Data Checkers
@@ -296,16 +301,8 @@ proc derivativeBasisFunctions[Vector](nc: NurbsCurve[Vector], i: int, u: float):
     acc *= nc.degree - k
 
 # Constructors
-# From data
-proc nurbsCurve*[Vector](degree: int, weightedControlPoints: openArray[Vector], knots: openArray[float]): NurbsCurve[Vector] =
-  if isValidNurbsCurveData(degree, weightedControlPoints, knots):
-    let
-      controlPoints = dehomogenize(weightedControlPoints)
-      weights = weights(controlPoints)
-    result = NurbsCurve(degree: degree, controlPoints: @controlPoints, weights: @weights, knots: @knots)
-
 # From weights
-proc nurbsCurve*[Vector](degree: int, controlPoints: openArray[Vector], weights, knots: openArray[float]): NurbsCurve[Vector] =
+proc nurbsCurve*[Vector](controlPoints: openArray[Vector], weights, knots: openArray[float], degree: int = 3): NurbsCurve[Vector] =
   if isValidNurbsCurveData(degree, controlPoints, knots):
     result = NurbsCurve[Vector](degree: degree, controlPoints: @controlPoints, weights: @weights, knots: @knots)
 
@@ -370,7 +367,7 @@ proc nurbsCurve*[Vector](points: openArray[Vector], degree: int = 3): NurbsCurve
 
     var weights = newSeq[float](len(controlPoints))
     fill(weights, 1.0)
-    result = nurbsCurve(degree, controlPoints, weights, knots)
+    result = nurbsCurve(controlPoints, weights, knots, degree)
 
 # Accessors
 # TODO: Revert to generics
@@ -590,49 +587,49 @@ proc transform*[Vector, Matrix](nc: NurbsCurve[Vector], m: Matrix): Vector =
   var controlPoints = nc.controlPoints
   for i in 0..<len(controlPoints):
     controlPoints[i] = transform(controlPoints[i], m)
-  result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
+  result = nurbsCurve(controlPoints, nc.weights, nc.knots, nc.degree)
 
 proc rotate*(nc: NurbsCurve[Vector2], theta: float): NurbsCurve[Vector2] =
   var controlPoints = nc.controlPoints
   for i in 0..<len(controlPoints):
     controlPoints[i] = rotate(controlPoints[i], theta)
-  result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
+  result = nurbsCurve(controlPoints, nc.weights, nc.knots, nc.degree)
 
 proc rotate*(nc: NurbsCurve[Vector3], axis: Vector3, theta: float): NurbsCurve[Vector3] =
   var controlPoints = nc.controlPoints
   for i in 0..<len(controlPoints):
     controlPoints[i] = rotate(controlPoints[i], axis, theta)
-  result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
+  result = nurbsCurve(controlPoints, nc.weights, nc.knots, nc.degree)
 
 proc scale*[Vector](nc: NurbsCurve[Vector], s: float): NurbsCurve[Vector] =
   var controlPoints = nc.controlPoints
   for i in 0..<len(controlPoints):
     controlPoints[i] = scale(controlPoints[i], s)
-  result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
+  result = nurbsCurve(controlPoints, nc.weights, nc.knots, nc.degree)
 
 proc scale*(nc: NurbsCurve[Vector2], sx, sy: float): NurbsCurve[Vector2] =
   var controlPoints = nc.controlPoints
   for i in 0..<len(controlPoints):
     controlPoints[i] = scale(controlPoints[i], sx, sy)
-  result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
+  result = nurbsCurve(controlPoints, nc.weights, nc.knots, nc.degree)
 
 proc scale*(nc: NurbsCurve[Vector3], sx, sy, sz: float): NurbsCurve[Vector3] =
   var controlPoints = nc.controlPoints
   for i in 0..<len(controlPoints):
     controlPoints[i] = scale(controlPoints[i], sx, sy, sz)
-  result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
+  result = nurbsCurve(controlPoints, nc.weights, nc.knots, nc.degree)
 
 proc scale*(nc: NurbsCurve[Vector4], sx, sy, sz, sw: float): NurbsCurve[Vector4] =
   var controlPoints = nc.controlPoints
   for i in 0..<len(controlPoints):
     controlPoints[i] = scale(controlPoints[i], sx, sy, sz, sw)
-  result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
+  result = nurbsCurve(controlPoints, nc.weights, nc.knots, nc.degree)
 
 proc translate*[Vector](nc: NurbsCurve[Vector], v: Vector): NurbsCurve[Vector] =
   var controlPoints = nc.controlPoints
   for i in 0..<len(controlPoints):
     controlPoints[i] = translate(controlPoints[i], v)
-  result = nurbsCurve(nc.degree, controlPoints, nc.weights, nc.knots)
+  result = nurbsCurve(controlPoints, nc.weights, nc.knots, nc.degree)
 
 # Hash
 proc hash*[Vector](nc: NurbsCurve[Vector]): hashes.Hash =
@@ -671,3 +668,104 @@ proc `$`*[Vector](nc: NurbsCurve[Vector]): string =
       result &= ", " & $v
     result &= "]"
   result &= " }"
+
+# JSON
+proc mapVector2Sequence(vectors: JsonNode): seq[Vector2] =
+  result = map(getElems(vectors), proc(n: JsonNode): Vector2 = vector2FromJsonNode(n))
+
+proc mapVector3Sequence(vectors: JsonNode): seq[Vector3] =
+  result = map(getElems(vectors), proc(n: JsonNode): Vector3 = vector3FromJsonNode(n))
+
+proc nurbsCurve2FromJsonNode(jsonNode: JsonNode): NurbsCurve[Vector2] =
+  try:
+    let
+      degree = getInt(jsonNode["degree"])
+      controlPoints = mapVector2Sequence(jsonNode["controlPoints"])
+      weights = map(getElems(jsonNode["weights"]), proc(n: JsonNode): float = getFloat(n))
+      knots = map(getElems(jsonNode["knots"]), proc(n: JsonNode): float = getFloat(n))
+    result = nurbsCurve(controlPoints, weights, knots, degree)
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+proc nurbsCurve3FromJsonNode(jsonNode: JsonNode): NurbsCurve[Vector3] =
+  try:
+    let
+      degree = getInt(jsonNode["degree"])
+      controlPoints = mapVector3Sequence(jsonNode["controlPoints"])
+      weights = map(getElems(jsonNode["weights"]), proc(n: JsonNode): float = getFloat(n))
+      knots = map(getElems(jsonNode["knots"]), proc(n: JsonNode): float = getFloat(n))
+    result = nurbsCurve(controlPoints, weights, knots, degree)
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+proc nurbsCurve2FromJson*(jsonString: string): NurbsCurve[Vector2] =
+  result = nurbsCurve2FromJsonNode(parseJson(jsonString))
+
+proc nurbsCurve3FromJson*(jsonString: string): NurbsCurve[Vector3] =
+  result = nurbsCurve3FromJsonNode(parseJson(jsonString))
+
+proc nurbsCurve2InterpolationFromJsonNode(jsonNode: JsonNode): NurbsCurve[Vector2] =
+  try:
+    let
+      degree = getInt(jsonNode["degree"])
+      points = mapVector2Sequence(jsonNode["points"])
+    result = nurbsCurve(points, degree)
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+proc nurbsCurve3InterpolationFromJsonNode(jsonNode: JsonNode): NurbsCurve[Vector3] =
+  try:
+    let
+      degree = getInt(jsonNode["degree"])
+      points = mapVector3Sequence(jsonNode["points"])
+    result = nurbsCurve(points, degree)
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+proc nurbsCurve2InterpolationFromJson*(jsonString: string): NurbsCurve[Vector2] =
+  result = nurbsCurve2InterpolationFromJsonNode(parseJson(jsonString))
+
+proc nurbsCurve3InterpolationFromJson*(jsonString: string): NurbsCurve[Vector3] =
+  result = nurbsCurve3InterpolationFromJsonNode(parseJson(jsonString))
+
+proc toJson*(nc: NurbsCurve[Vector2]): string =
+  result = "{\"degree\":" & $nc.degree
+  if len(nc.controlPoints) > 0:
+    result &= ",\"controlPoints\":[" & toJson(nc.controlPoints[0])
+    for v in nc.controlPoints[1..^1]:
+      result &= "," & toJson(v)
+    result &= "]"
+  if len(nc.weights) > 0:
+    result &= ",\"weights\":[" & $nc.weights[0]
+    for v in nc.weights[1..^1]:
+      result &= "," & $v
+    result &= "]"
+  if len(nc.knots) > 0:
+    result &= ",\"knots\":[" & $nc.knots[0]
+    for v in nc.knots[1..^1]:
+      result &= "," & $v
+    result &= "]"
+  result &= "}"
+
+proc toJson*(nc: NurbsCurve[Vector3]): string =
+  result = "{\"degree\":" & $nc.degree
+  if len(nc.controlPoints) > 0:
+    result &= ",\"controlPoints\":[" & toJson(nc.controlPoints[0])
+    for v in nc.controlPoints[1..^1]:
+      result &= "," & toJson(v)
+    result &= "]"
+  if len(nc.weights) > 0:
+    result &= ",\"weights\":[" & $nc.weights[0]
+    for v in nc.weights[1..^1]:
+      result &= "," & $v
+    result &= "]"
+  if len(nc.knots) > 0:
+    result &= ",\"knots\":[" & $nc.knots[0]
+    for v in nc.knots[1..^1]:
+      result &= "," & $v
+    result &= "]"
+  result &= "}"
