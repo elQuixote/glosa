@@ -18,71 +18,37 @@ proc lineSegment_Net*(s: LineSegment[Vector3]): LineSegment_Net =
 # ***************************************
 proc areClosed_v2_segment*(s: cstring): bool {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
-  var p = polyline2FromJson($s)
-  result = p.segments.areClosed()
+  result = areClosed(polyline2FromJson($s).segments)
   tearDownForeignThreadGc()
 
 proc areClosed_v3_segment*(s: cstring): bool {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
-  var p = polyline3FromJson($s)
-  result = p.segments.areClosed()
+  result = areClosed(polyline3FromJson($s).segments)
   tearDownForeignThreadGc()
 
 proc areClosed_v4_segment*(s: cstring): bool {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
-  var p = polyline4FromJson($s)
-  result = p.segments.areClosed()
+  result = areClosed(polyline4FromJson($s).segments)
   tearDownForeignThreadGc()
 
-# proc segmentFromVectors*(v1,v2: Vector3): LineSegment_Net {.cdecl, exportc, dynlib.} = lineSegment_Net(lineSegment(v1, v2))
-
-# proc arrayToSegments(segments: openArray[LineSegment_Net]): seq[LineSegment[Vector3]] =
-#   var arr : seq[LineSegment[Vector3]] = @[]
-#   for i in 0..<len(segments):
-#     arr.add(lineSegment_Net(segments[i]))
-#   result = arr
-
-# proc arrayToSegments(segments: openArray[LineSegment[Vector3]]): seq[LineSegment_Net] =
-#   var arr : seq[LineSegment_Net] = @[]
-#   for i in 0..<len(segments):
-#     arr.add(lineSegment_Net(segments[i]))
-#   result = arr  
-
-# proc polyline_Net*[Vector3](s: Polyline_Net): Polyline[Vector3] =
-#   result = Polyline[Vector3](vertices: s.vertices, segments: arrayToSegments(s.segments))
-
-# proc polyline_Net*(s: Polyline[Vector3]): Polyline_Net =
-#   result = Polyline_Net(vertices: s.vertices, segments: arrayToSegments(s.segments))
-
 # ***************************************
 #     Polyline Proc Wrappers
 # ***************************************
-# proc createPolyline*[Vector3](segments: openArray[LineSegment_Net]): Polyline_Net {.cdecl, exportc, dynlib.} =
-#   polyline_Net(polyline(arrayToSegments(segments)))
+proc areClosed_v2_vertices*(s: cstring): bool {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = areClosed(polyline2FromJson($s).vertices)
+  tearDownForeignThreadGc()
 
-#proc createPolyline*(verts: openArray[Vector3], closed: bool): Polyline_Net {.cdecl, exportc, dynlib.} = polyline_Net(polyline[Vector3](verts, closed))
-# proc createPolyline*(verts: openArray[Vector3], closed: bool): seq[Vector3] {.cdecl, exportc, dynlib.} = 
-#   result = polyline_Net(polyline[Vector3](verts, closed)).vertices
+proc areClosed_v3_vertices*(s: cstring): bool {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = areClosed(polyline3FromJson($s).vertices)
+  tearDownForeignThreadGc()
 
-# proc createPolyline*(verts: var seq[cdouble], closed: bool): void {.cdecl, exportc, dynlib.} = 
-#   #setupForeignThreadGc()
-#   #var a = polyline_Net(polyline[Vector3](verts, closed))
-#   #verts = [a.vertices[0], a.vertices[1]]
-#   #verts = @[]
-#   verts.add(1.0)
-#   verts.add(2.0)
+proc areClosed_v4_vertices*(s: cstring): bool {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = areClosed(polyline4FromJson($s).vertices)
+  tearDownForeignThreadGc()
 
-# proc toArray_v2*(a: var array[2, cdouble]): void {.cdecl, exportc, dynlib.} =
-#   a[0] = 0.0
-#   a[1] = 1.1
-
-# proc toOpenArray_v2*(verts: var openArray[cdouble]): void {.cdecl, exportc, dynlib.} = 
-#   setupForeignThreadGc()
-#   verts[0] = 100.00
-
-# ***************************************
-#     Polyline Proc Wrappers
-# ***************************************
 proc polyline_v1*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
   result = toJson(polyline1FromJson($s))
