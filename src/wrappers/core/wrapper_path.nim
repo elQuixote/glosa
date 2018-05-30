@@ -88,17 +88,96 @@ proc isClosed_v4_polyline*(s: cstring): bool {.cdecl, exportc, dynlib.} =
 
 proc reverse_v2_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
-  result = toJson(reverse(polyline2FromJson($s)))
+  var p = polyline2FromJson($s)
+  result = toJson(reverse(p))
   tearDownForeignThreadGc()
 
 proc reverse_v3_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
-  result = toJson(reverse(polyline3FromJson($s)))
+  var p = polyline3FromJson($s)
+  result = toJson(reverse(p))
   tearDownForeignThreadGc()
 
 proc reverse_v4_polyline*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
-  result = toJson(reverse(polyline4FromJson($s)))
+  var p = polyline4FromJson($s)
+  result = toJson(reverse(p))
+  tearDownForeignThreadGc()
+
+# NOTE: Contains is causing a segfault when chained with other wrapper procs in .net
+proc contains_v2_polyline*(s: cstring, v: Vector2): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = contains(polyline2FromJson($s), v)
+  tearDownForeignThreadGc()
+
+proc contains_v3_polyline*(s: cstring, v: Vector3): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = contains(polyline3FromJson($s), v)
+  tearDownForeignThreadGc()
+
+proc contains_v4_polyline*(s: cstring, v: Vector4): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = contains(polyline4FromJson($s), v)
+  tearDownForeignThreadGc()
+
+proc containsPoint_v2_polyline*(s: cstring, v: Vector2): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = containsPoint(polyline2FromJson($s), v)
+  tearDownForeignThreadGc()
+
+proc containsPoint_v3_polyline*(s: cstring, v: Vector3): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = containsPoint(polyline3FromJson($s), v)
+  tearDownForeignThreadGc()
+
+proc containsPoint_v4_polyline*(s: cstring, v: Vector4): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = containsPoint(polyline4FromJson($s), v)
+  tearDownForeignThreadGc()
+
+proc equals_v2_polyline*(s1, s2: cstring): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = polyline2FromJson($s1) == polyline2FromJson($s2)
+  tearDownForeignThreadGc()
+
+proc equals_v3_polyline*(s1, s2: cstring): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = polyline3FromJson($s1) == polyline3FromJson($s2)
+  tearDownForeignThreadGc()
+
+proc equals_v4_polyline*(s1, s2: cstring): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = polyline4FromJson($s1) == polyline4FromJson($s2)
+  tearDownForeignThreadGc()
+
+proc hash_v2_polyline*(s: cstring): int {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = hash(polyline2FromJson($s))
+  tearDownForeignThreadGc()
+
+proc hash_v3_polyline*(s: cstring): int {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = hash(polyline3FromJson($s))
+  tearDownForeignThreadGc()
+
+proc hash_v4_polyline*(s: cstring): int {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = hash(polyline4FromJson($s))
+  tearDownForeignThreadGc()
+
+proc dimension_v2_polyline*(s: cstring): int {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = dimension(polyline2FromJson($s))
+  tearDownForeignThreadGc()
+
+proc dimension_v3_polyline*(s: cstring): int {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = dimension(polyline3FromJson($s))
+  tearDownForeignThreadGc()
+
+proc dimension_v4_polyline*(s: cstring): int {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = dimension(polyline4FromJson($s))
   tearDownForeignThreadGc()
 
 # Transforms

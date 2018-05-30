@@ -188,10 +188,10 @@ proc reverse*[Vector](p: var Polyline[Vector]): var Polyline[Vector] =
 
 # NOTE: This is added from design doc
 proc contains*[Vector](p: Polyline[Vector], v: Vector): bool =
-  result = contains(polyline.vertices, v)
+  result = contains(p.vertices, v)
 
 proc contains*[Vector](p: Polyline[Vector], s: LineSegment): bool =
-  result = contains(polyline.segments, s)
+  result = contains(p.segments, s)
 
 # NOTE: This is added from design doc
 proc containsPoint*[Vector](p: Polyline[Vector], v: Vector): bool =
