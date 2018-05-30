@@ -269,8 +269,12 @@ proc average*[Vector](p: Polyline[Vector]): Vector =
 
 # Closest Vertex
 proc closestVertex*[Vector](p: Polyline[Vector], v: Vector): Vector =
-  if len(p.vertices > 0):
-    result = clear(copy(p.vertices[0]))
+  if len(p.vertices) > 0:
+    var v1 = p.vertices[0]
+    var v2 = v1.copy()
+    var v3 = v2.clear()
+    result = v3
+    #result = clear(copy(p.vertices[0]))
     var minDist = high(float)
     for vertex in p.vertices:
       var dist = distanceToSquared(vertex, v)
