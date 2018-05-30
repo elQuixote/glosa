@@ -134,7 +134,7 @@ proc polyline*[Vector](segments: openArray[LineSegment[Vector]]): Polyline[Vecto
   result.segments = @segments
 
 # NOTE: This is added from design doc
-proc closestPointTo*[Vector](l: LineSegment[Vector], v: Vector2): Vector2 =
+proc closestPointTo*[Vector](l: LineSegment[Vector], v: Vector): Vector =
   var sub = subtractNew(l.endVertex, l.startVertex)
   let t = dot(subtractNew(v, l.startVertex), sub) / magnitudeSquared(sub)
   if t < 0.0:
@@ -257,10 +257,8 @@ proc `$`*[Vector](p: Polyline[Vector]): string =
 # NOTE: This is added from design doc
 proc average*[Vector](p: Polyline[Vector]): Vector =
   if len(p.vertices) > 0:
-    var v1 = p.vertices[0]
-    var v2 = v1.copy()
-    var v3 = v2.clear()
-    result = v3
+    var v1 = copy(p.vertices[0])
+    result = v1.clear()
     # chaining below was triggering type mismatch: got <Vector2> error
     #result = clear(copy(p.vertices[0]))
     for i in 0..<len(p.vertices):
@@ -270,11 +268,8 @@ proc average*[Vector](p: Polyline[Vector]): Vector =
 # Closest Vertex
 proc closestVertex*[Vector](p: Polyline[Vector], v: Vector): Vector =
   if len(p.vertices) > 0:
-    var v1 = p.vertices[0]
-    var v2 = v1.copy()
-    var v3 = v2.clear()
-    result = v3
-    #result = clear(copy(p.vertices[0]))
+    var v1 = copy(p.vertices[0])
+    result = v1.clear()
     var minDist = high(float)
     for vertex in p.vertices:
       var dist = distanceToSquared(vertex, v)
@@ -293,11 +288,8 @@ proc toPolygon*[Vector](p: Polyline[Vector]): Polygon[Vector] =
 # Closest Point
 proc closestPoint*[Vector](p: Polyline[Vector], v: Vector): Vector =
   if len(p.vertices) > 0:
-    var v1 = p.vertices[0]
-    var v2 = v1.copy()
-    var v3 = v2.clear()
-    result = v3
-    #result = clear(copy(p.vertices[0]))
+    var v1 = copy(p.vertices[0])
+    result = v1.clear()
     var minDist = high(float)
     for s in p.segments:
       var
@@ -309,12 +301,28 @@ proc closestPoint*[Vector](p: Polyline[Vector], v: Vector): Vector =
 
 # Transforms
 # Rotate
-proc rotate*[Vector](p: var Polyline[Vector], theta: float): var Polyline[Vector] {.noinit.} =
+proc rotate*[Vector2](p: var Polyline[Vector2], theta: float): var Polyline[Vector2] {.noinit.} =
   for i in 0..<len(p.vertices):
     p.vertices[i] = rotate(p.vertices[i], theta)
   for i in 0..<len(p.segments):
     p.segments[i].startVertex = rotate(p.segments[i].startVertex, theta)
     p.segments[i].endVertex = rotate(p.segments[i].endVertex, theta)
+  result = p
+
+proc rotate*[Vector3](p: var Polyline[Vector3], axis: Vector3, theta: float): var Polyline[Vector3] {.noinit.} =
+  for i in 0..<len(p.vertices):
+    p.vertices[i] = rotate(p.vertices[i], axis, theta)
+  for i in 0..<len(p.segments):
+    p.segments[i].startVertex = rotate(p.segments[i].startVertex, axis, theta)
+    p.segments[i].endVertex = rotate(p.segments[i].endVertex, axis, theta)
+  result = p
+
+proc rotate*[Vector4](p: var Polyline[Vector4], b1, b2: Vector4, theta: float, b3, b4: Vector4, phi: float): var Polyline[Vector4] {.noinit.} =
+  for i in 0..<len(p.vertices):
+    p.vertices[i] = rotate(p.vertices[i], b1, b2, theta, b3, b4, phi)
+  for i in 0..<len(p.segments):
+    p.segments[i].startVertex = rotate(p.segments[i].startVertex, b1, b2, theta, b3, b4, phi)
+    p.segments[i].endVertex = rotate(p.segments[i].endVertex, b1, b2, theta, b3, b4, phi)
   result = p
 # Scale
 proc scale*[Vector](p: var Polyline[Vector], s: float): var Polyline[Vector] {.noinit.} =
@@ -359,7 +367,7 @@ proc translate*[Vector](p: var Polyline[Vector], v: Vector): var Polyline[Vector
   result = p
 
 # Transform(Matrix)
-proc transform*[Vector](p: var Polyline[Vector], m: Matrix): var Polyline[Vector] {.noinit.} =
+proc transform*[Vector, Matrix](p: var Polyline[Vector], m: Matrix): var Polyline[Vector] {.noinit.} =
   for i in 0..<len(p.vertices):
     p.vertices[i] = transform(p.vertices[i], m)
   for i in 0..<len(p.segments):

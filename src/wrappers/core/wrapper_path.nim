@@ -1,7 +1,9 @@
 import ../../core/path
 import ../../core/vector
+#from ../../core/vector import Vector2, Vector3, Vector4
 import json
 import ../../core/polygon
+from ../../core/matrix import Matrix44, Matrix33
 
 type
   LineSegment_Net* = object
@@ -278,16 +280,16 @@ proc rotate_v2_polyline*(s: cstring, theta: cdouble): cstring {.cdecl, exportc, 
   result = toJson(rotate(p, theta))
   tearDownForeignThreadGc()
 
-proc rotate_v3_polyline*(s: cstring, theta: cdouble): cstring {.cdecl, exportc, noinit, dynlib.} = 
+proc rotate_v3_polyline*(s: cstring, axis: Vector3, theta: cdouble): cstring {.cdecl, exportc, noinit, dynlib.} = 
   setupForeignThreadGc()
   var p = polyline3FromJson($s)
-  result = toJson(rotate(p, theta))
+  result = toJson(rotate(p, axis, theta))
   tearDownForeignThreadGc()
 
-proc rotate_v4_polyline*(s: cstring, theta: cdouble): cstring {.cdecl, exportc, noinit, dynlib.} = 
+proc rotate_v4_polyline*(s: cstring, b1, b2: Vector4, theta: cdouble, b3, b4: Vector4, phi: cdouble): cstring {.cdecl, exportc, noinit, dynlib.} = 
   setupForeignThreadGc()
   var p = polyline4FromJson($s)
-  result = toJson(rotate(p, theta))
+  result = toJson(rotate(p, b1, b2, theta, b3, b4, phi))
   tearDownForeignThreadGc()
 
 proc scale_v2_polyline*(s: cstring, sx, sy: cdouble): cstring {.cdecl, exportc, noinit, dynlib.} = 
