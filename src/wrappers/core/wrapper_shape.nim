@@ -118,3 +118,18 @@ proc average_v4_circle*(s: cstring): Vector4 {.cdecl, exportc, dynlib.} =
   result = average(circle4FromJson($s))
   tearDownForeignThreadGc()
 
+# ClosestPoint
+proc closestPoint_v2_circle*(s: cstring, v: Vector2): Vector2 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = closestPoint(circle2FromJson($s), v)
+  tearDownForeignThreadGc()
+
+proc closestPoint_v3_circle*(s: cstring, v: Vector3): Vector3 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = closestPoint(circle3FromJson($s), v)
+  tearDownForeignThreadGc()
+
+proc closestPoint_v4_circle*(s: cstring, v: Vector4): Vector4 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = closestPoint(circle4FromJson($s), v)
+  tearDownForeignThreadGc()
