@@ -165,3 +165,51 @@ proc hash_v4_circle*(s: cstring): int {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
   result = hash(circle4FromJson($s))
   tearDownForeignThreadGc()
+
+# Dimension
+proc dimension_v2_circle*(s: cstring): int {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = dimension(circle2FromJson($s))
+  tearDownForeignThreadGc()
+
+proc dimension_v3_circle*(s: cstring): int {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = dimension(circle3FromJson($s))
+  tearDownForeignThreadGc()
+
+proc dimension_v4_circle*(s: cstring): int {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = dimension(circle4FromJson($s))
+  tearDownForeignThreadGc()
+
+# Copy
+proc copy_v2_circle*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(copy(circle2FromJson($s)))
+  tearDownForeignThreadGc()
+
+proc copy_v3_circle*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(copy(circle3FromJson($s)))
+  tearDownForeignThreadGc()
+
+proc copy_v4_circle*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(copy(circle4FromJson($s)))
+  tearDownForeignThreadGc()
+
+# Copy
+proc clear_v2_circle*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(clear(circle2FromJson($s)))
+  tearDownForeignThreadGc()
+
+proc clear_v3_circle*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(clear(circle3FromJson($s)))
+  tearDownForeignThreadGc()
+
+proc clear_v4_circle*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(clear(circle4FromJson($s)))
+  tearDownForeignThreadGc()
