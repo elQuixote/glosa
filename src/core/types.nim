@@ -62,4 +62,4 @@ type
   HalfEdgeMesh*[Vector] = object
     vertices*: seq[MeshVertex[Vector]]
     faces*: seq[MeshFace[Vector]]
-    halfEdges*: seq[HalfEdge[Vector]]
+    edges*: seq[HalfEdge[Vector]]
