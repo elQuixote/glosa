@@ -85,3 +85,19 @@ proc circumference_v4_circle*(s: cstring): cdouble {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
   result = circumference(circle4FromJson($s))
   tearDownForeignThreadGc()
+
+# Centroid
+proc centroid_v2_circle*(s: cstring): Vector2 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = centroid(circle2FromJson($s))
+  tearDownForeignThreadGc()
+
+proc centroid_v3_circle*(s: cstring): Vector3 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = centroid(circle3FromJson($s))
+  tearDownForeignThreadGc()
+
+proc centroid_v4_circle*(s: cstring): Vector4 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = centroid(circle4FromJson($s))
+  tearDownForeignThreadGc()
