@@ -149,3 +149,19 @@ proc equals_v4_circle*(s1, s2: cstring): bool {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
   result = circle4FromJson($s1) == circle4FromJson($s2)
   tearDownForeignThreadGc()
+
+# Hash
+proc hash_v2_circle*(s: cstring): int {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = hash(circle2FromJson($s))
+  tearDownForeignThreadGc()
+
+proc hash_v3_circle*(s: cstring): int {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = hash(circle3FromJson($s))
+  tearDownForeignThreadGc()
+
+proc hash_v4_circle*(s: cstring): int {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = hash(circle4FromJson($s))
+  tearDownForeignThreadGc()
