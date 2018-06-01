@@ -2,19 +2,6 @@ import ../../src/core/vector
 import ../../src/core/path
 import unittest
 
-var p = polyline(@[Vector3(x: 0.0, y: 0.0, z: 0.0),
-                 Vector3(x: 2.0, y: 0.0, z: 0.0),
-                 Vector3(x: 4.0, y: 2.0, z: 0.0),
-                 Vector3(x: 4.0, y: 4.0, z: 0.0),
-                 Vector3(x: 2.0, y: 4.0, z: 0.0),
-                 Vector3(x: 0.0, y: 2.0, z: 0.0)])
-
-echo $p
-
-p = p.reverse()
-
-echo $p
-
 suite "Creating a new Polyline":
   let
     vertices = @[
