@@ -133,3 +133,19 @@ proc closestPoint_v4_circle*(s: cstring, v: Vector4): Vector4 {.cdecl, exportc, 
   setupForeignThreadGc()
   result = closestPoint(circle4FromJson($s), v)
   tearDownForeignThreadGc()
+
+# Equality
+proc equals_v2_circle*(s1, s2: cstring): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = circle2FromJson($s1) == circle2FromJson($s2)
+  tearDownForeignThreadGc()
+
+proc equals_v3_circle*(s1, s2: cstring): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = circle3FromJson($s1) == circle3FromJson($s2)
+  tearDownForeignThreadGc()
+
+proc equals_v4_circle*(s1, s2: cstring): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = circle4FromJson($s1) == circle4FromJson($s2)
+  tearDownForeignThreadGc()
