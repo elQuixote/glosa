@@ -137,6 +137,7 @@ iterator faces*[Vector](p: Polygon[Vector]): LineSegment[Vector] =
     yield s
 
 # NOTE: This is added from design doc
+# NOTE: Remove returns for all in place operations
 proc reverse*[Vector](p: var Polygon[Vector]): var Polygon[Vector] =
   p.polyline = reverse(p.polyline)
   result = p

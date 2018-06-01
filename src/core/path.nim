@@ -185,6 +185,7 @@ proc isClosed*[Vector](p: Polyline[Vector]): bool =
   result = p.segments[0].startVertex == p.segments[^1].endVertex
 
 # NOTE: This is added from design doc
+# NOTE: Remove returns for all in place operations
 proc reverse*[Vector](p: var Polyline[Vector]): var Polyline[Vector] =
   apply(p.segments, proc(s: var LineSegment[Vector]) = swap(s.startVertex, s.endVertex))
   reverse(p.segments)
