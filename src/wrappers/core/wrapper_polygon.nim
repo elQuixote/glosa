@@ -347,3 +347,21 @@ proc transform_v4_polygon*(s: cstring, m: Matrix44): cstring {.cdecl, exportc, n
   var p = polygon4FromJson($s)
   result = toJson(transform(p, m))
   tearDownForeignThreadGc()
+
+# ArePlanar
+proc isPlanar_v2_polygon*(s: cstring): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  var p = polygon2FromJson($s)
+  result = arePlanar(p.polyline.vertices)
+  tearDownForeignThreadGc()
+
+proc isPlanar_v3_polygon*(s: cstring): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = arePlanar(polygon3FromJson($s).polyline.vertices)
+  tearDownForeignThreadGc()
+
+proc isPlanar_v4_polygon*(s: cstring): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  var p = polygon4FromJson($s)
+  result = arePlanar(p.polyline.vertices)
+  tearDownForeignThreadGc() 
