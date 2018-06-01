@@ -101,3 +101,20 @@ proc centroid_v4_circle*(s: cstring): Vector4 {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
   result = centroid(circle4FromJson($s))
   tearDownForeignThreadGc()
+
+# Average
+proc average_v2_circle*(s: cstring): Vector2 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = average(circle2FromJson($s))
+  tearDownForeignThreadGc()
+
+proc average_v3_circle*(s: cstring): Vector3 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = average(circle3FromJson($s))
+  tearDownForeignThreadGc()
+
+proc average_v4_circle*(s: cstring): Vector4 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = average(circle4FromJson($s))
+  tearDownForeignThreadGc()
+
