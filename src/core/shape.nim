@@ -56,7 +56,8 @@ from ./vector import
   vector2FromJsonNode,
   vector3FromJsonNode,
   vector4FromJsonNode,
-  toJson
+  toJson,
+  transform
 
 # const
 #   UNIT_CIRCLE_2D = Circle(center: Vector2(x: 0.0, y: 0.0), radius: 1.0)
@@ -156,7 +157,7 @@ proc translate*[Vector](c: var Circle[Vector], t: float): var Circle[Vector] {.n
   result = c
 
 # Transform
-proc transform*[Vector](c: var Circle[Vector], m : Matrix): var Circle[Vector] {.noinit.} =
+proc transform*[Vector, Matrix](c: var Circle[Vector], m : Matrix): var Circle[Vector] {.noinit.} =
   c.center = transform(c.center, m)
   result = c
 
