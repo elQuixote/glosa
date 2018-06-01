@@ -213,3 +213,19 @@ proc clear_v4_circle*(s: cstring): cstring {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
   result = toJson(clear(circle4FromJson($s)))
   tearDownForeignThreadGc()
+
+# Stringify
+proc stringify_v2_circle*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = $circle2FromJson($s)
+  tearDownForeignThreadGc()
+
+proc stringify_v3_circle*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = $circle3FromJson($s)
+  tearDownForeignThreadGc()
+
+proc stringify_v4_circle*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = $circle4FromJson($s)
+  tearDownForeignThreadGc()
