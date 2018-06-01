@@ -44,6 +44,7 @@ import json
 from ./vector import
   vector2,
   vector3,
+  vector4,
   cross,
   dimension,
   distanceTo,
@@ -124,8 +125,18 @@ proc hash*[Vector](c: Circle[Vector]): hashes.Hash =
   result = !$(result !& hash(c.center.x) !& hash(c.center.y) !& hash(c.radius))
 
 # Clear
-proc clear*[Vector](c: var Circle[Vector]): var Circle[Vector] {.noinit.} =
+proc clear*[Vector2](c: var Circle[Vector2]): var Circle[Vector2] {.noinit.} =
   c.center = vector2(0, 0)
+  c.radius = 1
+  result = c
+
+proc clear3*[Vector3](c: var Circle[Vector3]): var Circle[Vector3] {.noinit.} =
+  c.center = vector3(0, 0, 0)
+  c.radius = 1
+  result = c
+
+proc clear4*[Vector4](c: var Circle[Vector4]): var Circle[Vector4] {.noinit.} =
+  c.center = vector4(0, 0, 0, 0)
   c.radius = 1
   result = c
 
