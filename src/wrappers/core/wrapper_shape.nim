@@ -69,3 +69,19 @@ proc perimeter_v4_circle*(s: cstring): cdouble {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
   result = perimeter(circle4FromJson($s))
   tearDownForeignThreadGc()
+
+# Circumference
+proc circumference_v2_circle*(s: cstring): cdouble {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = circumference(circle2FromJson($s))
+  tearDownForeignThreadGc()
+
+proc circumference_v3_circle*(s: cstring): cdouble {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = circumference(circle3FromJson($s))
+  tearDownForeignThreadGc()
+
+proc circumference_v4_circle*(s: cstring): cdouble {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = circumference(circle4FromJson($s))
+  tearDownForeignThreadGc()
