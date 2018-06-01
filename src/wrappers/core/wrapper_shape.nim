@@ -229,3 +229,68 @@ proc stringify_v4_circle*(s: cstring): cstring {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
   result = $circle4FromJson($s)
   tearDownForeignThreadGc()
+
+# Transforms
+# Rotate
+proc rotate_v2_circle*(s: cstring, theta: cdouble): cstring {.cdecl, exportc, noinit, dynlib.} = 
+  setupForeignThreadGc()
+  var p = circle2FromJson($s)
+  result = toJson(rotate(p, theta))
+  tearDownForeignThreadGc()
+
+# Scale
+proc scale_v2_circle*(s: cstring, s: cdouble): cstring {.cdecl, exportc, noinit, dynlib.} = 
+  setupForeignThreadGc()
+  var p = circle2FromJson($s)
+  result = toJson(scale(p, s))
+  tearDownForeignThreadGc()
+
+proc scale_v3_circle*(s: cstring, s: cdouble): cstring {.cdecl, exportc, noinit, dynlib.} = 
+  setupForeignThreadGc()
+  var p = circle3FromJson($s)
+  result = toJson(scale(p, s))
+  tearDownForeignThreadGc()
+
+proc scale_v4_circle*(s: cstring, s: cdouble): cstring {.cdecl, exportc, noinit, dynlib.} = 
+  setupForeignThreadGc()
+  var p = circle4FromJson($s)
+  result = toJson(scale(p, s))
+  tearDownForeignThreadGc()
+
+# Translate
+proc translate_v2_circle*(s: cstring, t: cdouble): cstring {.cdecl, exportc, noinit, dynlib.} = 
+  setupForeignThreadGc()
+  var p = circle2FromJson($s)
+  result = toJson(translate(p, t))
+  tearDownForeignThreadGc()
+
+proc translate_v3_circle*(s: cstring, t: cdouble): cstring {.cdecl, exportc, noinit, dynlib.} = 
+  setupForeignThreadGc()
+  var p = circle3FromJson($s)
+  result = toJson(translate(p, t))
+  tearDownForeignThreadGc()
+
+proc translate_v4_circle*(s: cstring, t: cdouble): cstring {.cdecl, exportc, noinit, dynlib.} = 
+  setupForeignThreadGc()
+  var p = circle4FromJson($s)
+  result = toJson(translate(p, t))
+  tearDownForeignThreadGc()
+
+# Transform
+proc transform_v2_circle*(s: cstring, m: Matrix33): cstring {.cdecl, exportc, noinit, dynlib.} = 
+  setupForeignThreadGc()
+  var p = circle2FromJson($s)
+  result = toJson(transform(p, m))
+  tearDownForeignThreadGc()
+
+proc transform_v3_circle*(s: cstring, m: Matrix44): cstring {.cdecl, exportc, noinit, dynlib.} = 
+  setupForeignThreadGc()
+  var p = circle3FromJson($s)
+  result = toJson(transform(p, m))
+  tearDownForeignThreadGc()
+
+proc transform_v4_circle*(s: cstring, m: Matrix44): cstring {.cdecl, exportc, noinit, dynlib.} = 
+  setupForeignThreadGc()
+  var p = circle4FromJson($s)
+  result = toJson(transform(p, m))
+  tearDownForeignThreadGc()
