@@ -172,13 +172,13 @@ proc closestPoint*[Vector](l: LineSegment[Vector], v: Vector): Vector =
 
 # # NOTE: This is added from design doc
 # # NOTE: Using Nim paradigm (items, fields, pairs, etc)
-# iterator vertices*[Vector](p: Polyline[Vector]): Vector =
-#   for v in p.vertices:
-#     yield v
+iterator vertices*[Vector](p: Polyline[Vector]): Vector =
+  for v in p.vertices:
+    yield v
 
-# iterator segments*[Vector](p: Polyline[Vector]): LineSegment[Vector] =
-#   for s in p.segments:
-#     yield s
+iterator segments*[Vector](p: Polyline[Vector]): LineSegment[Vector] =
+  for s in p.segments:
+    yield s
 
 # NOTE: This is added from design doc
 proc isClosed*[Vector](p: Polyline[Vector]): bool =
