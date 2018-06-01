@@ -205,17 +205,17 @@ proc clear_v2_circle*(s: cstring): cstring {.cdecl, exportc, dynlib.} =
   result = toJson(clear(p))
   tearDownForeignThreadGc()
 
-# proc clear_v3_circle*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
-#   setupForeignThreadGc()
-#   var p = circle3FromJson($s)
-#   result = toJson(clear(p))
-#   tearDownForeignThreadGc()
+proc clear_v3_circle*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  var p = circle3FromJson($s)
+  result = toJson(clear3(p))
+  tearDownForeignThreadGc()
 
-# proc clear_v4_circle*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
-#   setupForeignThreadGc()
-#   var p = circle4FromJson($s)
-#   result = toJson(clear(p))
-#   tearDownForeignThreadGc()
+proc clear_v4_circle*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  var p = circle4FromJson($s)
+  result = toJson(clear4(p))
+  tearDownForeignThreadGc()
 
 # Stringify
 proc stringify_v2_circle*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
