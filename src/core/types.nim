@@ -44,21 +44,22 @@ type
     center*: Vector
     radius*: float
 
-  # Half Edge Mesh
+  # Mesh
   MeshVertex*[Vector] = object
-    discard
-
-  MeshEdge*[Vector] = object
-    discard
+    position*: Vector
+    edge*: HalfEdge[Vector]
 
   MeshFace*[Vector] = object
-    discard
+    edge*: HalfEdge[Vector]
 
   HalfEdge*[Vector] = object
-    discard
+    vertex*: MeshVertex[Vector]
+    face*: MeshFace[Vector]
+    twin*: HalfEdge[Vector]
+    next*: HalfEdge[Vector]
+    previous*: HalfEdge[Vector]
 
   HalfEdgeMesh*[Vector] = object
     vertices*: seq[MeshVertex[Vector]]
-    edges*: seq[MeshEdge[Vector]]
     faces*: seq[MeshFace[Vector]]
     halfEdges*: seq[HalfEdge[Vector]]
