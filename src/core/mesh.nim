@@ -90,3 +90,7 @@ proc dimension*[Vector](v: MeshVertex[Vector]): int =
 proc dimension*[Vector](m: HalfEdgeMesh[Vector]): int =
   if len(m.vertices) > 0:
     result = dimension(m.vertices[0])
+
+proc copy*[Vector](m: HalfEdgeMesh[Vector]): HalfEdgeMesh[Vector] =
+  result = HalfEdgeMesh[Vector](edges: m.edges, faces: m.faces, vertices: m.vertices)
+
