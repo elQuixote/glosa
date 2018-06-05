@@ -4,8 +4,6 @@ from ./concepts import
   Hash,
   Transform,
   Dimension,
-  # Set,
-  # Clear,
   Copy,
   String,
   Centroid,
@@ -34,8 +32,6 @@ export
   Hash,
   Transform,
   Dimension,
-  # Set,
-  # Clear,
   Copy,
   String,
   Centroid,
@@ -141,19 +137,10 @@ iterator faces*[Vector](p: Polygon[Vector]): LineSegment[Vector] =
     yield s
 
 # NOTE: This is added from design doc
-proc reverse*[Vector](p: Polygon[Vector]): Polygon[Vector] =
-  #result = polygon(reverse(p.polyline))
-  var list = newSeq[Vector](len(p.polyline.vertices))
-  for i, x in p.polyline.vertices:
-    list[p.polyline.vertices.high-i] = x
-  #p.polyline.vertices = list 
-  #result = p
-  if areClosed(p.polyline.segments):
-    var p = polyline(list, true)
-    result = Polygon[Vector](polyline: p)
-  else:
-    var p = polyline(list, false)
-    result = Polygon[Vector](polyline: p)
+# NOTE: Remove returns for all in place operations
+proc reverse*[Vector](p: var Polygon[Vector]): var Polygon[Vector] =
+  p.polyline = reverse(p.polyline)
+  result = p
 
 # NOTE: This is added from design doc
 proc contains*[Vector](p: Polygon[Vector], v: Vector): bool =

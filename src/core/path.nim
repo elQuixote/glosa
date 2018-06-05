@@ -3,8 +3,6 @@ from ./concepts import
   Hash,
   Transform,
   Dimension,
-  # Set,
-  # Clear,
   Copy,
   String,
   Centroid,
@@ -33,8 +31,6 @@ export
   Hash,
   Transform,
   Dimension,
-  # Set,
-  # Clear,
   Copy,
   String,
   Centroid,
@@ -48,7 +44,7 @@ export
 from math import arctan2, arccos, sqrt, TAU, PI
 from strformat import `&`
 from algorithm import reverse
-from sequtils import map
+from sequtils import apply, map
 import hashes
 import json
 
@@ -174,8 +170,8 @@ proc closestPoint*[Vector](l: LineSegment[Vector], v: Vector): Vector =
 #   else: raise newException(AccessViolationError, "Attempting to add a vertex which alreaday exists")
 #   result = p
 
-# NOTE: This is added from design doc
-# NOTE: Using Nim paradigm (items, fields, pairs, etc)
+# # NOTE: This is added from design doc
+# # NOTE: Using Nim paradigm (items, fields, pairs, etc)
 iterator vertices*[Vector](p: Polyline[Vector]): Vector =
   for v in p.vertices:
     yield v
@@ -189,19 +185,18 @@ proc isClosed*[Vector](p: Polyline[Vector]): bool =
   result = p.segments[0].startVertex == p.segments[^1].endVertex
 
 # NOTE: This is added from design doc
+# NOTE: Remove returns for all in place operations
 proc reverse*[Vector](p: var Polyline[Vector]): var Polyline[Vector] =
-  #result = polyline(reverse(p.vertices))
-  var list = newSeq[Vector](len(p.vertices))
-  for i, x in p.vertices:
-    list[p.vertices.high-i] = x
-  p.vertices = list 
+  apply(p.segments, proc(s: var LineSegment[Vector]) = swap(s.startVertex, s.endVertex))
+  reverse(p.segments)
+  reverse(p.vertices)
   result = p
 
 # NOTE: This is added from design doc
 proc contains*[Vector](p: Polyline[Vector], v: Vector): bool =
   result = contains(p.vertices, v)
 
-proc contains*[Vector](p: Polyline[Vector], s: LineSegment): bool =
+proc contains*[Vector](p: Polyline[Vector], s: LineSegment[Vector]): bool =
   result = contains(p.segments, s)
 
 # NOTE: This is added from design doc
