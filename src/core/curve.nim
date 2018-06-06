@@ -815,6 +815,9 @@ proc mapVector3Vertices(vertices: JsonNode): seq[Vector3] =
 proc mapVector4Vertices(vertices: JsonNode): seq[Vector4] =
   result = map(getElems(vertices), proc(n: JsonNode): Vector4 = vector4FromJsonNode(n))
 
+proc mapFloats(data: JsonNode): seq[float] =
+  result = map(getElems(data), proc(n: JsonNode): float = getfloat(n))
+
 proc mapVector1Seq*(jsonString: string): seq[Vector1] = 
   var jsonNode = parseJson(jsonString)
   result = mapVector1Vertices(jsonNode["points"])
@@ -830,3 +833,8 @@ proc mapVector3Seq*(jsonString: string): seq[Vector3] =
 proc mapVector4Seq*(jsonString: string): seq[Vector4] = 
   var jsonNode = parseJson(jsonString)
   result = mapVector4Vertices(jsonNode["points"])
+
+proc mapFloatSeq*(jsonString: string): seq[float] = 
+  var jsonNode = parseJson(jsonString)
+  echo "JsonData = ", jsonNode["data"]
+  result = mapFloats(jsonNode["data"])
