@@ -765,3 +765,31 @@ proc toJson*(nc: NurbsCurve[Vector3]): string =
       result &= "," & $v
     result &= "]"
   result &= "}"
+
+proc toJson*(s: openArray[Vector1]): string =
+  if len(s) > 0:
+    result = "\"data\":[" & toJson(s[0])
+    for v in s[1..^1]:
+      result &= "," & toJson(v)
+    result &= "]"
+
+proc toJson*(s: openArray[Vector2]): string =
+  if len(s) > 0:
+    result = "\"data\":[" & toJson(s[0])
+    for v in s[1..^1]:
+      result &= "," & toJson(v)
+    result &= "]"
+
+proc toJson*(s: openArray[Vector3]): string =
+  if len(s) > 0:
+    result = "\"data\":[" & toJson(s[0])
+    for v in s[1..^1]:
+      result &= "," & toJson(v)
+    result &= "]"
+
+proc toJson*(s: openArray[Vector4]): string =
+  if len(s) > 0:
+    result = "\"data\":[" & toJson(s[0])
+    for v in s[1..^1]:
+      result &= "," & toJson(v)
+    result &= "]"
