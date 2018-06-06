@@ -398,5 +398,33 @@ proc dehomogenize_v1_curve*(p: Vector2): Vector1 {.cdecl, exportc, dynlib.} = de
 proc dehomogenize_v2_curve*(p: Vector3): Vector2 {.cdecl, exportc, dynlib.} = dehomogenize(p)
 proc dehomogenize_v3_curve*(p: Vector4): Vector3 {.cdecl, exportc, dynlib.} = dehomogenize(p)
 
+# Weights
+proc weight_v2_curve*(p: Vector2): cdouble {.cdecl, exportc, dynlib.} = weight(p)
+proc weight_v3_curve*(p: Vector3): cdouble {.cdecl, exportc, dynlib.} = weight(p)
+proc weight_v4_curve*(p: Vector4): cdouble {.cdecl, exportc, dynlib.} = weight(p)
+# NOTE: What do we want to do about weights that returns seq[Vector]???weights*[Vector](points: openArray[Vector]): seq[float] =
+
+# Equality
+proc interpEquals_v2_curve*(s1, s2: cstring): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = nurbsCurve2InterpolationFromJson($s1) == nurbsCurve2InterpolationFromJson($s2)
+  tearDownForeignThreadGc()
+
+proc interpEquals_v3_curve*(s1, s2: cstring): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = nurbsCurve3InterpolationFromJson($s1) == nurbsCurve3InterpolationFromJson($s2)
+  tearDownForeignThreadGc()
+
+proc equals_v2_curve*(s1, s2: cstring): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = nurbsCurve2FromJson($s1) == nurbsCurve2FromJson($s2)
+  tearDownForeignThreadGc()
+
+proc equals_v3_curve*(s1, s2: cstring): bool {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = nurbsCurve3FromJson($s1) == nurbsCurve3FromJson($s2)
+  tearDownForeignThreadGc()
+
+
 
 
