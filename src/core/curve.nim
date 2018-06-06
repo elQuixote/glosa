@@ -796,6 +796,13 @@ proc toJson*(s: openArray[Vector4]): string =
       result &= "," & toJson(v)
     result &= "]"
 
+proc toJson*(s: openArray[float]): string =
+  if len(s) > 0:
+    result = "\"data\":[" & $s[0]
+    for v in s[1..^1]:
+      result &= "," & $v
+    result &= "]"
+
 proc mapVector1Vertices(vertices: JsonNode): seq[Vector1] =
   result = map(getElems(vertices), proc(n: JsonNode): Vector1 = vector1FromJsonNode(n))
 
