@@ -68,8 +68,10 @@ from ./vector import
   rotate,
   scale,
   translate,
+  vector1FromJsonNode,
   vector2FromJsonNode,
   vector3FromJsonNode,
+  vector4FromJsonNode,
   toJson
 
 from ./binomial import binGet
@@ -768,28 +770,56 @@ proc toJson*(nc: NurbsCurve[Vector3]): string =
 
 proc toJson*(s: openArray[Vector1]): string =
   if len(s) > 0:
-    result = "\"data\":[" & toJson(s[0])
+    result = "\"points\":[" & toJson(s[0])
     for v in s[1..^1]:
       result &= "," & toJson(v)
     result &= "]"
 
 proc toJson*(s: openArray[Vector2]): string =
   if len(s) > 0:
-    result = "\"data\":[" & toJson(s[0])
+    result = "\"points\":[" & toJson(s[0])
     for v in s[1..^1]:
       result &= "," & toJson(v)
     result &= "]"
 
 proc toJson*(s: openArray[Vector3]): string =
   if len(s) > 0:
-    result = "\"data\":[" & toJson(s[0])
+    result = "\"points\":[" & toJson(s[0])
     for v in s[1..^1]:
       result &= "," & toJson(v)
     result &= "]"
 
 proc toJson*(s: openArray[Vector4]): string =
   if len(s) > 0:
-    result = "\"data\":[" & toJson(s[0])
+    result = "\"points\":[" & toJson(s[0])
     for v in s[1..^1]:
       result &= "," & toJson(v)
     result &= "]"
+
+proc mapVector1Vertices(vertices: JsonNode): seq[Vector1] =
+  result = map(getElems(vertices), proc(n: JsonNode): Vector1 = vector1FromJsonNode(n))
+
+proc mapVector2Vertices(vertices: JsonNode): seq[Vector2] =
+  result = map(getElems(vertices), proc(n: JsonNode): Vector2 = vector2FromJsonNode(n))
+
+proc mapVector3Vertices(vertices: JsonNode): seq[Vector3] =
+  result = map(getElems(vertices), proc(n: JsonNode): Vector3 = vector3FromJsonNode(n))
+
+proc mapVector4Vertices(vertices: JsonNode): seq[Vector4] =
+  result = map(getElems(vertices), proc(n: JsonNode): Vector4 = vector4FromJsonNode(n))
+
+proc mapVector1Seq*(jsonString: string): seq[Vector1] = 
+  var jsonNode = parseJson(jsonString)
+  result = mapVector1Vertices(jsonNode["points"])
+
+proc mapVector2Seq*(jsonString: string): seq[Vector2] = 
+  var jsonNode = parseJson(jsonString)
+  result = mapVector2Vertices(jsonNode["points"])
+
+proc mapVector3Seq*(jsonString: string): seq[Vector3] = 
+  var jsonNode = parseJson(jsonString)
+  result = mapVector3Vertices(jsonNode["points"])
+
+proc mapVector4Seq*(jsonString: string): seq[Vector4] = 
+  var jsonNode = parseJson(jsonString)
+  result = mapVector4Vertices(jsonNode["points"])
