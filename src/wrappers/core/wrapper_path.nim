@@ -1,5 +1,6 @@
 import ../../core/path
 import ../../core/vector
+import ../../core/curve
 import json
 import ../../core/polygon
 from ../../core/matrix import Matrix44, Matrix33
@@ -359,4 +360,31 @@ proc transform_v4_polyline*(s: cstring, m: Matrix44): cstring {.cdecl, exportc, 
   setupForeignThreadGc()
   var p = polyline4FromJson($s)
   result = toJson(transform(p, m))
+  tearDownForeignThreadGc()
+
+# ***************************************
+#     Nurbs Proc Wrappers
+# ***************************************
+
+# Constructors
+# NOTE: In stable build cannot succesfuly interpolate curve!
+proc interpolateCurve_v2_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(nurbsCurve2InterpolationFromJson($s))
+  tearDownForeignThreadGc()
+  
+# NOTE: In stable build cannot succesfuly interpolate curve!
+proc interpolateCurve_v3_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(nurbsCurve3InterpolationFromJson($s))
+  tearDownForeignThreadGc()
+
+proc nurbsCurve_v2_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(nurbsCurve2FromJson($s))
+  tearDownForeignThreadGc()
+
+proc nurbsCurve_v3_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(nurbsCurve3FromJson($s))
   tearDownForeignThreadGc()
