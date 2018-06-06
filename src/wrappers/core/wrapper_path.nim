@@ -372,7 +372,7 @@ proc interpolateCurve_v2_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} 
   setupForeignThreadGc()
   result = toJson(nurbsCurve2InterpolationFromJson($s))
   tearDownForeignThreadGc()
-  
+
 # NOTE: In stable build cannot succesfuly interpolate curve!
 proc interpolateCurve_v3_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
@@ -388,3 +388,15 @@ proc nurbsCurve_v3_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
   result = toJson(nurbsCurve3FromJson($s))
   tearDownForeignThreadGc()
+
+# Homogenize
+proc homogenize_v1_curve*(p: Vector1, weight: cdouble): Vector2 {.cdecl, exportc, dynlib.} = homogenize(p, weight)
+proc homogenize_v2_curve*(p: Vector2, weight: cdouble): Vector3 {.cdecl, exportc, dynlib.} = homogenize(p, weight)
+proc homogenize_v3_curve*(p: Vector3, weight: cdouble): Vector4 {.cdecl, exportc, dynlib.} = homogenize(p, weight)
+# NOTE: What do we want to do about homogenize that returns seq[Vector]???
+proc dehomogenize_v1_curve*(p: Vector2): Vector1 {.cdecl, exportc, dynlib.} = dehomogenize(p)
+proc dehomogenize_v2_curve*(p: Vector3): Vector2 {.cdecl, exportc, dynlib.} = dehomogenize(p)
+proc dehomogenize_v3_curve*(p: Vector4): Vector3 {.cdecl, exportc, dynlib.} = dehomogenize(p)
+
+
+
