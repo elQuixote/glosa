@@ -660,14 +660,12 @@ proc dimension_v3_curve*(s: cstring): int {.cdecl, exportc, dynlib.} =
 # Copy
 proc copy_v2_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
-  var p = nurbsCurve2FromJson($s)
-  result = toJson(copy(p))
+  result = toJson(copy(nurbsCurve2FromJson($s)))
   tearDownForeignThreadGc()
 
 proc copy_v3_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
-  var p = nurbsCurve3FromJson($s)
-  result = toJson(copy(p))
+  result = toJson(copy(nurbsCurve3FromJson($s)))
   tearDownForeignThreadGc()
 
 # Stringify

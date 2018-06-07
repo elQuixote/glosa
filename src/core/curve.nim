@@ -644,8 +644,9 @@ proc dimension*[Vector](nc: NurbsCurve[Vector]): int =
     result = dimension(nc.controlPoints[0])
 
 # Copy
+# NOTE: had to remove the var for compilation
 proc copy*[Vector](nc: NurbsCurve[Vector]): NurbsCurve[Vector] =
-  result = NurbsCurve(degree: nc.degree, controlPoints: var nc.controlPoints, weights: var nc.weights, knots: var nc.knots)
+  result = NurbsCurve[Vector](degree: nc.degree, controlPoints: nc.controlPoints, weights: nc.weights, knots: nc.knots)
 
 # String
 proc `$`*[Vector](nc: NurbsCurve[Vector]): string =
