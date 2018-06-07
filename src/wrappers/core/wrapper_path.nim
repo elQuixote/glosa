@@ -396,37 +396,36 @@ proc homogenize_v3_curve*(p: Vector3, weight: cdouble): Vector4 {.cdecl, exportc
 
 proc homogenizeArray_v1_curve*(s1: cstring, s2: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
-  result = toJson(homogenize(mapVector1Seq(s1),mapFloatSeq(s2)))
+  result = toJson(homogenize(mapVector1Seq($s1),mapFloatSeq($s2)))
   tearDownForeignThreadGc()
 
 proc homogenizeArray_v2_curve*(s1: cstring, s2: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
-  result = toJson(homogenize(mapVector2Seq(s1),mapFloatSeq(s2)))
+  result = toJson(homogenize(mapVector2Seq($s1),mapFloatSeq($s2)))
   tearDownForeignThreadGc()
 
 proc homogenizeArray_v3_curve*(s1: cstring, s2: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
-  result = toJson(homogenize(mapVector3Seq(s1),mapFloatSeq(s2)))
+  result = toJson(homogenize(mapVector3Seq($s1),mapFloatSeq($s2)))
   tearDownForeignThreadGc()
 
-# NOTE: What do we want to do about homogenize that returns seq[Vector]???
 proc dehomogenize_v1_curve*(p: Vector2): Vector1 {.cdecl, exportc, dynlib.} = dehomogenize(p)
 proc dehomogenize_v2_curve*(p: Vector3): Vector2 {.cdecl, exportc, dynlib.} = dehomogenize(p)
 proc dehomogenize_v3_curve*(p: Vector4): Vector3 {.cdecl, exportc, dynlib.} = dehomogenize(p)
 
 proc dehomogenizeArray_v2_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
-  result = toJson(dehomogenize(mapVector2Seq(s1)))
+  result = toJson(dehomogenize(mapVector2Seq($s1)))
   tearDownForeignThreadGc()
 
 proc dehomogenizeArray_v3_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
-  result = toJson(dehomogenize(mapVector3Seq(s)))
+  result = toJson(dehomogenize(mapVector3Seq($s)))
   tearDownForeignThreadGc()
 
 proc dehomogenizeArray_v4_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
-  result = toJson(dehomogenize(mapVector4Seq(s)))
+  result = toJson(dehomogenize(mapVector4Seq($s)))
   tearDownForeignThreadGc()
 
 # Weights
@@ -436,17 +435,17 @@ proc weight_v4_curve*(p: Vector4): cdouble {.cdecl, exportc, dynlib.} = weight(p
 
 proc weights_v2_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
-  result = toJson(weights(mapVector2Seq(s)))
+  result = toJson(weights(mapVector2Seq($s)))
   tearDownForeignThreadGc()
 
 proc weights_v3_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
-  result = toJson(weights(mapVector3Seq(s)))
+  result = toJson(weights(mapVector3Seq($s)))
   tearDownForeignThreadGc()
 
 proc weights_v4_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
-  result = toJson(weights(mapVector4Seq(s)))
+  result = toJson(weights(mapVector4Seq($s)))
   tearDownForeignThreadGc()
 
 # Equality
@@ -470,6 +469,48 @@ proc equals_v3_curve*(s1, s2: cstring): bool {.cdecl, exportc, dynlib.} =
   result = nurbsCurve3FromJson($s1) == nurbsCurve3FromJson($s2)
   tearDownForeignThreadGc()
 
+# Weighted CPs
+proc weightedControlPoints_v2_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(weightedControlPoints(nurbsCurve2FromJson($s)))
+  tearDownForeignThreadGc()
 
+proc weightedControlPoints_v3_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(weightedControlPoints(nurbsCurve3FromJson($s)))
+  tearDownForeignThreadGc()
+
+# Sample
+proc rationalSample_v2_curve*(s: cstring, u: cdouble): Vector3 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = rationalSample(nurbsCurve2FromJson($s), u)
+  tearDownForeignThreadGc()
+
+proc rationalSample_v3_curve*(s: cstring, u: cdouble): Vector4 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = rationalSample(nurbsCurve3FromJson($s), u)
+  tearDownForeignThreadGc()
+
+# NOTE: wrapping rationalRegularSampleWithParameter requires a mapping for seq[tuple[]]
+# TODO: Add JsonMappings
+proc rationalRegularSample_v2_curve*(s: cstring, n: int): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(rationalRegularSample(nurbsCurve2FromJson($s), n))
+  tearDownForeignThreadGc()
+
+proc rationalRegularSample_v3_curve*(s: cstring, n: int): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(rationalRegularSample(nurbsCurve3FromJson($s), n))
+  tearDownForeignThreadGc()
+
+proc rationalSampleDerrivatives_v2_curve*(s: cstring, u: cdouble, n: int): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(rationalSampleDerivatives(nurbsCurve2FromJson($s), u, n))
+  tearDownForeignThreadGc()
+
+proc rationalSampleDerrivatives_v3_curve*(s: cstring, u: cdouble, n: int): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(rationalSampleDerivatives(nurbsCurve3FromJson($s), u, n))
+  tearDownForeignThreadGc()
 
 
