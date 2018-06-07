@@ -489,7 +489,7 @@ proc regularSample*[Vector](nc: NurbsCurve[Vector], ustart, uend: float, n: int)
     proc(x: tuple[u: float, v: Vector]): Vector = x.v)
 
 proc regularSample*[Vector](nc: NurbsCurve[Vector], n: int): seq[Vector] =
-  result = regularSample(nc, nc.knot[0], nc.knot[^1], n)
+  result = regularSample(nc, nc.knots[0], nc.knots[^1], n)
 
 proc sampleDerivatives*[Vector](nc: NurbsCurve[Vector], u: float, n: int = 1): seq[Vector] =
   let
