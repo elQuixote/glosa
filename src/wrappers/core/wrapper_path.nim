@@ -645,3 +645,14 @@ proc hash_v3_curve*(s: cstring): int {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
   result = hash(nurbsCurve3FromJson($s))
   tearDownForeignThreadGc()
+
+# Dimension
+proc dimension_v2_curve*(s: cstring): int {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = dimension(nurbsCurve2FromJson($s))
+  tearDownForeignThreadGc()
+
+proc dimension_v3_curve*(s: cstring): int {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = dimension(nurbsCurve3FromJson($s))
+  tearDownForeignThreadGc()
