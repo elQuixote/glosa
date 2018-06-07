@@ -601,3 +601,36 @@ proc transform_v3_curve*(s: cstring, m: Matrix44): cstring {.cdecl, exportc, dyn
   setupForeignThreadGc()
   result = toJson(transform(nurbsCurve3FromJson($s), m))
   tearDownForeignThreadGc()
+
+# Rotate
+proc rotate_v2_curve*(s: cstring, theta: cdouble): cstring {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = toJson(rotate(nurbsCurve2FromJson($s), theta))
+  tearDownForeignThreadGc()
+
+proc rotate_v3_curve*(s: cstring, axis: Vector3, theta: cdouble): cstring {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = toJson(rotate(nurbsCurve3FromJson($s), axis, theta))
+  tearDownForeignThreadGc()
+
+# Scale
+proc scale_v2_curve*(s: cstring, sx, sy: cdouble): cstring {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = toJson(scale(nurbsCurve2FromJson($s), sx, sy))
+  tearDownForeignThreadGc()
+
+proc scale_v3_curve*(s: cstring, sx, sy, sz: cdouble): cstring {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = toJson(scale(nurbsCurve3FromJson($s), sx, sy, sz))
+  tearDownForeignThreadGc()
+
+# Translate
+proc translate_v2_curve*(s: cstring, v: Vector2): cstring {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = toJson(translate(nurbsCurve2FromJson($s), v))
+  tearDownForeignThreadGc()
+
+proc translate_v3_curve*(s: cstring, v: Vector3): cstring {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = toJson(translate(nurbsCurve3FromJson($s), v))
+  tearDownForeignThreadGc()
