@@ -590,3 +590,14 @@ proc closestPoint_v3_curve*(s: cstring, v: Vector3): Vector3 {.cdecl, exportc, d
   setupForeignThreadGc()
   result = closestPoint(nurbsCurve3FromJson($s), v)
   tearDownForeignThreadGc()
+
+# Transform
+proc transform_v2_curve*(s: cstring, m: Matrix33): cstring {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = toJson(transform(nurbsCurve2FromJson($s), m))
+  tearDownForeignThreadGc()
+
+proc transform_v3_curve*(s: cstring, m: Matrix44): cstring {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = toJson(transform(nurbsCurve3FromJson($s), m))
+  tearDownForeignThreadGc()
