@@ -819,22 +819,43 @@ proc mapFloats(data: JsonNode): seq[float] =
   result = map(getElems(data), proc(n: JsonNode): float = getfloat(n))
 
 proc mapVector1Seq*(jsonString: string): seq[Vector1] = 
-  var jsonNode = parseJson(jsonString)
-  result = mapVector1Vertices(jsonNode["points"])
+  try:
+    let jsonNode = parseJson(jsonString)
+    result = mapVector1Vertices(jsonNode["points"])
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
 
 proc mapVector2Seq*(jsonString: string): seq[Vector2] = 
-  var jsonNode = parseJson(jsonString)
-  result = mapVector2Vertices(jsonNode["points"])
+  try:
+    let jsonNode = parseJson(jsonString)
+    result = mapVector2Vertices(jsonNode["points"])
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
 
 proc mapVector3Seq*(jsonString: string): seq[Vector3] = 
-  var jsonNode = parseJson(jsonString)
-  result = mapVector3Vertices(jsonNode["points"])
+  try:
+    let jsonNode = parseJson(jsonString)
+    result = mapVector3Vertices(jsonNode["points"])
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
 
 proc mapVector4Seq*(jsonString: string): seq[Vector4] = 
-  var jsonNode = parseJson(jsonString)
-  result = mapVector4Vertices(jsonNode["points"])
+  try:
+    let jsonNode = parseJson(jsonString)
+    result = mapVector4Vertices(jsonNode["points"])
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
 
 proc mapFloatSeq*(jsonString: string): seq[float] = 
-  var jsonNode = parseJson(jsonString)
-  echo "JsonData = ", jsonNode["data"]
-  result = mapFloats(jsonNode["data"])
+  try:
+    let jsonNode = parseJson(jsonString)
+    result = mapFloats(jsonNode["data"])
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+
