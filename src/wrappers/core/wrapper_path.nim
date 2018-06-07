@@ -634,3 +634,14 @@ proc translate_v3_curve*(s: cstring, v: Vector3): cstring {.cdecl, exportc, dynl
   setupForeignThreadGc()
   result = toJson(translate(nurbsCurve3FromJson($s), v))
   tearDownForeignThreadGc()
+
+# Hash
+proc hash_v2_curve*(s: cstring): int {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = hash(nurbsCurve2FromJson($s))
+  tearDownForeignThreadGc()
+
+proc hash_v3_curve*(s: cstring): int {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = hash(nurbsCurve3FromJson($s))
+  tearDownForeignThreadGc()
