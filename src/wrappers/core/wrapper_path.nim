@@ -523,7 +523,18 @@ proc sample_v3_curve*(s: cstring, u: cdouble): Vector3 {.cdecl, exportc, dynlib.
   result = sample(nurbsCurve3FromJson($s), u)
   tearDownForeignThreadGc()
 
-proc sample_v4_curve*(s: cstring, u: cdouble): Vector4 {.cdecl, exportc, dynlib.} = 
+# NOTE: Do we want a nurbscurve4fromJson??
+# proc sample_v4_curve*(s: cstring, u: cdouble): Vector4 {.cdecl, exportc, dynlib.} = 
+#   setupForeignThreadGc()
+#   result = sample(nurbsCurve4FromJson($s), u)
+#   tearDownForeignThreadGc()
+
+proc regularSample_v2_curve*(s: cstring, ustart, uend: cdouble, n: int): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
-  result = sample(nurbsCurve4FromJson($s), u)
+  result = toJson(regularSample(nurbsCurve2FromJson($s), ustart, uend, n))
+  tearDownForeignThreadGc()
+
+proc regularSample_v3_curve*(s: cstring, ustart, uend: cdouble, n: int): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(regularSample(nurbsCurve3FromJson($s), ustart, uend, n))
   tearDownForeignThreadGc()

@@ -476,16 +476,16 @@ proc sample*[Vector](nc: NurbsCurve[Vector], u: float): Vector =
 
 proc regularSampleWithParameter*[Vector](nc: NurbsCurve[Vector], ustart, uend: float, n: int): seq[tuple[u: float, v: Vector]] =
   result = newSeq[tuple[u: float, v: Vector]](n)
-  let span = (ustart - uend) / (n - 1)
+  let span = (ustart - uend) / (float)(n - 1)
   for i in 0..<n:
-    let u = ustart + span * i
-    result[i] = (u: u, v: sample(curve, u))
+    let u = ustart + span * (float)i
+    result[i] = (u: u, v: sample(nc, u))
 
 proc regularSampleWithParameter*[Vector](nc: NurbsCurve[Vector], n: int): seq[tuple[u: float, v: Vector]] =
-  result = regularSampleWithParameter(nc, nc.knot[0], nc.knot[^1], n)
+  result = regularSampleWithParameter(nc, nc.knots[0], nc.knots[^1], n)
 
 proc regularSample*[Vector](nc: NurbsCurve[Vector], ustart, uend: float, n: int): seq[Vector] =
-  result = map(regularSampleWithParameter(nc, nc.knot[0], nc.knot[^1], n),
+  result = map(regularSampleWithParameter(nc, nc.knots[0], nc.knots[^1], n),
     proc(x: tuple[u: float, v: Vector]): Vector = x.v)
 
 proc regularSample*[Vector](nc: NurbsCurve[Vector], n: int): seq[Vector] =
