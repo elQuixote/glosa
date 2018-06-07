@@ -558,3 +558,25 @@ proc sampleDerivatives_v3_curve*(s: cstring, u: cdouble, n: int): cstring {.cdec
   setupForeignThreadGc()
   result = toJson(sampleDerivatives(nurbsCurve3FromJson($s), u, n))
   tearDownForeignThreadGc()
+
+# Closest Parameter
+proc rationalClosestParameter_v2_curve*(s: cstring, v: Vector2): cdouble {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = rationalClosestParameter(nurbsCurve2FromJson($s), v)
+  tearDownForeignThreadGc()
+
+proc rationalClosestParameter_v3_curve*(s: cstring, v: Vector3): cdouble {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = rationalClosestParameter(nurbsCurve3FromJson($s), v)
+  tearDownForeignThreadGc()
+
+proc closestParameter_v2_curve*(s: cstring, v: Vector2): cdouble {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = closestParameter(nurbsCurve2FromJson($s), v)
+  tearDownForeignThreadGc()
+
+proc closestParameter_v3_curve*(s: cstring, v: Vector3): cdouble {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = closestParameter(nurbsCurve3FromJson($s), v)
+  tearDownForeignThreadGc()
+
