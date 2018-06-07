@@ -641,7 +641,7 @@ proc hash*[Vector](nc: NurbsCurve[Vector]): hashes.Hash =
 # Dimension
 proc dimension*[Vector](nc: NurbsCurve[Vector]): int =
   if len(nc.controlPoints) != 0:
-    result = dimension(nc.vertices[0])
+    result = dimension(nc.controlPoints[0])
 
 # Copy
 proc copy*[Vector](nc: NurbsCurve[Vector]): NurbsCurve[Vector] =
