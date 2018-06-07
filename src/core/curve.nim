@@ -578,7 +578,7 @@ proc closestParameter*[Vector](nc: NurbsCurve[Vector], v: Vector): float =
   result = rationalClosestParameter(nc, v)
 
 proc closestPoint*[Vector](nc: NurbsCurve[Vector], v: Vector): Vector =
-  result = sample(closestParameter(nc, v))
+  result = sample(nc, closestParameter(nc, v))
 
 # Transforms
 proc transform*[Vector, Matrix](nc: NurbsCurve[Vector], m: Matrix): Vector =
