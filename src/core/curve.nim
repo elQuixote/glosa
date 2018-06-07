@@ -581,7 +581,7 @@ proc closestPoint*[Vector](nc: NurbsCurve[Vector], v: Vector): Vector =
   result = sample(nc, closestParameter(nc, v))
 
 # Transforms
-proc transform*[Vector, Matrix](nc: NurbsCurve[Vector], m: Matrix): Vector =
+proc transform*[Vector, Matrix](nc: NurbsCurve[Vector], m: Matrix): NurbsCurve[Vector] =
   var controlPoints = nc.controlPoints
   for i in 0..<len(controlPoints):
     controlPoints[i] = transform(controlPoints[i], m)
