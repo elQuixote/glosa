@@ -548,3 +548,13 @@ proc regularSample2_v3_curve*(s: cstring, n: int): cstring {.cdecl, exportc, dyn
   setupForeignThreadGc()
   result = toJson(regularSample(nurbsCurve3FromJson($s), n))
   tearDownForeignThreadGc()
+
+proc sampleDerivatives_v2_curve*(s: cstring, u: cdouble, n: int): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(sampleDerivatives(nurbsCurve2FromJson($s), u, n))
+  tearDownForeignThreadGc()
+
+proc sampleDerivatives_v3_curve*(s: cstring, u: cdouble, n: int): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(sampleDerivatives(nurbsCurve3FromJson($s), u, n))
+  tearDownForeignThreadGc()
