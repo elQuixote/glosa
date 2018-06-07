@@ -415,7 +415,7 @@ proc dehomogenize_v3_curve*(p: Vector4): Vector3 {.cdecl, exportc, dynlib.} = de
 
 proc dehomogenizeArray_v2_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
   setupForeignThreadGc()
-  result = toJson(dehomogenize(mapVector2Seq($s1)))
+  result = toJson(dehomogenize(mapVector2Seq($s)))
   tearDownForeignThreadGc()
 
 proc dehomogenizeArray_v3_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
@@ -513,4 +513,17 @@ proc rationalSampleDerrivatives_v3_curve*(s: cstring, u: cdouble, n: int): cstri
   result = toJson(rationalSampleDerivatives(nurbsCurve3FromJson($s), u, n))
   tearDownForeignThreadGc()
 
+proc sample_v2_curve*(s: cstring, u: cdouble): Vector2 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = sample(nurbsCurve2FromJson($s), u)
+  tearDownForeignThreadGc()
 
+proc sample_v3_curve*(s: cstring, u: cdouble): Vector3 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = sample(nurbsCurve3FromJson($s), u)
+  tearDownForeignThreadGc()
+
+proc sample_v4_curve*(s: cstring, u: cdouble): Vector4 {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = sample(nurbsCurve4FromJson($s), u)
+  tearDownForeignThreadGc()
