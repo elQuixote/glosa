@@ -433,7 +433,21 @@ proc dehomogenizeArray_v4_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.}
 proc weight_v2_curve*(p: Vector2): cdouble {.cdecl, exportc, dynlib.} = weight(p)
 proc weight_v3_curve*(p: Vector3): cdouble {.cdecl, exportc, dynlib.} = weight(p)
 proc weight_v4_curve*(p: Vector4): cdouble {.cdecl, exportc, dynlib.} = weight(p)
-# NOTE: What do we want to do about weights that returns seq[Vector]???weights*[Vector](points: openArray[Vector]): seq[float] =
+
+proc weights_v2_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(weights(mapVector2Seq(s)))
+  tearDownForeignThreadGc()
+
+proc weights_v3_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(weights(mapVector3Seq(s)))
+  tearDownForeignThreadGc()
+
+proc weights_v4_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} = 
+  setupForeignThreadGc()
+  result = toJson(weights(mapVector4Seq(s)))
+  tearDownForeignThreadGc()
 
 # Equality
 proc interpEquals_v2_curve*(s1, s2: cstring): bool {.cdecl, exportc, dynlib.} = 
