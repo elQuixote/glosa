@@ -669,3 +669,14 @@ proc copy_v3_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} =
   var p = nurbsCurve3FromJson($s)
   result = toJson(copy(p))
   tearDownForeignThreadGc()
+
+# Stringify
+proc stringify_v2_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = $nurbsCurve2FromJson($s)
+  tearDownForeignThreadGc()
+
+proc stringify_v3_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = $nurbsCurve3FromJson($s)
+  tearDownForeignThreadGc()
