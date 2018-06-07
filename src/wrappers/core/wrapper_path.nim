@@ -580,3 +580,13 @@ proc closestParameter_v3_curve*(s: cstring, v: Vector3): cdouble {.cdecl, export
   result = closestParameter(nurbsCurve3FromJson($s), v)
   tearDownForeignThreadGc()
 
+# ClosestPoint
+proc closestPoint_v2_curve*(s: cstring, v: Vector2): Vector2 {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = closestPoint(nurbsCurve2FromJson($s), v)
+  tearDownForeignThreadGc()
+
+proc closestPoint_v3_curve*(s: cstring, v: Vector3): Vector3 {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  result = closestPoint(nurbsCurve3FromJson($s), v)
+  tearDownForeignThreadGc()
