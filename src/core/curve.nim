@@ -771,38 +771,38 @@ proc toJson*(nc: NurbsCurve[Vector3]): string =
 
 proc toJson*(s: openArray[Vector1]): string =
   if len(s) > 0:
-    result = "\"points\":[" & toJson(s[0])
+    result = "{\"points\":[" & toJson(s[0])
     for v in s[1..^1]:
       result &= "," & toJson(v)
-    result &= "]"
+    result &= "]}"
 
 proc toJson*(s: openArray[Vector2]): string =
   if len(s) > 0:
-    result = "\"points\":[" & toJson(s[0])
+    result = "{\"points\":[" & toJson(s[0])
     for v in s[1..^1]:
       result &= "," & toJson(v)
-    result &= "]"
+    result &= "]}"
 
 proc toJson*(s: openArray[Vector3]): string =
   if len(s) > 0:
-    result = "\"points\":[" & toJson(s[0])
+    result = "{\"points\":[" & toJson(s[0])
     for v in s[1..^1]:
       result &= "," & toJson(v)
-    result &= "]"
+    result &= "]}"
 
 proc toJson*(s: openArray[Vector4]): string =
   if len(s) > 0:
-    result = "\"points\":[" & toJson(s[0])
+    result = "{\"points\":[" & toJson(s[0])
     for v in s[1..^1]:
       result &= "," & toJson(v)
-    result &= "]"
+    result &= "]}"
 
 proc toJson*(s: openArray[float]): string =
   if len(s) > 0:
-    result = "\"data\":[" & $s[0]
+    result = "{\"data\":[" & $s[0]
     for v in s[1..^1]:
       result &= "," & $v
-    result &= "]"
+    result &= "]}"
 
 proc mapVector1Vertices(vertices: JsonNode): seq[Vector1] =
   result = map(getElems(vertices), proc(n: JsonNode): Vector1 = vector1FromJsonNode(n))
