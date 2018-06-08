@@ -45,17 +45,17 @@ type
     radius*: float
 
   # Mesh
-  MeshVertex*[Vector] = object
+  MeshVertex*[Vector] = ref object
     position*: Vector
     edge*: HalfEdge[Vector]
 
-  MeshFace*[Vector] = object
+  MeshFace*[Vector] = ref object
     edge*: HalfEdge[Vector]
 
-  HalfEdge*[Vector] = object
+  HalfEdge*[Vector] = ref object
     vertex*: MeshVertex[Vector]
     face*: MeshFace[Vector]
-    twin*: HalfEdge[Vector]
+    pair*: HalfEdge[Vector]
     next*: HalfEdge[Vector]
     previous*: HalfEdge[Vector]
 
