@@ -6,78 +6,113 @@ var
   b = Vector3(x: 5.0, y: 5.0, z: 5.0)
   c = Vector3(x: 10.0, y: 10.0, z: 10.0)
   d = Vector3(x: -5.0, y: -5.0, z: -5.0)
+  e = Vector3(x: 20.0, y: 20.0, z: 20.0)
 
 var
-  aVertex = MeshVertex[Vector3](position: a, edge: nil)
-  bVertex = MeshVertex[Vector3](position: b, edge: nil)
-  cVertex = MeshVertex[Vector3](position: c, edge: nil)
-  dVertex = MeshVertex[Vector3](position: d, edge: nil)
+  aVertex = meshVertex[Vector3](a, nil)
+  bVertex = meshVertex[Vector3](b, nil)
+  cVertex = meshVertex[Vector3](c, nil)
+  dVertex = meshVertex[Vector3](d, nil)
+  eVertex = meshVertex[Vector3](e, nil)
 
 var
-  abcFace = MeshFace[Vector3](edge: nil)
-  acdFace = MeshFace[Vector3](edge: nil)
+  abcFace = meshFace[Vector3](nil)
+  acdFace = meshFace[Vector3](nil)
 
 var
-  abEdge = HalfEdge[Vector3](vertex: aVertex, face: nil, twin: nil, next: nil, previous: nil)
-  baEdge = HalfEdge[Vector3](vertex: bVertex, face: nil, twin: nil, next: nil, previous: nil)
-  bcEdge = HalfEdge[Vector3](vertex: bVertex, face: nil, twin: nil, next: nil, previous: nil)
-  cbEdge = HalfEdge[Vector3](vertex: cVertex, face: nil, twin: nil, next: nil, previous: nil)
-  caEdge = HalfEdge[Vector3](vertex: cVertex, face: nil, twin: nil, next: nil, previous: nil)
-  acEdge = HalfEdge[Vector3](vertex: aVertex, face: nil, twin: nil, next: nil, previous: nil)
+  abEdge = halfEdge[Vector3](aVertex, nil, nil, nil, nil)
+  baEdge = halfEdge[Vector3](bVertex, nil, nil, nil, nil)
+  bcEdge = halfEdge[Vector3](bVertex, nil, nil, nil, nil)
+  cbEdge = halfEdge[Vector3](cVertex, nil, nil, nil, nil)
+  caEdge = halfEdge[Vector3](cVertex, nil, nil, nil, nil)
+  acEdge = halfEdge[Vector3](aVertex, nil, nil, nil, nil)
 
-  adEdge = HalfEdge[Vector3](vertex: aVertex, face: nil, twin: nil, next: nil, previous: nil)
-  daEdge = HalfEdge[Vector3](vertex: dVertex, face: nil, twin: nil, next: nil, previous: nil)
-  dcEdge = HalfEdge[Vector3](vertex: dVertex, face: nil, twin: nil, next: nil, previous: nil)
-  cdEdge = HalfEdge[Vector3](vertex: cVertex, face: nil, twin: nil, next: nil, previous: nil)
+  adEdge = halfEdge[Vector3](aVertex, nil, nil, nil, nil)
+  daEdge = halfEdge[Vector3](dVertex, nil, nil, nil, nil)
+  dcEdge = halfEdge[Vector3](dVertex, nil, nil, nil, nil)
+  cdEdge = halfEdge[Vector3](cVertex, nil, nil, nil, nil)
 
-# Twinning
-abEdge.twin = baEdge
-baEdge.twin = abEdge
-bcEdge.twin = cbEdge
-cbEdge.twin = bcEdge
-acEdge.twin = caEdge
-caEdge.twin = acEdge
+var m = HalfEdgeMesh[Vector3](
+  vertices: @[
+    aVertex,
+    bVertex,
+    cVertex,
+    dVertex
+  ],
+  faces: @[],
+  edges: @[])
 
-adEdge.twin = daEdge
-daEdge.twin = adEdge
-dcEdge.twin = cdEdge
-cdEdge.twin = dcEdge
+discard addFace(m, @[aVertex, bVertex, cVertex])
 
-# Nexting / Previousing
-abEdge.next = bcEdge
-abEdge.previous = caEdge
+for e in halfEdgeCirculator(m, aVertex):
+  echo $e
 
-baEdge.next = acEdge
-baEdge.previous = cbEdge
+for e in halfEdgeCirculator(m, bVertex):
+  echo $e
 
-bcEdge.next = caEdge
-bcEdge.previous = abEdge
+for e in halfEdgeCirculator(m, cVertex):
+  echo $e
 
-cbEdge.next = baEdge
-cbEdge.previous = acEdge
+echo "Adding Face"
+discard addFace(m, @[aVertex, cVertex, dVertex])
 
-acEdge.next = cbEdge
-acEdge.previous = baEdge
+for e in halfEdgeCirculator(m, aVertex):
+  echo $e
 
-caEdge.next = abEdge
-caEdge.previous = bcEdge
+for e in halfEdgeCirculator(m, bVertex):
+  echo $e
 
-adEdge.next = dcEdge
-adEdge.previous = caEdge
+for e in halfEdgeCirculator(m, cVertex):
+  echo $e
 
-daEdge.next = acEdge
-daEdge.previous = cdEdge
+# Pairing
+# abEdge.pair = baEdge
+# baEdge.pair = abEdge
+# bcEdge.pair = cbEdge
+# cbEdge.pair = bcEdge
+# acEdge.pair = caEdge
+# caEdge.pair = acEdge
 
-dcEdge.next = caEdge
-dcEdge.previous = adEdge
+# adEdge.pair = daEdge
+# daEdge.pair = adEdge
+# dcEdge.pair = cdEdge
+# cdEdge.pair = dcEdge
 
-cdEdge.next = daEdge
-cdEdge.previous = acEdge
+# # Nexting / Previousing
+# abEdge.next = bcEdge
+# abEdge.previous = caEdge
 
-abEdge.face = abcFace
-bcEdge.face = abcFace
-caEdge.face = abcFace
+# baEdge.next = acEdge
+# baEdge.previous = cbEdge
 
-acEdge.face = acdFace
-cdEdge.face = acdFace
-daEdge.face = acdFace
+# bcEdge.next = caEdge
+# bcEdge.previous = abEdge
+
+# cbEdge.next = baEdge
+# cbEdge.previous = acEdge
+
+# acEdge.next = cbEdge
+# acEdge.previous = baEdge
+
+# caEdge.next = abEdge
+# caEdge.previous = bcEdge
+
+# adEdge.next = dcEdge
+# adEdge.previous = caEdge
+
+# daEdge.next = acEdge
+# daEdge.previous = cdEdge
+
+# dcEdge.next = caEdge
+# dcEdge.previous = adEdge
+
+# cdEdge.next = daEdge
+# cdEdge.previous = acEdge
+
+# abEdge.face = abcFace
+# bcEdge.face = abcFace
+# caEdge.face = abcFace
+
+# acEdge.face = acdFace
+# cdEdge.face = acdFace
+# daEdge.face = acdFace

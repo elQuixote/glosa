@@ -45,9 +45,21 @@ from ./Vector import
   distanceTo,
   clearCopy,
   cross,
-  normalize
+  normalize,
+  `$`
 
+import oids
 from sequtils import concat, toSeq, map, filter
+
+# Constructors
+proc meshVertex*[Vector](position: Vector, edge: HalfEdge[Vector]): MeshVertex[Vector] =
+  result = MeshVertex[Vector](oid: genOid(), position: position, edge: edge)
+
+proc meshFace*[Vector](edge: HalfEdge[Vector]): MeshFace[Vector] =
+  result = MeshFace[Vector](oid: genOid(), edge: edge)
+
+proc halfEdge*[Vector](vertex: MeshVertex[Vector], face: MeshFace[Vector], pair, next, previous: HalfEdge[Vector]): HalfEdge[Vector] =
+  result = HalfEdge[Vector](oid: genOid(), vertex: vertex, face: face, pair: pair, next: next, previous: previous)
 
 # Forward Declarations
 proc isBoundary*[Vector](m: HalfEdgeMesh[Vector], halfEdge: HalfEdge[Vector]): bool
@@ -60,63 +72,67 @@ proc addPair*[Vector](m: var HalfEdgeMesh[Vector], startVertex, endVertex: MeshV
 # Accessors
 # Traverses clockwise around the starting vertex of a halfedge
 iterator vertexCirculator*[Vector](m: HalfEdgeMesh[Vector], halfEdge: HalfEdge[Vector]): HalfEdge[Vector] =
-  var h = halfEdge
-  while true:
-    if not contains(m.edges, h):
-      raise newException(InvalidEdgeError,
-        "Mesh does not contain this half-edge")
-    if isNil(h):
-      raise newException(InvalidOperationError,
-        "Next half-edge is unset")
-    yield h
-    h = h.pair.next
-    if h == halfEdge:
-      break
+  block:
+    var h = halfEdge
+    while true:
+      if not contains(m.edges, h):
+        # Next edge is not in the mesh
+        break
+      if isNil(h):
+        # Next edge is not set
+        break
+      yield h
+      h = h.pair.next
+      if h == halfEdge:
+        break
 
 iterator faceCirculator*[Vector](m: HalfEdgeMesh[Vector], halfEdge: HalfEdge[Vector]): HalfEdge[Vector] =
-  var h = halfEdge
-  while true:
-    if not contains(m.edges, h):
-      raise newException(InvalidHalfEdgeError,
-        "Mesh does not contain this half-edge")
-    if isNil(h):
-      raise newException(InvalidOperationError,
-        "Next half-edge is unset")
-    yield h
-    h = h.next
-    if h == halfEdge:
-      break
+  block:
+    var h = halfEdge
+    while true:
+      if not contains(m.edges, h):
+        # Next edge is not in the mesh
+        break
+      if isNil(h):
+        # Next edge is not set
+        break
+      yield h
+      h = h.next
+      if h == halfEdge:
+        break
 
 iterator halfEdgeCirculator*[Vector](m: HalfEdgeMesh[Vector], vertex: MeshVertex[Vector]): HalfEdge[Vector] =
-  let firstHalfEdge = vertex.edge
-  if not contains(m.vertices, vertex):
-    raise newException(InvalidVertexOperation,
-      "Mesh does not contain this vertex")
-  if (isNil(firstHalfEdge)):
-    raise newException(InvalidOperationError,
-      "Vertex has not connectivity")
-  var h = firstHalfEdge
-  while true:
-    if (isNil(h)):
-      raise newException(InvalidOperationError,
-        "Next half-edge is unset")
-    yield h
-    h = h.pair.next
-    if h == firstHalfEdge:
+  block:
+    let firstHalfEdge = vertex.edge
+    if not contains(m.vertices, vertex):
+      # Vertex is not in the mesh
       break
+    if (isNil(firstHalfEdge)):
+      # Vertex does not have an edge
+      break
+    var h = firstHalfEdge
+    while true:
+      if (isNil(h)):
+        # Next edge is not set
+        break
+      yield h
+      h = h.pair.next
+      if h == firstHalfEdge:
+        break
 
 iterator halfEdgeCirculator*[Vector](m: HalfEdgeMesh[Vector], vertex: MeshVertex[Vector], halfEdge: HalfEdge[Vector]): HalfEdge[Vector] =
-  if not contains(m.vertices, vertex):
-    raise newException(InvalidVertexOperation,
-      "Mesh does not contain this vertex")
-  if not contains(m.edges, halfEdge):
-    raise newException(InvalidHalfEdgeError,
-      "Mesh does not contain this half-edge")
-  if halfEdge.vertex != vertex:
-    raise newException(InvalidOperationError,
-      "Half-edge does not start at vertex")
-  for h in halfEdgeCirculator(m, halfEdge.vertex):
-    yield h
+  block:
+    if not contains(m.vertices, vertex):
+      # Vertex is not in the mesh
+      break
+    if not contains(m.edges, halfEdge):
+      # Edge is not in the mesh
+      break
+    if halfEdge.vertex != vertex:
+      # Ege does not start at the vertex
+      break
+    for h in halfEdgeCirculator(m, halfEdge.vertex):
+      yield h
 
 # Helpers
 proc makeConsecutive[Vector](previous, next: HalfEdge[Vector]) =
@@ -144,7 +160,7 @@ proc addVertex*[Vector](m: var HalfEdgeMesh[Vector], vertex: MeshVertex[Vector])
   add(m.vertices, vertex)
 
 proc addVertex*[Vector](m: var HalfEdgeMesh[Vector], vector: Vector): void =
-  add(m.vertices, MeshVertex[Vector](position: vector, edge: nil))
+  add(m.vertices, meshVertex[Vector](position: vector, edge: nil))
 
 proc addVertices*[Vector](m: var HalfEdgeMesh[Vector], vertices: openArray[MeshVertex[Vector]]): void =
   m.vertices = concat(m.vertices, vertices)
@@ -190,7 +206,7 @@ proc addFace*[Vector](m: var HalfEdgeMesh[Vector], face: MeshFace[Vector]): void
 
 proc addFace*[Vector](m: var HalfEdgeMesh[Vector], vertices: openArray[MeshVertex[Vector]]): MeshFace[Vector] =
   let n = len(vertices)
-  result = MeshFace[Vector](edge: nil)
+  result = meshFace[Vector](nil)
   if n < 3:
     raise newException(InvalidFaceError,
       "Face is degenerate")
@@ -198,9 +214,6 @@ proc addFace*[Vector](m: var HalfEdgeMesh[Vector], vertices: openArray[MeshVerte
     if not contains(m.vertices, v):
       raise newException(InvalidVertexError,
         "Mesh does not contain vertex")
-    if v.edge != nil and v.edge.face != nil:
-      raise newException(InvalidVertexError,
-        "Vertex is not on boundary")
 
   var
     loop = newSeq[HalfEdge[Vector]](n)
@@ -210,17 +223,16 @@ proc addFace*[Vector](m: var HalfEdgeMesh[Vector], vertices: openArray[MeshVerte
       v1 = vertices[i]
       v2 = vertices[(i + 1) mod n]
 
-    if containsHalfEdge(m, v1, v2):
-      let h = findHalfEdge(m, v1, v2)
-      if isNil(h):
-        loop[i] = addPair(m, v1, v2, result)
-        created[i] = true
-      elif not isNil(h.face):
-        raise newException(InvalidOperationError,
-          "Half-edge has a face (is non-manifold)")
-      else:
-        h.face = result
-        loop[i] = h
+    let h = findHalfEdge(m, v1, v2)
+    if isNil(h):
+      loop[i] = addPair(m, v1, v2, result)
+      created[i] = true
+    elif not isNil(h.face):
+      raise newException(InvalidOperationError,
+        "Half-edge has a face (is non-manifold)")
+    else:
+      h.face = result
+      loop[i] = h
 
   for i in 0..<n:
     let ii = (i + 1) mod n
@@ -236,7 +248,7 @@ proc addFace*[Vector](m: var HalfEdgeMesh[Vector], vertices: openArray[MeshVerte
         outerPrevious = loop[ii].pair
       elif created[i] and created[ii]:
         let v = vertices[ii]
-        if isNil(v.edge):
+        if not isNil(v.edge):
           outerNext = loop[i].pair
           outerPrevious = v.edge.previous
           outerNext.previous = outerPrevious
@@ -258,7 +270,7 @@ proc addFace*[Vector](m: var HalfEdgeMesh[Vector], vertices: openArray[MeshVerte
         vertices[ii].edge = loop[ii]
     else:
       if vertices[ii].edge == loop[ii]:
-        for e in toSeq(vertexCirculator(loop[ii]))[1..^1]:
+        for e in toSeq(vertexCirculator(m, loop[ii]))[1..^1]:
           if isNil(e.face):
             vertices[ii].edge = e
             break
@@ -269,13 +281,13 @@ proc addFace*[Vector](m: var HalfEdgeMesh[Vector], vertices: openArray[MeshVerte
           previous = loop[ii].previous
 
         try:
-          let boundary = filter(toSeq(vertexCirculator(loop[ii]))[1..^1],
+          let boundary = filter(toSeq(vertexCirculator(m, loop[ii]))[1..^1],
             proc(e: HalfEdge[Vector]): bool = isNil(e.face))[0]
           makeConsecutive(loop[i], loop[ii])
           makeConsecutive(boundary.previous, next)
           makeConsecutive(previous, boundary)
         except:
-          raise newException(InvalidOperationException,
+          raise newException(InvalidOperationError,
            "Failed to relink half-edges around vertex during face creation")
   result.edge = loop[0]
 
@@ -287,11 +299,11 @@ proc addEdge*[Vector](m: var HalfEdgeMesh[Vector], halfEdge: HalfEdge[Vector]): 
   add(m.edges, halfEdge)
 
 proc addEdges*[Vector](m: var HalfEdgeMesh[Vector], halfEdges: openArray[HalfEdge[Vector]]): void =
-  m.edges = concat(m.edges, halfEdges)
+  m.edges = concat(m.edges, @halfEdges)
 
 proc addPair*[Vector](m: var HalfEdgeMesh[Vector], startVertex, endVertex: MeshVertex[Vector], face: MeshFace[Vector]): HalfEdge[Vector] =
-  result = HalfEdge[Vector](vertex: startVertex, face: face, pair: nil, next: nil, previous: nil)
-  var halfEdge2 = HalfEdge[Vector](vertex: endVertex, face: nil, pair: result, next: nil, previous: nil)
+  result = halfEdge[Vector](startVertex, face, nil, nil, nil)
+  var halfEdge2 = halfEdge[Vector](endVertex, nil, result, nil, nil)
   result.pair = halfEdge2
   addEdges(m, @[result, halfEdge2])
 
@@ -318,5 +330,35 @@ proc findHalfEdge*[Vector](m: HalfEdgeMesh[Vector], startVertex, endVertex: Mesh
     if endVertex == he.pair.vertex:
       result = he
       break
+
+# Support
+const NIL_STRING = "nil"
+proc nilOid[Vector](vertex: MeshVertex[Vector]): string =
+  result = if isNil(vertex): NIL_STRING else: $vertex.oid
+
+proc nilOid[Vector](face: MeshFace[Vector]): string =
+  result = if isNil(face): NIL_STRING else: $face.oid
+
+proc nilOid[Vector](halfEdge: HalfEdge[Vector]): string =
+  result = if isNil(halfEdge): NIL_STRING else: $halfEdge.oid
+
+proc `$`*[Vector](vertex: MeshVertex[Vector]): string =
+  result = "{ oid: " &
+    $vertex.oid & ", position: " &
+    $vertex.position & ", edge: " &
+    nilOid(vertex.edge) & " }"
+
+proc `$`*[Vector](face: MeshFace[Vector]): string =
+  result = "{ oid: " &
+    $face.oid & ", edge: " &
+    nilOid(face.edge) & " }"
+
+proc `$`*[Vector](edge: HalfEdge[Vector]): string =
+  result = "{ oid: " &
+    $edge.oid & ", face: " &
+    nilOid(edge.face) & ", pair: " &
+    nilOid(edge.pair) & ", next: " &
+    nilOid(edge.next) & ", previous: " &
+    nilOid(edge.previous) & " }"
 
 # TODO: EULER OPERATIONS

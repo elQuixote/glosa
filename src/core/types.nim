@@ -1,3 +1,5 @@
+import oids
+
 type
   # Vectors
   Vector1* = object
@@ -46,13 +48,16 @@ type
 
   # Mesh
   MeshVertex*[Vector] = ref object
+    oid*: Oid
     position*: Vector
     edge*: HalfEdge[Vector]
 
   MeshFace*[Vector] = ref object
+    oid*: Oid
     edge*: HalfEdge[Vector]
 
   HalfEdge*[Vector] = ref object
+    oid*: Oid
     vertex*: MeshVertex[Vector]
     face*: MeshFace[Vector]
     pair*: HalfEdge[Vector]
