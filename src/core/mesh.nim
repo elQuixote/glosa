@@ -60,6 +60,12 @@ from ./Path import
   closestPoint,
   average
 
+from ./Polygon import
+  polygon,
+  centroid,
+  perimeter,
+  area
+
 import oids
 from sequtils import concat, toSeq, map, filter
 
@@ -314,9 +320,21 @@ proc closestPoint*[Vector](m: HalfEdgeMesh[Vector], face: MeshFace[Vector]): Vec
   let vertices = toSeq(faceCirculator(m, face.edge))
   result = closestPoint(polyline(vertices), true)
 
+proc centroid*[Vector](m: HalfEdgeMesh[Vector], face: MeshFace[Vector]): Vector =
+  let vertices = toSeq(faceCirculator(m, face.edge))
+  result = centroid(polygon(vertices))
+
 proc average*[Vector](m: HalfEdgeMesh[Vector], face: MeshFace[Vector]): Vector =
   let vertices = toSeq(faceCirculator(m, face.edge))
   result = average(polyline(vertices), true)
+
+proc perimeter*[Vector](m: HalfEdgeMesh[Vector], face: MeshFace[Vector]): float =
+  let vertices = toSeq(faceCirculator(m, face.edge))
+  result = perimeter(polygon(vertices))
+
+proc area*[Vector](m: HalfEdgeMesh[Vector], face: MeshFace[Vector]): float =
+  let vertices = toSeq(faceCirculator(m, face.edge))
+  result = area(polygon(vertices))
 
 # Edges
 proc addEdge*[Vector](m: var HalfEdgeMesh[Vector], halfEdge: HalfEdge[Vector]): void =
