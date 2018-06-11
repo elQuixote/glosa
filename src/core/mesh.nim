@@ -55,6 +55,11 @@ from ./Vector import
   translate,
   transform
 
+from ./Path import
+  polyline,
+  closestPoint,
+  average
+
 import oids
 from sequtils import concat, toSeq, map, filter
 
@@ -302,6 +307,16 @@ proc addFace*[Vector](m: var HalfEdgeMesh[Vector], vertices: openArray[MeshVerte
 
 proc addFaces*[Vector](m: var HalfEdgeMesh[Vector], faces: openArray[MeshFace[Vector]]): void =
   m.faces  =concat(m.faces, faces)
+
+# Face Operations
+# NOTE: Path/Polygon operations need to be expanded, all currently empty (unfilled) face operations
+proc closestPoint*[Vector](m: HalfEdgeMesh[Vector], face: MeshFace[Vector]): Vector =
+  let vertices = toSeq(faceCirculator(m, face.edge))
+  result = closestPoint(polyline(vertices), true)
+
+proc average*[Vector](m: HalfEdgeMesh[Vector], face: MeshFace[Vector]): Vector =
+  let vertices = toSeq(faceCirculator(m, face.edge))
+  result = average(polyline(vertices), true)
 
 # Edges
 proc addEdge*[Vector](m: var HalfEdgeMesh[Vector], halfEdge: HalfEdge[Vector]): void =

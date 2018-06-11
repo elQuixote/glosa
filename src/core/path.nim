@@ -3,8 +3,6 @@ from ./concepts import
   Hash,
   Transform,
   Dimension,
-  # Set,
-  # Clear,
   Copy,
   String,
   Centroid,
@@ -33,8 +31,6 @@ export
   Hash,
   Transform,
   Dimension,
-  # Set,
-  # Clear,
   Copy,
   String,
   Centroid,
@@ -194,7 +190,7 @@ proc reverse*[Vector](p: var Polyline[Vector]): var Polyline[Vector] =
   var list = newSeq[Vector](len(p.vertices))
   for i, x in p.vertices:
     list[p.vertices.high-i] = x
-  p.vertices = list 
+  p.vertices = list
   result = p
 
 # NOTE: This is added from design doc
@@ -206,7 +202,7 @@ proc contains*[Vector](p: Polyline[Vector], s: LineSegment): bool =
 
 # NOTE: This is added from design doc
 proc containsPoint*[Vector](p: Polyline[Vector], v: Vector): bool =
-  # Checks if a point is contained within the polygon
+  # Checks if a point is contained within the Polyline
   let l = len(p.vertices)
   var
     j = l - 1
@@ -221,7 +217,7 @@ proc containsPoint*[Vector](p: Polyline[Vector], v: Vector): bool =
     j = i
   result = nodes
 
-# Equals (compares points in polygon)
+# Equals (compares points in Polyline)
 proc `==`*[Vector](p1, p2: Polyline[Vector]): bool =
   let
     l1 = len(p1.vertices)
