@@ -37,82 +37,20 @@ var m = HalfEdgeMesh[Vector3](
     aVertex,
     bVertex,
     cVertex,
-    dVertex
+    dVertex,
+    eVertex
   ],
   faces: @[],
   edges: @[])
 
+echo "Adding Face"
 discard addFace(m, @[aVertex, bVertex, cVertex])
-
-for e in halfEdgeCirculator(m, aVertex):
-  echo $e
-
-for e in halfEdgeCirculator(m, bVertex):
-  echo $e
-
-for e in halfEdgeCirculator(m, cVertex):
-  echo $e
 
 echo "Adding Face"
 discard addFace(m, @[aVertex, cVertex, dVertex])
 
-for e in halfEdgeCirculator(m, aVertex):
-  echo $e
+echo "Adding Face"
+discard addFace(m, @[cVertex, bVertex, eVertex])
 
 for e in halfEdgeCirculator(m, bVertex):
   echo $e
-
-for e in halfEdgeCirculator(m, cVertex):
-  echo $e
-
-# Pairing
-# abEdge.pair = baEdge
-# baEdge.pair = abEdge
-# bcEdge.pair = cbEdge
-# cbEdge.pair = bcEdge
-# acEdge.pair = caEdge
-# caEdge.pair = acEdge
-
-# adEdge.pair = daEdge
-# daEdge.pair = adEdge
-# dcEdge.pair = cdEdge
-# cdEdge.pair = dcEdge
-
-# # Nexting / Previousing
-# abEdge.next = bcEdge
-# abEdge.previous = caEdge
-
-# baEdge.next = acEdge
-# baEdge.previous = cbEdge
-
-# bcEdge.next = caEdge
-# bcEdge.previous = abEdge
-
-# cbEdge.next = baEdge
-# cbEdge.previous = acEdge
-
-# acEdge.next = cbEdge
-# acEdge.previous = baEdge
-
-# caEdge.next = abEdge
-# caEdge.previous = bcEdge
-
-# adEdge.next = dcEdge
-# adEdge.previous = caEdge
-
-# daEdge.next = acEdge
-# daEdge.previous = cdEdge
-
-# dcEdge.next = caEdge
-# dcEdge.previous = adEdge
-
-# cdEdge.next = daEdge
-# cdEdge.previous = acEdge
-
-# abEdge.face = abcFace
-# bcEdge.face = abcFace
-# caEdge.face = abcFace
-
-# acEdge.face = acdFace
-# cdEdge.face = acdFace
-# daEdge.face = acdFace

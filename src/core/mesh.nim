@@ -11,7 +11,10 @@ from ./concepts import
   Vertices
 
 from ./types import
+  Vector1,
+  Vector2,
   Vector3,
+  Vector4,
   MeshVertex,
   MeshFace,
   HalfEdge,
@@ -46,10 +49,16 @@ from ./Vector import
   clearCopy,
   cross,
   normalize,
-  `$`
+  `$`,
+  rotate,
+  scale,
+  translate,
+  transform
 
 import oids
 from sequtils import concat, toSeq, map, filter
+
+import hashes
 
 # Constructors
 proc meshVertex*[Vector](position: Vector, edge: HalfEdge[Vector]): MeshVertex[Vector] =
@@ -129,7 +138,7 @@ iterator halfEdgeCirculator*[Vector](m: HalfEdgeMesh[Vector], vertex: MeshVertex
       # Edge is not in the mesh
       break
     if halfEdge.vertex != vertex:
-      # Ege does not start at the vertex
+      # Edge does not start at the vertex
       break
     for h in halfEdgeCirculator(m, halfEdge.vertex):
       yield h
@@ -331,34 +340,113 @@ proc findHalfEdge*[Vector](m: HalfEdgeMesh[Vector], startVertex, endVertex: Mesh
       result = he
       break
 
+# Transforms
+# Rotate
+proc rotate*(mesh: var HalfEdgeMesh[Vector2], theta: float): var HalfEdgeMesh[Vector2] {.noinit.} =
+  for i in 0..<len(mesh.vertices):
+    mesh.vertices[i].position = rotate(mesh.vertices[i].position, theta)
+  result = mesh
+
+proc rotate*(mesh: var HalfEdgeMesh[Vector3], axis: Vector3, theta: float): var HalfEdgeMesh[Vector3] {.noinit.} =
+  for i in 0..<len(mesh.vertices):
+    mesh.vertices[i].position = rotate(mesh.vertices[i].position, axis, theta)
+  result = mesh
+
+proc rotate*(mesh: var HalfEdgeMesh[Vector4], b1, b2: Vector4, theta: float, b3, b4: Vector4, phi: float): var HalfEdgeMesh[Vector4] {.noinit.} =
+  for i in 0..<len(mesh.vertices):
+    mesh.vertices[i].position = rotate(mesh.vertices[i].position, b1, b2, theta, b3, b4, phi)
+  result = mesh
+
+# Scale
+proc scale*[Vector](mesh: var HalfEdgeMesh[Vector], s: float): var HalfEdgeMesh[Vector] {.noinit.} =
+  for i in 0..<len(mesh.vertices):
+    mesh.vertices[i].position = scale(mesh.vertices[i].position, s)
+  result = mesh
+
+proc scale*(mesh: var HalfEdgeMesh[Vector2], sx, sy: float): var HalfEdgeMesh[Vector2] {.noinit.} =
+  for i in 0..<len(mesh.vertices):
+    mesh.vertices[i].position = scale(mesh.vertices[i].position, sx, sy)
+  result = mesh
+
+proc scale*(mesh: var HalfEdgeMesh[Vector3], sx, sy, sz: float): var HalfEdgeMesh[Vector3] {.noinit.} =
+  for i in 0..<len(mesh.vertices):
+    mesh.vertices[i].position = scale(mesh.vertices[i].position, sx, sy, sz)
+  result = mesh
+
+proc scale*(mesh: var HalfEdgeMesh[Vector4], sx, sy, sz, sw: float): var HalfEdgeMesh[Vector4] {.noinit.} =
+  for i in 0..<len(mesh.vertices):
+    mesh.vertices[i].position = scale(mesh.vertices[i].position, sx, sy, sz, sw)
+  result = mesh
+
+# Translate
+proc translate*[Vector](mesh: var HalfEdgeMesh[Vector], v: Vector): var HalfEdgeMesh[Vector] {.noinit.} =
+  for i in 0..<len(mesh.vertices):
+    mesh.vertices[i].position = translate(mesh.vertices[i].position, v)
+  result = mesh
+
+# Transform(Matrix)
+proc transform*[Vector, Matrix](mesh: var HalfEdgeMesh[Vector], m: Matrix): var HalfEdgeMesh[Vector] {.noinit.} =
+  for i in 0..<len(mesh.vertices):
+    mesh.vertices[i].position = transform(mesh.vertices[i].position, m)
+  result = mesh
+
 # Support
 const NIL_STRING = "nil"
-proc nilOid[Vector](vertex: MeshVertex[Vector]): string =
+proc genOidString[Vector](vertex: MeshVertex[Vector]): string =
   result = if isNil(vertex): NIL_STRING else: $vertex.oid
 
-proc nilOid[Vector](face: MeshFace[Vector]): string =
+proc genOidString[Vector](face: MeshFace[Vector]): string =
   result = if isNil(face): NIL_STRING else: $face.oid
 
-proc nilOid[Vector](halfEdge: HalfEdge[Vector]): string =
+proc genOidString[Vector](halfEdge: HalfEdge[Vector]): string =
   result = if isNil(halfEdge): NIL_STRING else: $halfEdge.oid
 
 proc `$`*[Vector](vertex: MeshVertex[Vector]): string =
   result = "{ oid: " &
     $vertex.oid & ", position: " &
     $vertex.position & ", edge: " &
-    nilOid(vertex.edge) & " }"
+    genOidString(vertex.edge) & " }"
 
 proc `$`*[Vector](face: MeshFace[Vector]): string =
   result = "{ oid: " &
     $face.oid & ", edge: " &
-    nilOid(face.edge) & " }"
+    genOidString(face.edge) & " }"
 
 proc `$`*[Vector](edge: HalfEdge[Vector]): string =
   result = "{ oid: " &
     $edge.oid & ", face: " &
-    nilOid(edge.face) & ", pair: " &
-    nilOid(edge.pair) & ", next: " &
-    nilOid(edge.next) & ", previous: " &
-    nilOid(edge.previous) & " }"
+    genOidString(edge.face) & ", pair: " &
+    genOidString(edge.pair) & ", next: " &
+    genOidString(edge.next) & ", previous: " &
+    genOidString(edge.previous) & " }"
+
+proc hash*[Vector](vertex: MeshVertex[Vector]): hashes.Hash =
+  result = !$(result !& hash(vertex.oid))
+
+proc hash*[Vector](face: MeshFace[Vector]): hashes.Hash =
+  result = !$(result !& hash(face.oid))
+
+proc hash*[Vector](edge: HalfEdge[Vector]): hashes.Hash =
+  result = !$(result !& hash(edge.oid))
+
+proc hash*[Vector](mesh: HalfEdgeMesh[Vector]): hashes.Hash =
+  for vertex in mesh.vertices:
+    result = !$(result !& hash(vertex))
+  for face in mesh.faces:
+    result = !$(result !& hash(face))
+  for edge in mesh.edges:
+    result = !$(result !& hash(edge))
+
+proc dimension*(mesh: HalfEdgeMesh[Vector1]): int =
+  result = 1
+
+proc dimension*(mesh: HalfEdgeMesh[Vector2]): int =
+  result = 2
+
+proc dimension*(mesh: HalfEdgeMesh[Vector3]): int =
+  result = 3
+
+proc dimension*(mesh: HalfEdgeMesh[Vector4]): int =
+  result = 4
 
 # TODO: EULER OPERATIONS
