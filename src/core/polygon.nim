@@ -115,30 +115,32 @@ proc polygon*[Vector](vertices: openArray[Vector]): Polygon[Vector] =
 #   result = p
 
 # Accessors
-proc vertices*[Vector](p: Polygon[Vector]): seq[Vector] {.inline.} =
-  result = p.polyline.vertices
+# proc vertices*[Vector](p: Polygon[Vector]): seq[Vector] {.inline.} =
+#   result = p.polyline.vertices
 
-proc segments*[Vector](p: Polygon[Vector]): seq[LineSegment[Vector]] {.inline.} =
-  result = p.polyline.segments
+# proc segments*[Vector](p: Polygon[Vector]): seq[LineSegment[Vector]] {.inline.} =
+#   result = p.polyline.segments
 
-proc faces*[Vector](p: Polygon[Vector]): seq[LineSegment[Vector]] {.inline.} = p.segments
+# proc faces*[Vector](p: Polygon[Vector]): seq[LineSegment[Vector]] {.inline.} = p.segments
 
 # Iterators
 iterator vertices*[Vector](p: Polygon[Vector]): Vector =
-  for v in p.vertices:
+  for v in p.polyline.vertices:
     yield v
 
 iterator segments*[Vector](p: Polygon[Vector]): LineSegment[Vector] =
-  for s in p.segments:
+  for s in p.polyline.segments:
     yield s
 
 iterator faces*[Vector](p: Polygon[Vector]): LineSegment[Vector] =
-  for s in p.segments:
+  for s in p.polyline.segments:
     yield s
 
 # NOTE: This is added from design doc
-proc reverse*[Vector](p: Polygon[Vector]): Polygon[Vector] =
-  result = polygon(reverse(p.polyline))
+# NOTE: Remove returns for all in place operations
+proc reverse*[Vector](p: var Polygon[Vector]): var Polygon[Vector] =
+  p.polyline = reverse(p.polyline)
+  result = p
 
 # NOTE: This is added from design doc
 proc contains*[Vector](p: Polygon[Vector], v: Vector): bool =
@@ -170,7 +172,7 @@ proc dimension*[Vector](p: Polygon[Vector]): int =
 
 # Copy
 proc copy*[Vector](p: Polygon[Vector]): Polygon[Vector] =
-  result = Polygon(polyline: copy(p.polyline))
+  result = Polygon[Vector](polyline: copy(p.polyline))
 
 # String
 proc `$`*[Vector](p: Polygon[Vector]): string =
@@ -178,7 +180,7 @@ proc `$`*[Vector](p: Polygon[Vector]): string =
 
 # Area
 proc signedArea[Vector](p: Polygon[Vector]): float =
-  for s in p.segments:
+  for s in p.polyline.segments:
     let
       a = s.startVertex
       b = s.endVertex
@@ -190,15 +192,16 @@ proc area*[Vector](p: Polygon[Vector]): float = abs(signedArea(p))
 
 # Perimeter (the circumference)
 proc perimeter*[Vector](p: Polygon[Vector]): float =
-  for s in p.segments:
+  for s in p.polyline.segments:
     result += distanceTo(s.startVertex, s.endVertex)
 
 # Centroid
 proc centroid*[Vector](p: Polygon[Vector]): Vector =
-  let l = len(p.vertices)
+  let l = len(p.polyline.vertices)
   if l > 0:
-    result = clear(copy(p.vertices[0]))
-    for s in p.segments:
+    var v1 = copy(p.polyline.vertices[0])
+    result = v1.clear()
+    for s in p.polyline.segments:
       let
         a = s.startVertex
         b = s.endVertex
@@ -229,8 +232,16 @@ proc isClockwise*[Vector](p: Polygon[Vector]): bool =
 
 # Predicate Transforms
 # Rotate
-proc rotate*[Vector](p: var Polygon[Vector], theta: float): var Polygon[Vector] {.noinit.} =
+proc rotate*[Vector2](p: var Polygon[Vector2], theta: float): var Polygon[Vector2] {.noinit.} =
   p.polyline = rotate(p.polyline, theta)
+  result = p
+
+proc rotate*[Vector3](p: var Polygon[Vector3], axis: Vector3, theta: float): var Polygon[Vector3] {.noinit.} =
+  p.polyline = rotate(p.polyline, axis, theta)
+  result = p
+
+proc rotate*[Vector4](p: var Polygon[Vector4], b1, b2: Vector4, theta: float, b3, b4: Vector4, phi: float): var Polygon[Vector4] {.noinit.} =
+  p.polyline = rotate(p.polyline, b1, b2, theta, b3, b4, phi)
   result = p
 
 # Scale
@@ -238,12 +249,16 @@ proc scale*[Vector](p: var Polygon[Vector], s: float): var Polygon[Vector] {.noi
   p.polyline = scale(p.polyline, s)
   result = p
 
-proc scale*[Vector](p: var Polygon[Vector], sx, sy: float): var Polygon[Vector] {.noinit.} =
+proc scale*[Vector2](p: var Polygon[Vector2], sx, sy: float): var Polygon[Vector2] {.noinit.} =
   p.polyline = scale(p.polyline, sx, sy)
   result = p
 
-proc scale*[Vector](p: var Polygon[Vector], sx, sy, sz: float): var Polygon[Vector] {.noinit.} =
+proc scale*[Vector3](p: var Polygon[Vector3], sx, sy, sz: float): var Polygon[Vector3] {.noinit.} =
   p.polyline = scale(p.polyline, sx, sy, sz)
+  result = p
+
+proc scale*[Vector4](p: var Polygon[Vector4], sx, sy, sz, sw: float): var Polygon[Vector4] {.noinit.} =
+  p.polyline = scale(p.polyline, sx, sy, sz, sw)
   result = p
 
 # Translate
@@ -252,7 +267,7 @@ proc translate*[Vector](p: var Polygon[Vector], v: Vector): var Polygon[Vector] 
   result = p
 
 # Transform
-proc transform*[Vector](p: var Polygon[Vector], m : Matrix): var Polygon[Vector] {.noinit.} =
+proc transform*[Vector, Matrix](p: var Polygon[Vector], m : Matrix): var Polygon[Vector] {.noinit.} =
   p.polyline = transform(p.polyline, m)
   result = p
 

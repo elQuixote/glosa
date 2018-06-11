@@ -4,10 +4,8 @@ from ./concepts import
   Hash,
   Transform,
   Dimension,
-  # Clear,
   Copy,
   String,
-  # Centroid,
   Closest
 
 from ./types import
@@ -31,10 +29,8 @@ export
   Hash,
   Transform,
   Dimension,
-  # Clear,
   Copy,
   String,
-  # Centroid,
   Closest,
   NurbsCurve,
   InvalidDegreeError,
