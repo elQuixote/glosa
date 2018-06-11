@@ -54,3 +54,9 @@ discard addFace(m, @[cVertex, bVertex, eVertex])
 
 for e in halfEdgeCirculator(m, bVertex):
   echo $e
+
+echo "Copying Mesh"
+let newMesh = copy(m)
+
+echo $m
+echo $newMesh

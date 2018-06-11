@@ -50,6 +50,7 @@ from ./Vector import
   cross,
   normalize,
   `$`,
+  copy,
   rotate,
   scale,
   translate,
@@ -67,6 +68,7 @@ from ./Polygon import
   area
 
 import oids
+import tables
 from sequtils import concat, toSeq, map, filter
 
 import hashes
@@ -310,6 +312,7 @@ proc addFace*[Vector](m: var HalfEdgeMesh[Vector], vertices: openArray[MeshVerte
           raise newException(InvalidOperationError,
            "Failed to relink half-edges around vertex during face creation")
   result.edge = loop[0]
+  add(m.faces, result)
 
 proc addFaces*[Vector](m: var HalfEdgeMesh[Vector], faces: openArray[MeshFace[Vector]]): void =
   m.faces  =concat(m.faces, faces)
@@ -372,6 +375,40 @@ proc findHalfEdge*[Vector](m: HalfEdgeMesh[Vector], startVertex, endVertex: Mesh
     if endVertex == he.pair.vertex:
       result = he
       break
+
+# Copy
+proc lookUpOid[T](obj: T, table: Table[string, int], s: seq[T]): T =
+  if isNil(obj):
+    return nil
+  else:
+    return s[table[$obj.oid]]
+
+proc copy*[Vector](m: HalfEdgeMesh[Vector]): HalfEdgeMesh[Vector] =
+  var
+    vertexTable = initTable[string, int]()
+    faceTable = initTable[string, int]()
+    edgeTable = initTable[string, int]()
+  result = halfEdgeMesh[Vector]()
+  for i, v in pairs(m.vertices):
+    vertexTable[$v.oid] = i
+    add(result.vertices, meshVertex[Vector](copy(v.position), nil))
+  for i, f in pairs(m.faces):
+    faceTable[$f.oid] = i
+    add(result.faces, meshFace[Vector](nil))
+  for i, e in pairs(m.edges):
+    edgeTable[$e.oid] = i
+    add(result.edges, halfEdge[Vector](nil, nil, nil, nil, nil))
+  for i, oldV in pairs(m.vertices):
+    result.vertices[i].edge = lookUpOid(oldV.edge, edgeTable, result.edges)
+  for i, oldF in pairs(m.faces):
+    result.faces[i].edge = lookUpOid(oldF.edge, edgeTable, result.edges)
+  for i, oldE in pairs(m.edges):
+    result.edges[i].vertex = lookUpOid(oldE.vertex, vertexTable, result.vertices)
+    result.edges[i].face = lookUpOid(oldE.face, faceTable, result.faces)
+    result.edges[i].pair = lookUpOid(oldE.pair, edgeTable, result.edges)
+    result.edges[i].next = lookUpOid(oldE.next, edgeTable, result.edges)
+    result.edges[i].previous = lookUpOid(oldE.previous, edgeTable, result.edges)
+
 
 # Transforms
 # Rotate
