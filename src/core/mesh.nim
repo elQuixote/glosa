@@ -185,7 +185,7 @@ proc addVertex*[Vector](m: var HalfEdgeMesh[Vector], vector: Vector): void =
   add(m.vertices, meshVertex[Vector](position: vector, edge: nil))
 
 proc addVertices*[Vector](m: var HalfEdgeMesh[Vector], vertices: openArray[MeshVertex[Vector]]): void =
-  m.vertices = concat(m.vertices, vertices)
+  m.vertices = concat(m.vertices, @vertices)
 
 proc outgoingHalfEdges*[Vector](m: HalfEdgeMesh[Vector], vertex: MeshVertex[Vector]): seq[HalfEdge[Vector]] =
   result = toSeq(vertexCirculator(m, vertex.edge))
