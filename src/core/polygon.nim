@@ -63,6 +63,7 @@ from ./vector import
 from ./path import
   polyline,
   areClosed,
+  reverse,
   closestVertex,
   closestPoint,
   containsPoint,
