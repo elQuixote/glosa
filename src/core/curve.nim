@@ -455,9 +455,10 @@ proc calculateRationalSampleDerivatives[Vector, WeightedVector](nc: NurbsCurve[V
     knotSpan = knotSpan(nc, u)
     derivatives = derivativeBasisFunctions(nc, knotSpan, u)
   result = newSeq[WeightedVector](n + 1)
-  for k in 0..du:
+  for i in 0..<len(result):
     var kcopy = copy(weightedControlPoints[0])
-    result[k] = clear(kcopy)
+    result[i] = clear(kcopy)
+  for k in 0..du:
     for j in 0..nc.degree:
       result[k] += multiplyNew(weightedControlPoints[knotSpan - nc.degree + j], derivatives[k][j])
 

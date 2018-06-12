@@ -1,3 +1,5 @@
+import oids
+
 type
   # Vectors
   Vector1* = object
@@ -43,3 +45,26 @@ type
   Circle*[Vector] = object
     center*: Vector
     radius*: float
+
+  # Mesh
+  MeshVertex*[Vector] = ref object
+    oid*: Oid
+    position*: Vector
+    edge*: HalfEdge[Vector]
+
+  MeshFace*[Vector] = ref object
+    oid*: Oid
+    edge*: HalfEdge[Vector]
+
+  HalfEdge*[Vector] = ref object
+    oid*: Oid
+    vertex*: MeshVertex[Vector]
+    face*: MeshFace[Vector]
+    pair*: HalfEdge[Vector]
+    next*: HalfEdge[Vector]
+    previous*: HalfEdge[Vector]
+
+  HalfEdgeMesh*[Vector] = object
+    vertices*: seq[MeshVertex[Vector]]
+    faces*: seq[MeshFace[Vector]]
+    edges*: seq[HalfEdge[Vector]]

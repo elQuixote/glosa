@@ -369,6 +369,11 @@ proc clear*(v: var Vector2): var Vector2 = set(v, 0.0)
 proc clear*(v: var Vector3): var Vector3 = set(v, 0.0)
 proc clear*(v: var Vector4): var Vector4 = set(v, 0.0)
 
+proc clearCopy*(v: Vector1): Vector1 = vector1(0.0)
+proc clearCopy*(v: Vector2): Vector2 = vector2(0.0)
+proc clearCopy*(v: Vector3): Vector3 = vector3(0.0)
+proc clearCopy*(v: Vector4): Vector4 = vector4(0.0)
+
 # Inverse
 # NOTE: Changed/Added from design doc
 proc inverseSelf*(v: var Vector1): var Vector1 {.noinit.} =
@@ -922,16 +927,16 @@ proc distanceToSquared*(v1, v2: Vector4): float =
   result = a * a + b * b + c * c + d * d
 
 proc distanceTo*(v1, v2: Vector1): float =
-  result = v1.subtractNew(v2).length()
+  result = length(subtractNew(v1, v2))
 
 proc distanceTo*(v1, v2: Vector2): float =
-  result = v1.subtractNew(v2).length()
+  result = length(subtractNew(v1, v2))
 
 proc distanceTo*(v1, v2: Vector3): float =
-  result = v1.subtractNew(v2).length()
+  result = length(subtractNew(v1, v2))
 
 proc distanceTo*(v1, v2: Vector4): float =
-  result = v1.subtractNew(v2).length()
+  result = length(subtractNew(v1, v2))
 
 # Interpolate To
 # NOTE: This is added from design doc
