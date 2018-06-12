@@ -68,8 +68,10 @@ from ./vector import
   rotate,
   scale,
   translate,
+  vector1FromJsonNode,
   vector2FromJsonNode,
   vector3FromJsonNode,
+  vector4FromJsonNode,
   toJson
 
 from ./binomial import binGet
@@ -474,20 +476,20 @@ proc sample*[Vector](nc: NurbsCurve[Vector], u: float): Vector =
 
 proc regularSampleWithParameter*[Vector](nc: NurbsCurve[Vector], ustart, uend: float, n: int): seq[tuple[u: float, v: Vector]] =
   result = newSeq[tuple[u: float, v: Vector]](n)
-  let span = (ustart - uend) / (n - 1)
+  let span = (ustart - uend) / (float)(n - 1)
   for i in 0..<n:
-    let u = ustart + span * i
-    result[i] = (u: u, v: sample(curve, u))
+    let u = ustart + span * (float)i
+    result[i] = (u: u, v: sample(nc, u))
 
 proc regularSampleWithParameter*[Vector](nc: NurbsCurve[Vector], n: int): seq[tuple[u: float, v: Vector]] =
-  result = regularSampleWithParameter(nc, nc.knot[0], nc.knot[^1], n)
+  result = regularSampleWithParameter(nc, nc.knots[0], nc.knots[^1], n)
 
 proc regularSample*[Vector](nc: NurbsCurve[Vector], ustart, uend: float, n: int): seq[Vector] =
-  result = map(regularSampleWithParameter(nc, nc.knot[0], nc.knot[^1], n),
+  result = map(regularSampleWithParameter(nc, nc.knots[0], nc.knots[^1], n),
     proc(x: tuple[u: float, v: Vector]): Vector = x.v)
 
 proc regularSample*[Vector](nc: NurbsCurve[Vector], n: int): seq[Vector] =
-  result = regularSample(nc, nc.knot[0], nc.knot[^1], n)
+  result = regularSample(nc, nc.knots[0], nc.knots[^1], n)
 
 proc sampleDerivatives*[Vector](nc: NurbsCurve[Vector], u: float, n: int = 1): seq[Vector] =
   let
@@ -576,10 +578,10 @@ proc closestParameter*[Vector](nc: NurbsCurve[Vector], v: Vector): float =
   result = rationalClosestParameter(nc, v)
 
 proc closestPoint*[Vector](nc: NurbsCurve[Vector], v: Vector): Vector =
-  result = sample(closestParameter(nc, v))
+  result = sample(nc, closestParameter(nc, v))
 
 # Transforms
-proc transform*[Vector, Matrix](nc: NurbsCurve[Vector], m: Matrix): Vector =
+proc transform*[Vector, Matrix](nc: NurbsCurve[Vector], m: Matrix): NurbsCurve[Vector] =
   var controlPoints = nc.controlPoints
   for i in 0..<len(controlPoints):
     controlPoints[i] = transform(controlPoints[i], m)
@@ -639,11 +641,12 @@ proc hash*[Vector](nc: NurbsCurve[Vector]): hashes.Hash =
 # Dimension
 proc dimension*[Vector](nc: NurbsCurve[Vector]): int =
   if len(nc.controlPoints) != 0:
-    result = dimension(nc.vertices[0])
+    result = dimension(nc.controlPoints[0])
 
 # Copy
+# NOTE: had to remove the var for compilation
 proc copy*[Vector](nc: NurbsCurve[Vector]): NurbsCurve[Vector] =
-  result = NurbsCurve(degree: nc.degree, controlPoints: var nc.controlPoints, weights: var nc.weights, knots: var nc.knots)
+  result = NurbsCurve[Vector](degree: nc.degree, controlPoints: nc.controlPoints, weights: nc.weights, knots: nc.knots)
 
 # String
 proc `$`*[Vector](nc: NurbsCurve[Vector]): string =
@@ -765,3 +768,95 @@ proc toJson*(nc: NurbsCurve[Vector3]): string =
       result &= "," & $v
     result &= "]"
   result &= "}"
+
+proc toJson*(s: openArray[Vector1]): string =
+  if len(s) > 0:
+    result = "{\"points\":[" & toJson(s[0])
+    for v in s[1..^1]:
+      result &= "," & toJson(v)
+    result &= "]}"
+
+proc toJson*(s: openArray[Vector2]): string =
+  if len(s) > 0:
+    result = "{\"points\":[" & toJson(s[0])
+    for v in s[1..^1]:
+      result &= "," & toJson(v)
+    result &= "]}"
+
+proc toJson*(s: openArray[Vector3]): string =
+  if len(s) > 0:
+    result = "{\"points\":[" & toJson(s[0])
+    for v in s[1..^1]:
+      result &= "," & toJson(v)
+    result &= "]}"
+
+proc toJson*(s: openArray[Vector4]): string =
+  if len(s) > 0:
+    result = "{\"points\":[" & toJson(s[0])
+    for v in s[1..^1]:
+      result &= "," & toJson(v)
+    result &= "]}"
+
+proc toJson*(s: openArray[float]): string =
+  if len(s) > 0:
+    result = "{\"data\":[" & $s[0]
+    for v in s[1..^1]:
+      result &= "," & $v
+    result &= "]}"
+
+proc mapVector1Vertices(vertices: JsonNode): seq[Vector1] =
+  result = map(getElems(vertices), proc(n: JsonNode): Vector1 = vector1FromJsonNode(n))
+
+proc mapVector2Vertices(vertices: JsonNode): seq[Vector2] =
+  result = map(getElems(vertices), proc(n: JsonNode): Vector2 = vector2FromJsonNode(n))
+
+proc mapVector3Vertices(vertices: JsonNode): seq[Vector3] =
+  result = map(getElems(vertices), proc(n: JsonNode): Vector3 = vector3FromJsonNode(n))
+
+proc mapVector4Vertices(vertices: JsonNode): seq[Vector4] =
+  result = map(getElems(vertices), proc(n: JsonNode): Vector4 = vector4FromJsonNode(n))
+
+proc mapFloats(data: JsonNode): seq[float] =
+  result = map(getElems(data), proc(n: JsonNode): float = getfloat(n))
+
+proc mapVector1Seq*(jsonString: string): seq[Vector1] = 
+  try:
+    let jsonNode = parseJson(jsonString)
+    result = mapVector1Vertices(jsonNode["points"])
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+proc mapVector2Seq*(jsonString: string): seq[Vector2] = 
+  try:
+    let jsonNode = parseJson(jsonString)
+    result = mapVector2Vertices(jsonNode["points"])
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+proc mapVector3Seq*(jsonString: string): seq[Vector3] = 
+  try:
+    let jsonNode = parseJson(jsonString)
+    result = mapVector3Vertices(jsonNode["points"])
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+proc mapVector4Seq*(jsonString: string): seq[Vector4] = 
+  try:
+    let jsonNode = parseJson(jsonString)
+    result = mapVector4Vertices(jsonNode["points"])
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+proc mapFloatSeq*(jsonString: string): seq[float] = 
+  try:
+    let jsonNode = parseJson(jsonString)
+    result = mapFloats(jsonNode["data"])
+  except:
+    raise newException(InvalidJsonError,
+      "JSON is formatted incorrectly")
+
+
