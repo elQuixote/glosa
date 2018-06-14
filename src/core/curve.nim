@@ -677,28 +677,28 @@ proc mapVector3Sequence(vectors: JsonNode): seq[Vector3] =
   result = map(getElems(vectors), proc(n: JsonNode): Vector3 = vector3FromJsonNode(n))
 
 proc nurbsCurve2FromJsonNode(jsonNode: JsonNode): NurbsCurve[Vector2] =
-  try:
-    let
-      degree = getInt(jsonNode["degree"])
-      controlPoints = mapVector2Sequence(jsonNode["controlPoints"])
-      weights = map(getElems(jsonNode["weights"]), proc(n: JsonNode): float = getFloat(n))
-      knots = map(getElems(jsonNode["knots"]), proc(n: JsonNode): float = getFloat(n))
-    result = nurbsCurve(controlPoints, weights, knots, degree)
-  except:
-    raise newException(InvalidJsonError,
-      "JSON is formatted incorrectly")
+  # try:
+  let
+    degree = getInt(jsonNode["degree"])
+    controlPoints = mapVector2Sequence(jsonNode["controlPoints"])
+    weights = map(getElems(jsonNode["weights"]), proc(n: JsonNode): float = getFloat(n))
+    knots = map(getElems(jsonNode["knots"]), proc(n: JsonNode): float = getFloat(n))
+  result = nurbsCurve(controlPoints, weights, knots, degree)
+  # except:
+  #   raise newException(InvalidJsonError,
+  #     "JSON is formatted incorrectly")
 
 proc nurbsCurve3FromJsonNode(jsonNode: JsonNode): NurbsCurve[Vector3] =
-  try:
-    let
-      degree = getInt(jsonNode["degree"])
-      controlPoints = mapVector3Sequence(jsonNode["controlPoints"])
-      weights = map(getElems(jsonNode["weights"]), proc(n: JsonNode): float = getFloat(n))
-      knots = map(getElems(jsonNode["knots"]), proc(n: JsonNode): float = getFloat(n))
-    result = nurbsCurve(controlPoints, weights, knots, degree)
-  except:
-    raise newException(InvalidJsonError,
-      "JSON is formatted incorrectly")
+  # try:
+  let
+    degree = getInt(jsonNode["degree"])
+    controlPoints = mapVector3Sequence(jsonNode["controlPoints"])
+    weights = map(getElems(jsonNode["weights"]), proc(n: JsonNode): float = getFloat(n))
+    knots = map(getElems(jsonNode["knots"]), proc(n: JsonNode): float = getFloat(n))
+  result = nurbsCurve(controlPoints, weights, knots, degree)
+  # except:
+  #   raise newException(InvalidJsonError,
+  #     "JSON is formatted incorrectly")
 
 proc nurbsCurve2FromJson*(jsonString: string): NurbsCurve[Vector2] =
   result = nurbsCurve2FromJsonNode(parseJson(jsonString))
