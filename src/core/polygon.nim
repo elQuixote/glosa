@@ -274,32 +274,16 @@ proc transform*[Vector, Matrix](p: var Polygon[Vector], m : Matrix): var Polygon
 
 # JSON
 proc polygon1FromJsonNode*(jsonNode: JsonNode): Polygon[Vector1] =
-  try:
-    result = polygon(polyline1FromJsonNode(jsonNode["polyline"]))
-  except:
-    raise newException(InvalidJsonError,
-      "JSON is formatted incorrectly")
+  result = polygon(polyline1FromJsonNode(jsonNode["polyline"]))
 
 proc polygon2FromJsonNode*(jsonNode: JsonNode): Polygon[Vector2] =
-  try:
-    result = polygon(polyline2FromJsonNode(jsonNode["polyline"]))
-  except:
-    raise newException(InvalidJsonError,
-      "JSON is formatted incorrectly")
+  result = polygon(polyline2FromJsonNode(jsonNode["polyline"]))
 
 proc polygon3FromJsonNode*(jsonNode: JsonNode): Polygon[Vector3] =
-  try:
-    result = polygon(polyline3FromJsonNode(jsonNode["polyline"]))
-  except:
-    raise newException(InvalidJsonError,
-      "JSON is formatted incorrectly")
+  result = polygon(polyline3FromJsonNode(jsonNode["polyline"]))
 
 proc polygon4FromJsonNode*(jsonNode: JsonNode): Polygon[Vector4] =
-  try:
-    result = polygon(polyline4FromJsonNode(jsonNode["polyline"]))
-  except:
-    raise newException(InvalidJsonError,
-      "JSON is formatted incorrectly")
+  result = polygon(polyline4FromJsonNode(jsonNode["polyline"]))
 
 proc polygon1FromJson*(jsonString: string): Polygon[Vector1] =
   result = polygon1FromJsonNode(parseJson(jsonString))

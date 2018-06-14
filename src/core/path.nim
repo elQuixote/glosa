@@ -463,56 +463,40 @@ proc mapVector4Segments(segments: JsonNode): seq[LineSegment[Vector4]] =
   result = map(getElems(segments), proc(n: JsonNode): LineSegment[Vector4] = lineSegment4FromJsonNode(n))
 
 proc polyline1FromJsonNode*(jsonNode: JsonNode): Polyline[Vector1] =
-  try:
-    if contains(jsonNode, "vertices"):
-      result = polyline(mapVector1Vertices(jsonNode["vertices"]), getBool(jsonNode["closed"]))
-    elif contains(jsonNode, "segments"):
-      result = polyline(mapVector1Segments(jsonNode["segments"]))
-    else:
-      raise newException(InvalidJsonError,
-        "Incorrect JSON arguments")
-  except:
+  if contains(jsonNode, "vertices"):
+    result = polyline(mapVector1Vertices(jsonNode["vertices"]), getBool(jsonNode["closed"]))
+  elif contains(jsonNode, "segments"):
+    result = polyline(mapVector1Segments(jsonNode["segments"]))
+  else:
     raise newException(InvalidJsonError,
-      "JSON is formatted incorrectly")
+      "Incorrect JSON arguments")
 
 proc polyline2FromJsonNode*(jsonNode: JsonNode): Polyline[Vector2] =
-  try:
-    if contains(jsonNode, "vertices"):
-      result = polyline(mapVector2Vertices(jsonNode["vertices"]), getBool(jsonNode["closed"]))
-    elif contains(jsonNode, "segments"):
-      result = polyline(mapVector2Segments(jsonNode["segments"]))
-    else:
-      raise newException(InvalidJsonError,
-        "Incorrect JSON arguments")
-  except:
+  if contains(jsonNode, "vertices"):
+    result = polyline(mapVector2Vertices(jsonNode["vertices"]), getBool(jsonNode["closed"]))
+  elif contains(jsonNode, "segments"):
+    result = polyline(mapVector2Segments(jsonNode["segments"]))
+  else:
     raise newException(InvalidJsonError,
-      "JSON is formatted incorrectly")
+      "Incorrect JSON arguments")
 
 proc polyline3FromJsonNode*(jsonNode: JsonNode): Polyline[Vector3] =
-  try:
-    if contains(jsonNode, "vertices"):
-      result = polyline(mapVector3Vertices(jsonNode["vertices"]), getBool(jsonNode["closed"]))
-    elif contains(jsonNode, "segments"):
-      result = polyline(mapVector3Segments(jsonNode["segments"]))
-    else:
-      raise newException(InvalidJsonError,
-        "Incorrect JSON arguments")
-  except:
+  if contains(jsonNode, "vertices"):
+    result = polyline(mapVector3Vertices(jsonNode["vertices"]), getBool(jsonNode["closed"]))
+  elif contains(jsonNode, "segments"):
+    result = polyline(mapVector3Segments(jsonNode["segments"]))
+  else:
     raise newException(InvalidJsonError,
-      "JSON is formatted incorrectly")
+      "Incorrect JSON arguments")
 
 proc polyline4FromJsonNode*(jsonNode: JsonNode): Polyline[Vector4] =
-  try:
-    if contains(jsonNode, "vertices"):
-      result = polyline(mapVector4Vertices(jsonNode["vertices"]), getBool(jsonNode["closed"]))
-    elif contains(jsonNode, "segments"):
-      result = polyline(mapVector4Segments(jsonNode["segments"]))
-    else:
-      raise newException(InvalidJsonError,
-        "Incorrect JSON arguments")
-  except:
+  if contains(jsonNode, "vertices"):
+    result = polyline(mapVector4Vertices(jsonNode["vertices"]), getBool(jsonNode["closed"]))
+  elif contains(jsonNode, "segments"):
+    result = polyline(mapVector4Segments(jsonNode["segments"]))
+  else:
     raise newException(InvalidJsonError,
-      "JSON is formatted incorrectly")
+      "Incorrect JSON arguments")
 
 proc polyline1FromJson*(jsonString: string): Polyline[Vector1] =
   result = polyline1FromJsonNode(parseJson(jsonString))
