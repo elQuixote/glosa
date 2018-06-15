@@ -1509,6 +1509,7 @@ proc toArray*(v: Vector3): array[3, float] =
 proc toArray*(v: Vector4): array[4, float] =
   result = [v.x, v.y, v.z, v.w]
 
+# NOTE: These need to change (they break sequtils toSeq for iterators)
 proc toSeq*(v: Vector1): seq[float] =
   result = @[v.x]
 

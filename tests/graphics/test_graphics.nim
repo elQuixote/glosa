@@ -1,4 +1,5 @@
 import ../../src/core/mesh
+import ../../src/core/curve
 import ../../src/core/vector
 import ../../src/graphics/graphics
 
@@ -8,60 +9,70 @@ import sdl2
 import opengl
 import glu
 
-var m = halfEdgeMesh[Vector4]()
+# var m = halfEdgeMesh[Vector4]()
 
-addVertices(m, @[
-  # Top face (y = 1.0f)
-  meshVertex(vector4( 1.0, 1.0, -1.0, rand(1.0)), nil),
-  meshVertex(vector4(-1.0, 1.0, -1.0, rand(1.0)), nil),
-  meshVertex(vector4(-1.0, 1.0,  1.0, rand(1.0)), nil),
-  meshVertex(vector4( 1.0, 1.0,  1.0, rand(1.0)), nil),
-  meshVertex(vector4( 1.0, 1.0, -1.0, rand(1.0)), nil),
-  meshVertex(vector4(-1.0, 1.0,  1.0, rand(1.0)), nil),
+# addVertices(m, @[
+#   # Top face (y = 1.0f)
+#   meshVertex(vector4( 1.0, 1.0, -1.0, rand(1.0)), nil),
+#   meshVertex(vector4(-1.0, 1.0, -1.0, rand(1.0)), nil),
+#   meshVertex(vector4(-1.0, 1.0,  1.0, rand(1.0)), nil),
+#   meshVertex(vector4( 1.0, 1.0,  1.0, rand(1.0)), nil),
+#   meshVertex(vector4( 1.0, 1.0, -1.0, rand(1.0)), nil),
+#   meshVertex(vector4(-1.0, 1.0,  1.0, rand(1.0)), nil),
 
-  # Bottom face (y = -1.0f)
-  meshVertex(vector4( 1.0, -1.0,  1.0, rand(1.0)), nil),
-  meshVertex(vector4(-1.0, -1.0,  1.0, rand(1.0)), nil),
-  meshVertex(vector4(-1.0, -1.0, -1.0, rand(1.0)), nil),
-  meshVertex(vector4( 1.0, -1.0, -1.0, rand(1.0)), nil),
-  meshVertex(vector4( 1.0, -1.0,  1.0, rand(1.0)), nil),
-  meshVertex(vector4(-1.0, -1.0, -1.0, rand(1.0)), nil),
+#   # Bottom face (y = -1.0f)
+#   meshVertex(vector4( 1.0, -1.0,  1.0, rand(1.0)), nil),
+#   meshVertex(vector4(-1.0, -1.0,  1.0, rand(1.0)), nil),
+#   meshVertex(vector4(-1.0, -1.0, -1.0, rand(1.0)), nil),
+#   meshVertex(vector4( 1.0, -1.0, -1.0, rand(1.0)), nil),
+#   meshVertex(vector4( 1.0, -1.0,  1.0, rand(1.0)), nil),
+#   meshVertex(vector4(-1.0, -1.0, -1.0, rand(1.0)), nil),
 
-  # Front face  (z = 1.0f)
-  meshVertex(vector4( 1.0,  1.0, 1.0, rand(1.0)), nil),
-  meshVertex(vector4(-1.0,  1.0, 1.0, rand(1.0)), nil),
-  meshVertex(vector4(-1.0, -1.0, 1.0, rand(1.0)), nil),
-  meshVertex(vector4( 1.0, -1.0, 1.0, rand(1.0)), nil),
-  meshVertex(vector4( 1.0,  1.0, 1.0, rand(1.0)), nil),
-  meshVertex(vector4(-1.0, -1.0, 1.0, rand(1.0)), nil),
+#   # Front face  (z = 1.0f)
+#   meshVertex(vector4( 1.0,  1.0, 1.0, rand(1.0)), nil),
+#   meshVertex(vector4(-1.0,  1.0, 1.0, rand(1.0)), nil),
+#   meshVertex(vector4(-1.0, -1.0, 1.0, rand(1.0)), nil),
+#   meshVertex(vector4( 1.0, -1.0, 1.0, rand(1.0)), nil),
+#   meshVertex(vector4( 1.0,  1.0, 1.0, rand(1.0)), nil),
+#   meshVertex(vector4(-1.0, -1.0, 1.0, rand(1.0)), nil),
 
-  # Back face (z = -1.0f)
-  meshVertex(vector4( 1.0, -1.0, -1.0, rand(1.0)), nil),
-  meshVertex(vector4(-1.0, -1.0, -1.0, rand(1.0)), nil),
-  meshVertex(vector4(-1.0,  1.0, -1.0, rand(1.0)), nil),
-  meshVertex(vector4( 1.0,  1.0, -1.0, rand(1.0)), nil),
-  meshVertex(vector4( 1.0, -1.0, -1.0, rand(1.0)), nil),
-  meshVertex(vector4(-1.0,  1.0, -1.0, rand(1.0)), nil),
+#   # Back face (z = -1.0f)
+#   meshVertex(vector4( 1.0, -1.0, -1.0, rand(1.0)), nil),
+#   meshVertex(vector4(-1.0, -1.0, -1.0, rand(1.0)), nil),
+#   meshVertex(vector4(-1.0,  1.0, -1.0, rand(1.0)), nil),
+#   meshVertex(vector4( 1.0,  1.0, -1.0, rand(1.0)), nil),
+#   meshVertex(vector4( 1.0, -1.0, -1.0, rand(1.0)), nil),
+#   meshVertex(vector4(-1.0,  1.0, -1.0, rand(1.0)), nil),
 
-  # Left face (x = -1.0f)
-  meshVertex(vector4(-1.0,  1.0,  1.0, rand(1.0)), nil),
-  meshVertex(vector4(-1.0,  1.0, -1.0, rand(1.0)), nil),
-  meshVertex(vector4(-1.0, -1.0, -1.0, rand(1.0)), nil),
-  meshVertex(vector4(-1.0, -1.0,  1.0, rand(1.0)), nil),
-  meshVertex(vector4(-1.0,  1.0,  1.0, rand(1.0)), nil),
-  meshVertex(vector4(-1.0, -1.0, -1.0, rand(1.0)), nil),
+#   # Left face (x = -1.0f)
+#   meshVertex(vector4(-1.0,  1.0,  1.0, rand(1.0)), nil),
+#   meshVertex(vector4(-1.0,  1.0, -1.0, rand(1.0)), nil),
+#   meshVertex(vector4(-1.0, -1.0, -1.0, rand(1.0)), nil),
+#   meshVertex(vector4(-1.0, -1.0,  1.0, rand(1.0)), nil),
+#   meshVertex(vector4(-1.0,  1.0,  1.0, rand(1.0)), nil),
+#   meshVertex(vector4(-1.0, -1.0, -1.0, rand(1.0)), nil),
 
-  # Right face (x = 1.0f)
-  meshVertex(vector4(1.0,  1.0, -1.0, rand(1.0)), nil),
-  meshVertex(vector4(1.0,  1.0,  1.0, rand(1.0)), nil),
-  meshVertex(vector4(1.0, -1.0,  1.0, rand(1.0)), nil),
-  meshVertex(vector4(1.0, -1.0, -1.0, rand(1.0)), nil),
-  meshVertex(vector4(1.0,  1.0, -1.0, rand(1.0)), nil),
-  meshVertex(vector4(1.0, -1.0,  1.0, rand(1.0)), nil)
-])
+#   # Right face (x = 1.0f)
+#   meshVertex(vector4(1.0,  1.0, -1.0, rand(1.0)), nil),
+#   meshVertex(vector4(1.0,  1.0,  1.0, rand(1.0)), nil),
+#   meshVertex(vector4(1.0, -1.0,  1.0, rand(1.0)), nil),
+#   meshVertex(vector4(1.0, -1.0, -1.0, rand(1.0)), nil),
+#   meshVertex(vector4(1.0,  1.0, -1.0, rand(1.0)), nil),
+#   meshVertex(vector4(1.0, -1.0,  1.0, rand(1.0)), nil)
+# ])
 
-for i in 0..<((int)(len(m.vertices) / 3)):
-  discard addFace(m, @[m.vertices[3 * i], m.vertices[3 * i + 1], m.vertices[3 * i + 2]])
+# for i in 0..<((int)(len(m.vertices) / 3)):
+#   discard addFace(m, @[m.vertices[3 * i], m.vertices[3 * i + 1], m.vertices[3 * i + 2]])
+
+let s = @[
+  vector3(1.0, -1.0, 1.0),
+  vector3(1.5, -0.5, 1.5),
+  vector3(2.0, 0.0, 2.0),
+  vector3(1.5, 0.5, 1.5),
+  vector3(1.0, 1.0, 1.0)
+]
+
+let nc = nurbsCurve(s)
 
 discard sdl2.init(INIT_EVERYTHING)
 
@@ -96,7 +107,8 @@ proc render() =
   # Each quad consists of 2 triangles
   # Each triangle consists of 3 vertices
 
-  render4DColor(m)
+  # render4DColor(m)
+  render(nc)
 
   window.glSwapWindow() # Swap the front and back frame buffers (double buffering)
 
