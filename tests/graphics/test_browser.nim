@@ -96,7 +96,7 @@ proc render() =
   # Each quad consists of 2 triangles
   # Each triangle consists of 3 vertices
 
-  renderWithColor(m)
+  render4DColor(m)
 
   window.glSwapWindow() # Swap the front and back frame buffers (double buffering)
 
