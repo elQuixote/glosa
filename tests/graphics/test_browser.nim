@@ -72,7 +72,7 @@ var window = createWindow("SDL/OpenGL Skeleton", 100, 100, screenWidth, screenHe
 var context = window.glCreateContext()
 
 # Initialize OpenGL
-loadExtensions()
+# loadExtensions()
 glClearColor(0.0, 0.0, 0.0, 1.0)                  # Set background color to black and opaque
 glClearDepth(1.0)                                 # Set background depth to farthest
 glEnable(GL_DEPTH_TEST)                           # Enable depth testing for z-culling
@@ -96,7 +96,7 @@ proc render() =
   # Each quad consists of 2 triangles
   # Each triangle consists of 3 vertices
 
-  render4DColor(m)
+  renderWithColor(m)
 
   window.glSwapWindow() # Swap the front and back frame buffers (double buffering)
 
