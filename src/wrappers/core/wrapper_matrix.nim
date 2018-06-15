@@ -91,7 +91,10 @@ proc equals_33*(m1, m2: Matrix33_Net): bool {.cdecl, exportc, dynlib.} = matrix3
 proc hash_33*(m: Matrix33_Net): int {.cdecl, exportc, dynlib.} = hash(matrix33_Net(m))
 proc stringify_33*(m: Matrix33_Net): cstring {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
+  GC_disable()
   result = $matrix33_Net(m)
+  GC_enable()
+  GC_fullCollect()
   tearDownForeignThreadGc()
 proc transposeSelf_33*(m: Matrix33_Net): Matrix33_Net {.cdecl, exportc, noinit, dynlib.} = 
   var x = matrix33_Net(m)
@@ -146,7 +149,10 @@ proc equals_44*(m1, m2: Matrix44_Net): bool {.cdecl, exportc, dynlib.} = matrix4
 proc hash_44*(m: Matrix44_Net): int {.cdecl, exportc, dynlib.} = hash(matrix44_Net(m))
 proc stringify_44*(m: Matrix44_Net): cstring {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
+  GC_disable()
   result = $matrix44_Net(m)
+  GC_enable()
+  GC_fullCollect()
   tearDownForeignThreadGc()
 proc transposeSelf_44*(m: Matrix44_Net): Matrix44_Net {.cdecl, exportc, noinit, dynlib.} = 
   var x = matrix44_Net(m)
