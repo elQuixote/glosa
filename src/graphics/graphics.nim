@@ -11,6 +11,9 @@ import opengl
 # NOTE: Refactor to be based on length
 const SAMPLE_CONST = 100
 
+proc pointSize*(size: float): void =
+  glPointSize(size)
+
 proc render*(v: Vector1): void =
   glVertex3f(v.x, 0.0, 0.0)
 
@@ -25,8 +28,8 @@ proc render*(v: Vector4): void =
 
 proc render*[Vector](s: LineSegment[Vector]): void =
   glBegin(GL_LINES)
-  render(s.startVector)
-  render(s.endVector)
+  render(s.startVertex)
+  render(s.endVertex)
   glEnd()
 
 proc render*[Vector](p: Polyline[Vector]): void =
