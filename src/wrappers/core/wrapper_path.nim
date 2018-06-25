@@ -3,7 +3,8 @@ import ../../core/vector
 import ../../core/curve
 import json
 import ../../core/polygon
-from ../../core/matrix import Matrix44, Matrix33
+from ../../core/matrix import Matrix44, Matrix33, IDMATRIX44
+from random import rand
 
 type
   LineSegment_Net* = object
@@ -894,14 +895,6 @@ proc closestPoint_v3_curve*(s: cstring, v: Vector3): Vector3 {.cdecl, exportc, d
   GC_fullCollect()
   tearDownForeignThreadGc()
 
-proc testSegFault*(s: cstring): cdouble {.cdecl, exportc, dynlib.} =
-  setupForeignThreadGc()
-  GC_disable()
-  result = 0.5
-  GC_enable()
-  GC_fullCollect()
-  tearDownForeignThreadGc()
-
 # Transform
 proc transform_v2_curve*(s: cstring, m: Matrix33): cstring {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
@@ -1034,6 +1027,81 @@ proc stringify_v3_curve*(s: cstring): cstring {.cdecl, exportc, dynlib.} =
   setupForeignThreadGc()
   GC_disable()
   result = $nurbsCurve3FromJson($s)
+  GC_enable()
+  GC_fullCollect()
+  tearDownForeignThreadGc()
+
+proc SampleCurve*(s: cstring, c: int): cstring {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  GC_disable()
+  var 
+    list : seq[Vector3] = @[]
+    curve = nurbsCurve3FromJson($s)
+  for i in 0..c:
+    var vec2 = vector3((float)rand(10), (float)rand(10), (float)rand(10))   
+    list.add(closestPoint(curve, vec2))
+  result = toJson(list)
+  GC_enable()
+  GC_fullCollect()
+  tearDownForeignThreadGc()
+
+proc SampleCurve_Base*(s: cstring, c: int) {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  GC_disable()
+  var 
+    list : seq[Vector3] = @[]
+    curve = nurbsCurve3FromJson($s)
+  for i in 0..c:
+    var vec2 = vector3((float)rand(10), (float)rand(10), (float)rand(10))   
+    list.add(closestPoint(curve, vec2))
+  GC_enable()
+  GC_fullCollect()
+  tearDownForeignThreadGc()
+
+proc SamplePolyline*(s: cstring, c: int): cstring {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  GC_disable()
+  var 
+    list : seq[Vector3] = @[]
+    pline = polyline3FromJson($s)
+  for i in 0..c:
+    var vec2 = vector3((float)rand(10), (float)rand(10), (float)rand(10))   
+    list.add(closestPoint(pline, vec2))
+  result = toJson(list)
+  GC_enable()
+  GC_fullCollect()
+  tearDownForeignThreadGc()
+
+proc SamplePolyline_Base*(s: cstring, c: int) {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  GC_disable()
+  var 
+    list : seq[Vector3] = @[]
+    pline = polyline3FromJson($s)
+  for i in 0..c:
+    var vec2 = vector3((float)rand(10), (float)rand(10), (float)rand(10))   
+    list.add(closestPoint(pline, vec2))
+  GC_enable()
+  GC_fullCollect()
+  tearDownForeignThreadGc()
+
+proc MultiTransform*(s: cstring, c: int): cstring {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  GC_disable()
+  var pline = polyline3FromJson($s)
+  for i in 0..<c:
+    discard pline.transform(IDMATRIX44)
+  result = toJson(pline)
+  GC_enable()
+  GC_fullCollect()
+  tearDownForeignThreadGc()
+
+proc MultiTransform_Base*(s: cstring, c: int) {.cdecl, exportc, dynlib.} =
+  setupForeignThreadGc()
+  GC_disable()
+  var pline = polyline3FromJson($s)
+  for i in 0..<c:
+    discard pline.transform(IDMATRIX44)
   GC_enable()
   GC_fullCollect()
   tearDownForeignThreadGc()

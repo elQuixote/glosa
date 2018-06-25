@@ -1,5 +1,6 @@
 import ../../core/vector
 import ../../core/matrix
+from random import rand
 
 # Vector2 Proc Wraps
 proc copy_v2*(v1: Vector2): Vector2 {.cdecl, exportc, dynlib.} = copy(v1)
@@ -228,3 +229,11 @@ proc calculatePlane_v4*(v1, v2, v3: Vector3): Vector4 {.cdecl, exportc, dynlib.}
 
 proc areCollinear_v*(v1, v2, v3: Vector3): bool {.cdecl, exportc, dynlib.} = areCollinear(v1, v2, v3)
 proc arePlanar_v*(a: openArray[Vector3]): bool {.cdecl, exportc, dynlib.} = arePlanar(a)
+
+proc transformSetOfVectors*() {.cdecl, exportc, dynlib.} =
+  var vec = vector3(10.0,2.0,1.5)
+  for i in 0..10000000:
+    var vec2 = vector3((float)rand(10), (float)rand(10), (float)rand(10))   
+    discard vec.dot(vec2)
+    discard vec2.transformSelf(IDMATRIX44)
+  
