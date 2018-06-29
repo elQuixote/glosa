@@ -8,11 +8,9 @@ from ./concepts import
   String
 
 from ./types import
-  Matrix33,
-  Matrix44,
-  Quaternion,
-  Vector3,
-  Vector4
+  Vector,
+  Matrix,
+  Quaternion
 
 export
   Matrix,
