@@ -36,10 +36,10 @@ export
   Vector,
   InvalidCrossProductError
 
-from ./matrix import
-  matrix44,
-  invert,
-  `[]`
+# from ./matrix import
+#   matrix44,
+#   invert,
+#   `[]`
 
 import macros
 from math import sin, cos, arctan2, arccos, sqrt
@@ -52,18 +52,6 @@ template x*[N: static[int], T](v: Vector[N, T]): T = v[0]
 template y*[N: static[int], T](v: Vector[N, T]): T = v[1]
 template z*[N: static[int], T](v: Vector[N, T]): T = v[2]
 template w*[N: static[int], T](v: Vector[N, T]): T = v[3]
-
-macro `.`[N: static[int], T](v: Vector[N, T], field: string): expr =
-  result = newNimNode nnkBracket
-  for c in field.strVal:
-    result.add newDotExpr(v, newIdentNode($c))
-
-proc `$`[N: static[int], T](v: Vector[N, T]): string =
-  result = "["
-  for i, e in v:
-    if i > 0: result.add ", "
-    result.add($e)
-  result.add "]"
 
 # Constructors
 # From parameters
@@ -86,8 +74,8 @@ proc vector4*[T](x, y, z, w: T): Vector[4, T] =
   result[3] = w
 
 # From single value
-proc vector*[T](n: int, v: T): Vector[n, T] =
-  for i in n:
+proc vector*[T](n: static[int], v: T): Vector[n, T] =
+  for i in 0..<n:
     result[i] = v
 
 # From array
@@ -128,14 +116,10 @@ proc from3Spherical*[T](r, theta, phi, psi: T): Vector[4, T] =
     r * cos(theta)
   )
 
-# Copy
-proc copy*[N: static[int], T](v: Vector): Vector[N, T] =
-  for i, val in pairs(v):
-    result[i] = var val
-
 # Set
-proc set*[N: static[int], T](v: var Vector[N, T], x: T): var Vector[N, T] {.noinit.} =
-  v[0] = x
+proc set*[N: static[int], T](v: var Vector[N, T], n: T): var Vector[N, T] {.noinit.} =
+  for i in 0..<len(v):
+    v[i] = n
   result = v
 
 proc set*[N: static[int], T](v: var Vector[N, T], x, y: T): var Vector[N, T] {.noinit.} =
@@ -154,11 +138,6 @@ proc set*[N: static[int], T](v: var Vector[N, T], x, y, z, w: T): var Vector[N, 
   v[1] = y
   v[2] = z
   v[3] = w
-  result = v
-
-proc set*[N: static[int], T](v: var Vector[N, T], n: T): var Vector[N, T] {.noinit.} =
-  for i in 0..<len(v):
-    v[i] = n
   result = v
 
 # Randomize
@@ -187,16 +166,16 @@ proc randomize*[N: static[int], T](v: var Vector[N, T], maxX, maxY, maxZ, maxW: 
 # Clear
 proc clear*[N: static[int], T](v: var Vector[N, T]): var Vector[N, T] = set(v, 0.0)
 
-# Clear Copy (create Vector of the same length with empty values)
-proc clearCopy*[N: static[int], T](v: Vector[N, T]): Vector[N, T] = vector(0.0)
-
 # Inverse
 proc inverseSelf*[N: static[int], T](v: var Vector[N, T]): var Vector[N, T] {.noinit.} =
   for i, val in pairs(v):
     v[i] = -val
   result = v
 
-proc inverseNew*[N: static[int], T](v: Vector[N, T]): Vector[N, T] = inverseSelf(copy(v))
+proc inverseNew*[N: static[int], T](v: Vector[N, T]): Vector[N, T] =
+  deepCopy(result, v)
+  inverseSelf(result)
+
 proc inverse*[N: static[int], T](v: Vector[N, T]): Vector[N, T] = inverseNew(v)
 proc reverse*[N: static[int], T](v: Vector[N, T]): Vector[N, T] = inverseNew(v)
 
@@ -206,12 +185,15 @@ proc invertSelf*[N: static[int], T](v: var Vector[N, T]): var Vector[N, T] {.noi
     v[i] = 1 / val
   result = v
 
-proc invertNew*[N: static[int], T](v: Vector[N, T]): Vector[N, T] = invertSelf(copy(v))
+proc invertNew*[N: static[int], T](v: Vector[N, T]): Vector[N, T] =
+  deepCopy(result, v)
+  invertSelf(result)
+
 proc invert*[N: static[int], T](v: Vector[N, T]): Vector[N, T] = invertNew(v)
 
 # Addition
 proc addSelf*[N: static[int], T](v: var Vector[N, T], t: T): var Vector[N, T] {.noinit.} =
-  for i, val in pairs(v):
+  for i in 0..<len(v):
     v[i] += t
   result = v
 
@@ -220,8 +202,13 @@ proc addSelf*[N: static[int], T](v1: var Vector[N, T], v2: Vector[N, T]): var Ve
     v1[i] += v2[i]
   result = v1
 
-proc addNew*[N: static[int], T](v: Vector[N, T], t: T): Vector[N, T] = addSelf(copy(v), t)
-proc addNew*[N: static[int], T](v1, v2: Vector[N, T]): Vector[N, T] = addSelf(copy(v1), v2)
+proc addNew*[N: static[int], T](v: Vector[N, T], t: T): Vector[N, T] =
+  deepCopy(result, v)
+  addSelf(result, t)
+
+proc addNew*[N: static[int], T](v1, v2: Vector[N, T]): Vector[N, T] =
+  deepCopy(result, v1)
+  addSelf(result, v2)
 
 proc `+`*[N: static[int], T](v1, v2: Vector[N, T]): Vector[N, T] = addNew(v1, v2)
 proc `+`*[N: static[int], T](v: Vector[N, T], t: T): Vector[N, T] = addNew(v, t)
@@ -236,12 +223,17 @@ proc subtractSelf*[N: static[int], T](v: var Vector[N, T], t: T): var Vector[N, 
   result = v
 
 proc subtractSelf*[N: static[int], T](v1: var Vector[N, T], v2: Vector[N, T]): var Vector[N, T] {.noinit.} =
-  for i, val in pairs(v1):
-    v1[i] += v2[i]
+  for i in 0..<len(v1):
+    v1[i] -= v2[i]
   result = v1
 
-proc subtractNew*[N: static[int], T](v: Vector[N, T], t: T): Vector[N, T] = subtractSelf(copy(v), t)
-proc subtractNew*[N: static[int], T](v1, v2: Vector[N, T]): Vector[N, T] = subtractSelf(copy(v1), v2)
+proc subtractNew*[N: static[int], T](v: Vector[N, T], t: T): Vector[N, T] =
+  deepCopy(result, v)
+  subtractSelf(result, t)
+
+proc subtractNew*[N: static[int], T](v1, v2: Vector[N, T]): Vector[N, T] =
+  deepCopy(result, v1)
+  subtractSelf(result, v2)
 
 proc `-`*[N: static[int], T](v1, v2: Vector[N, T]): Vector[N, T] = subtractNew(v1, v2)
 proc `-`*[N: static[int], T](v: Vector[N, T], t: T): Vector[N, T] = subtractNew(v, t)
@@ -255,7 +247,9 @@ proc multiplySelf*[N: static[int], T](v: var Vector[N, T], t: T): var Vector[N, 
     v[i] *= t
   result = v
 
-proc multiplyNew*[N: static[int], T](v: Vector[N, T], t: T): Vector[N, T] = multiplySelf(copy(v), t)
+proc multiplyNew*[N: static[int], T](v: Vector[N, T], t: T): Vector[N, T] =
+  deepCopy(result, v)
+  multiplySelf(result, t)
 
 proc `*`*[N: static[int], T](v: Vector[N, T], t: T): Vector[N, T] = multiplyNew(v, t)
 proc `*`*[N: static[int], T](t: float, v: Vector[N, T]): Vector[N, T] = multiplyNew(v, t)
@@ -267,7 +261,9 @@ proc divideSelf*[N: static[int], T](v: var Vector[N, T], t: T): var Vector[N, T]
     v[i] /= t
   result = v
 
-proc divideNew*[N: static[int], T](v: Vector[N, T], t: T): Vector[N, T] = divideSelf(copy(v), t)
+proc divideNew*[N: static[int], T](v: Vector[N, T], t: T): Vector[N, T] =
+  deepCopy(result, v)
+  divideSelf(result, t)
 
 proc `/`*[N: static[int], T](v: Vector[N, T], t: T): Vector[N, T] = divideNew(v, t)
 proc `/`*[N: static[int], T](t: T, v: Vector[N, T]): Vector[N, T] = multiplyNew(invert(v), t)
@@ -295,35 +291,16 @@ proc cross*[T](v1, v2: Vector[4, T]) =
     "Cannot calculate cross product of Vector4s")
 
 # Heading
-proc headingXY*[T](v: Vector[2, T]): T =
-  result = arctan2(v[1], v[0])
-
-proc headingXY*[T](v: Vector[3, T]): T =
-  result = arctan2(v[1], v[0])
-
-proc headingXZ*[T](v: Vector[3, T]): T =
-  result = arctan2(v[2], v[0])
-
-proc headingYZ*[T](v: Vector[3, T]): T =
-  result = arctan2(v[2], v[1])
-
-proc headingXY*[T](v: Vector[4, T]): T =
-  result = arctan2(v[1], v[0])
-
-proc headingXZ*[T](v: Vector[4, T]): T =
-  result = arctan2(v[2], v[0])
-
-proc headingXW*[T](v: Vector[4, T]): T =
-  result = arctan2(v[3], v[0])
-
-proc headingYZ*[T](v: Vector[4, T]): T =
-  result = arctan2(v[2], v[1])
-
-proc headingYW*[T](v: Vector[4, T]): T =
-  result = arctan2(v[3], v[1])
-
-proc headingZW*[T](v: Vector[4, T]): T =
-  result = arctan2(v[3], v[2])
+proc headingXY*[T](v: Vector[2, T]): T = arctan2(v[1], v[0])
+proc headingXY*[T](v: Vector[3, T]): T = arctan2(v[1], v[0])
+proc headingXZ*[T](v: Vector[3, T]): T = arctan2(v[2], v[0])
+proc headingYZ*[T](v: Vector[3, T]): T = arctan2(v[2], v[1])
+proc headingXY*[T](v: Vector[4, T]): T = arctan2(v[1], v[0])
+proc headingXZ*[T](v: Vector[4, T]): T = arctan2(v[2], v[0])
+proc headingXW*[T](v: Vector[4, T]): T = arctan2(v[3], v[0])
+proc headingYZ*[T](v: Vector[4, T]): T = arctan2(v[2], v[1])
+proc headingYW*[T](v: Vector[4, T]): T = arctan2(v[3], v[1])
+proc headingZW*[T](v: Vector[4, T]): T = arctan2(v[3], v[2])
 
 proc heading*[T](v: Vector[1, T]): T = 0.0
 proc heading*[T](v: Vector[2, T]): T = headingXY(v)
@@ -339,7 +316,8 @@ proc length*[N: static[int], T](v: Vector[N, T]): T = magnitude(v)
 
 # Distance To
 proc distanceToSquared*[N: static[int], T](v1, v2: Vector[N, T]): T =
-  var differences = copy(v1)
+  var differences: Vector[N, T]
+  deepCopy(differences, v1)
   for i, val in pairs(v1):
     differences[i] = val - v2[i]
   result = magnitudeSquared(differences)
@@ -359,7 +337,9 @@ proc normalizeSelf*[N: static[int], T](v: var Vector[N, T], m: T = 1.0): var Vec
   else:
     result = v
 
-proc normalizeNew*[N: static[int], T](v: Vector[N, T], m: T = 1.0): Vector[N, T] = normalizeSelf(copy(v), m)
+proc normalizeNew*[N: static[int], T](v: Vector[N, T], m: T = 1.0): Vector[N, T] =
+  deepCopy(result, v)
+  normalizeSelf(result, m)
 
 proc normalize*[N: static[int], T](v: var Vector[N,  T], m: T = 1.0): var Vector[N, T] = normalizeSelf(v, m)
 
@@ -369,7 +349,9 @@ proc reflectSelf*[N: static[int], T](v: var Vector[N, T], n: Vector[N, T]): var 
   v = subtractSelf(v, multiplyNew(n, 2 * dot(v, n)))
   result = v
 
-proc reflectNew*[N: static[int], T](v, n: Vector[N, T]): Vector[N, T] = reflectSelf(copy(v), n)
+proc reflectNew*[N: static[int], T](v, n: Vector[N, T]): Vector[N, T] =
+  deepCopy(result, v)
+  reflectSelf(result, n)
 
 proc reflect*[N: static[int], T](v, n: Vector[N, T]): Vector[N, T] = reflectNew(v, n)
 
@@ -384,7 +366,9 @@ proc refractSelf*[N: static[int], T](v: var Vector[N, T], n: Vector[N, T], eta: 
   else:
     result = subtractSelf(multiplySelf(v, eta), multiplyNew(n, eta * d + sqrt(k)))
 
-proc refractNew*[N: static[int], T](v, n: Vector[N, T], eta: T): Vector[N, T] = refractSelf(copy(v), n, eta)
+proc refractNew*[N: static[int], T](v, n: Vector[N, T], eta: T): Vector[N, T] =
+  deepCopy(result, v)
+  refractSelf(result, n, eta)
 
 proc refract*[N: static[int], T](v, n: Vector[N, T], eta: T): Vector[N, T] = refractNew(v, n, eta)
 
@@ -426,149 +410,117 @@ proc dimension*[N: static[int], T](v: Vector[N, T]): int = N
 
 # Transformations
 # Transform
-proc transformSelf*(v: var Vector1, m: Matrix33): var Vector1 {.noinit.} =
-  v.x *= m[0, 0]
+proc transformSelf*[N: static[int], T](v: var Vector[N, T], m: Matrix): var Vector[N, T] {.noinit.} =
+  for i in 0..<len(v):
+    v[i] = 0
+    for j in 0..<len(m):
+      v[i] = v[i] + m[i, j] * v[j]
   result = v
 
-proc transformNew*(v: Vector1, m: Matrix33): Vector1 =
-  result.x = m[0, 0] * v.x
+proc transformNew*[N: static[int], T](v: Vector[N, T], m: Matrix): Vector[N, T] =
+  deepCopy(result, v)
+  transformSelf(result, m)
 
-proc transformSelf*(v: var Vector2, m: Matrix33): var Vector2 {.noinit.} =
-  v.x = m[0, 0] * v.x + m[0, 1] * v.y
-  v.y = m[1, 0] * v.x + m[1, 1] * v.y
-  result = v
-
-proc transformNew*(v: Vector2, m: Matrix33): Vector2 =
-  result.x = m[0, 0] * v.x + m[0, 1] * v.y
-  result.y = m[1, 0] * v.x + m[1, 1] * v.y
-
-proc transformSelf*(v: var Vector3, m: Matrix44): var Vector3 {.noinit.} =
-  v.x = m[0, 0] * v.x + m[0, 1] * v.y + m[0, 2] * v.z
-  v.y = m[1, 0] * v.x + m[1, 1] * v.y + m[1, 2] * v.z
-  v.z = m[2, 0] * v.z + m[2, 1] * v.y + m[2, 2] * v.z
-  result = v
-
-proc transformNew*(v: Vector3, m: Matrix44): Vector3 =
-  result.x = m[0, 0] * v.x + m[0, 1] * v.y + m[0, 2] * v.z
-  result.y = m[1, 0] * v.x + m[1, 1] * v.y + m[1, 2] * v.z
-  result.z = m[2, 0] * v.z + m[2, 1] * v.y + m[2, 2] * v.z
-
-proc transformSelf*(v: var Vector4, m: Matrix44): var Vector4 {.noinit.} =
-  v.x = m[0, 0] * v.x + m[0, 1] * v.y + m[0, 2] * v.z + m[0, 3] * v.w
-  v.y = m[1, 0] * v.x + m[1, 1] * v.y + m[1, 2] * v.z + m[1, 3] * v.w
-  v.z = m[2, 0] * v.x + m[2, 1] * v.y + m[2, 2] * v.z + m[2, 3] * v.w
-  v.w = m[3, 0] * v.x + m[3, 1] * v.y + m[3, 2] * v.z + m[3, 3] * v.w
-  result = v
-
-proc transformNew*(v: Vector4, m: Matrix44): Vector4 =
-  result.x = m[0, 0] * v.x + m[0, 1] * v.y + m[0, 2] * v.z + m[0, 3] * v.w
-  result.y = m[1, 0] * v.x + m[1, 1] * v.y + m[1, 2] * v.z + m[1, 3] * v.w
-  result.z = m[2, 0] * v.x + m[2, 1] * v.y + m[2, 2] * v.z + m[2, 3] * v.w
-  result.w = m[3, 0] * v.x + m[3, 1] * v.y + m[3, 2] * v.z + m[3, 3] * v.w
-
-proc transform*(v: var Vector1, m: Matrix33): var Vector1 {.noinit.} = transformSelf(v, m)
-proc transform*(v: var Vector2, m: Matrix33): var Vector2 {.noinit.} = transformSelf(v, m)
-proc transform*(v: var Vector3, m: Matrix44): var Vector3 {.noinit.} = transformSelf(v, m)
-proc transform*(v: var Vector4, m: Matrix44): var Vector4 {.noinit.} = transformSelf(v, m)
+proc transform*[N: static[int], T](v: var Vector[N, T], m: Matrix): var Vector[N, T] {.noinit.} = transformSelf(v, m)
 
 # Rotate
 # Private calculate new rotation coordinates
-proc calculateRotate(a, b, theta: float): tuple[a, b: float] =
+proc calculateRotate[T](a, b, theta: T): tuple[a, b: T] =
   let
     s = sin(theta)
     c = cos(theta)
   result = (a: a * c - b * s, b: b * c + a * s)
 
-proc rotateSelf*(v: var Vector1, theta: float): var Vector1 {.noinit.} =
+proc rotateSelf*[T](v: var Vector[1, T], theta: T): var Vector[1, T] {.noinit.} =
   result = v
 
-proc rotateNew*(v: Vector1, theta: float): Vector1 =
-  result = copy(v)
+proc rotateNew*[T](v: Vector[1, T], theta: T): Vector[1, T] =
+  deepCopy(result, v)
 
-proc rotateSelf*(v: var Vector2, theta: float): var Vector2 {.noinit.} =
-  let r = calculateRotate(v.x, v.y, theta)
+proc rotateSelf*[T](v: var Vector[2, T], theta: T): var Vector[2, T] {.noinit.} =
+  let r = calculateRotate(v[0], v[1], theta)
   result = set(v, r.a, r.b)
 
-proc rotateNew*(v: Vector2, theta: float): Vector2 =
-  let r = calculateRotate(v.x, v.y, theta)
+proc rotateNew*[T](v: Vector[2, T], theta: T): Vector[2, T] =
+  let r = calculateRotate(v[0], v[1], theta)
   result = vector2(r.a, r.b)
 
-proc rotateXSelf*(v: var Vector3, theta: float): var Vector3 {.noinit.} =
-  let r = calculateRotate(v.y, v.z, theta)
+proc rotateXSelf*[T](v: var Vector[3, T], theta: T): var Vector[3, T] {.noinit.} =
+  let r = calculateRotate(v[1], v[2], theta)
   result = set(v, v.x, r.a, r.b)
 
-proc rotateXNew*(v: Vector3, theta: float): Vector3 =
-  let r = calculateRotate(v.y, v.z, theta)
+proc rotateXNew*[T](v: Vector[3, T], theta: T): Vector[3, T] =
+  let r = calculateRotate(v[1], v[2], theta)
   result = vector3(v.x, r.a, r.b)
 
-proc rotateYSelf*(v: var Vector3, theta: float): var Vector3 {.noinit.} =
-  let r = calculateRotate(v.x, v.z, theta)
+proc rotateYSelf*[T](v: var Vector[3, T], theta: T): var Vector[3, T] {.noinit.} =
+  let r = calculateRotate(v[0], v[2], theta)
   result = set(v, r.a, v.y, r.b)
 
-proc rotateYNew*(v: Vector3, theta: float): Vector3 =
-  let r = calculateRotate(v.x, v.z, theta)
+proc rotateYNew*[T](v: Vector[3, T], theta: T): Vector[3, T] =
+  let r = calculateRotate(v[0], v[1], theta)
   result = vector3(r.a, v.y, r.b)
 
-proc rotateZSelf*(v: var Vector3, theta: float): var Vector3 {.noinit.} =
-  let r = calculateRotate(v.x, v.y, theta)
+proc rotateZSelf*[T](v: var Vector[3, T], theta: T): var Vector[3, T] {.noinit.} =
+  let r = calculateRotate(v[0], v[1], theta)
   result = set(v, r.a, r.b, v.z)
 
-proc rotateZNew*(v: Vector3, theta: float): Vector3 =
-  let r = calculateRotate(v.x, v.y, theta)
+proc rotateZNew*[T](v: Vector[3, T], theta: T): Vector[3, T] =
+  let r = calculateRotate(v[0], v[1], theta)
   result = vector3(r.a, r.b, v.z)
 
-proc rotateXYSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
-  let r = calculateRotate(v.z, v.w, theta)
+proc rotateXYSelf*[T](v: var Vector[4, T], theta: T): var Vector[4, T] {.noinit.} =
+  let r = calculateRotate(v[2], v[3], theta)
   result = set(v, v.x, v.y, r.a, r.b)
 
-proc rotateXYNew*(v: Vector4, theta: float): Vector4 =
-  let r = calculateRotate(v.z, v.w, theta)
+proc rotateXYNew*[T](v: Vector[4, T], theta: T): Vector[4, T] =
+  let r = calculateRotate(v[2], v[3], theta)
   result = vector4(v.x, v.y, r.a, r.b)
 
-proc rotateXZSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
-  let r = calculateRotate(v.y, v.w, theta)
+proc rotateXZSelf*[T](v: var Vector[4, T], theta: T): var Vector[4, T] {.noinit.} =
+  let r = calculateRotate(v[1], v[3], theta)
   result = set(v, v.x, r.a, v.z, r.b)
 
-proc rotateXZNew*(v: Vector4, theta: float): Vector4 =
-  let r = calculateRotate(v.y, v.w, theta)
+proc rotateXZNew*[T](v: Vector[4, T], theta: T): Vector[4, T] =
+  let r = calculateRotate(v[1], v[3], theta)
   result = vector4(v.x, r.a, v.z, r.b)
 
-proc rotateXWSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
-  let r = calculateRotate(v.y, v.z, theta)
+proc rotateXWSelf*[T](v: var Vector[4, T], theta: T): var Vector[4, T] {.noinit.} =
+  let r = calculateRotate(v[1], v[2], theta)
   result = set(v, v.x, r.a, r.b, v.w)
 
-proc rotateXWNew*(v: Vector4, theta: float): Vector4 =
-  let r = calculateRotate(v.y, v.z, theta)
+proc rotateXWNew*[T](v: Vector[4, T], theta: T): Vector[4, T] =
+  let r = calculateRotate(v[1], v[2], theta)
   result = vector4(v.x, r.a, r.b, v.w)
 
-proc rotateYZSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
-  let r = calculateRotate(v.x, v.w, theta)
+proc rotateYZSelf*[T](v: var Vector[4, T], theta: T): var Vector[4, T] {.noinit.} =
+  let r = calculateRotate(v[0], v[3], theta)
   result = set(v, r.a, v.y, v.z, r.b)
 
-proc rotateYZNew*(v: Vector4, theta: float): Vector4 =
-  let r = calculateRotate(v.x, v.w, theta)
+proc rotateYZNew*[T](v: Vector[4, T], theta: T): Vector[4, T] =
+  let r = calculateRotate(v[0], v[3], theta)
   result = vector4(r.a, v.y, v.z, r.b)
 
-proc rotateYWSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
-  let r = calculateRotate(v.x, v.z, theta)
+proc rotateYWSelf*[T](v: var Vector[4, T], theta: T): var Vector[4, T] {.noinit.} =
+  let r = calculateRotate(v[0], v[2], theta)
   result = set(v, r.a, v.y, r.b, v.w)
 
-proc rotateYWNew*(v: Vector4, theta: float): Vector4 =
-  let r = calculateRotate(v.x, v.y, theta)
+proc rotateYWNew*[T](v: Vector[4, T], theta: T): Vector[4, T] =
+  let r = calculateRotate(v[0], v[1], theta)
   result = vector4(r.a, v.y, r.b, v.w)
 
-proc rotateZWSelf*(v: var Vector4, theta: float): var Vector4 {.noinit.} =
-  let r = calculateRotate(v.x, v.y, theta)
+proc rotateZWSelf*[T](v: var Vector[4, T], theta: T): var Vector[4, T] {.noinit.} =
+  let r = calculateRotate(v[0], v[1], theta)
   result = set(v, r.a, r.b, v.z, v.w)
 
-proc rotateZWNew*(v: Vector4, theta: float): Vector4 =
-  let r = calculateRotate(v.x, v.y, theta)
+proc rotateZWNew*[T](v: Vector[4, T], theta: T): Vector[4, T] =
+  let r = calculateRotate(v[0], v[1], theta)
   result = vector4(r.a, r.b, v.z, v.w)
 
-proc rotate*(v: var Vector1, theta:float): var Vector1 {.noinit.} = rotateSelf(v, theta)
-proc rotate*(v: var Vector2, theta:float): var Vector2 {.noinit.} = rotateSelf(v, theta)
+proc rotate*[T](v: var Vector[1, T], theta: T): var Vector[1, T] {.noinit.} = rotateSelf(v, theta)
+proc rotate*[T](v: var Vector[2, T], theta: T): var Vector[2, T] {.noinit.} = rotateSelf(v, theta)
 # NOTE: Axis must be normalized
-proc rotate*(v: var Vector3, axis: Vector3, theta: float): var Vector3 {.noinit.} =
+proc rotate*[T](v: var Vector[3, T], axis: Vector[3, T], theta: T): var Vector[3, T] {.noinit.} =
   let
     s = sin(theta)
     c = cos(theta)
@@ -578,244 +530,106 @@ proc rotate*(v: var Vector3, axis: Vector3, theta: float): var Vector3 {.noinit.
              axis.y * t + v.y * c + (axis.z * v.x - axis.x * v.z) * s,
              axis.z * t + v.z * c + (axis.x * v.y - axis.y * v.x) * s)
   result = v
-# NOTE: The planes defined by (b1, b2) and (b3, b4) must be orthagonal
-proc rotate*(v: var Vector4, b1, b2: Vector4, theta: float, b3, b4: Vector4, phi: float): var Vector4 {.noinit.} =
-  var m = matrix44(b1, b2, b3, b4)
-  v = transform(v, invert(m))
-  v = rotateXYSelf(v, theta)
-  v = rotateZWSelf(v, phi)
-  v = transform(v, m)
-  result = v
+# # NOTE: The planes defined by (b1, b2) and (b3, b4) must be orthagonal
+# proc rotate*[T](v: var Vector[4, T], b1, b2: Vector[4, T], theta: T, b3, b4: Vector[4, T], phi: T): var Vector[4, T] {.noinit.} =
+#   var m = matrix44(b1, b2, b3, b4)
+#   v = transform(v, invert(m))
+#   v = rotateXYSelf(v, theta)
+#   v = rotateZWSelf(v, phi)
+#   v = transform(v, m)
+#   result = v
 
 # Scale
-proc scaleSelf*(v: var Vector1, s: float): var Vector1 {.noinit.} =
-  v.x *= s
+proc scaleSelf*[N: static[int], T](v: var Vector[N, T], s: T): var Vector[N, T] {.noinit.} =
+  for i in 0..<len(v):
+    v[i] *= s
   result = v
 
-proc scaleNew*(v: Vector1, s: float): Vector1 =
-  result.x = v.x * s
-
-proc scaleSelf*(v: var Vector2, s: float): var Vector2 {.noinit.} =
-  v.x *= s
-  v.y *= s
+proc scaleSelf*[N: static[int], T](v: var Vector[N, T], a: openArray[T]): var Vector[N, T] {.noinit.} =
+  for i in 0..<len(v):
+    v[i] *= a[i]
   result = v
 
-proc scaleNew*(v: Vector2, s: float): Vector2 =
-  result.x = v.x * s
-  result.y = v.y * s
+proc scaleNew*[N: static[int], T](v: Vector[N, T], s: T): Vector[N, T] =
+  deepCopy(result, v)
+  scaleSelf(result, s)
 
-proc scaleSelf*(v: var Vector2, sx, sy: float): var Vector2 {.noinit.} =
-  v.x *= sx
-  v.y *= sy
-  result = v
+proc scaleNew*[N: static[int], T](v: Vector[N, T], a: openArray[T]): Vector[N, T] =
+  deepCopy(result, v)
+  scaleSelf(result, a)
 
-proc scaleNew*(v: Vector2, sx, sy: float): Vector2 =
-  result.x = v.x * sx
-  result.y = v.y * sy
-
-proc scaleSelf*(v: var Vector3, s: float): var Vector3 {.noinit.} =
-  v.x *= s
-  v.y *= s
-  v.z *= s
-  result = v
-
-proc scaleNew*(v: Vector3, s: float): Vector3 =
-  result.x = v.x * s
-  result.y = v.y * s
-  result.z = v.z * s
-
-proc scaleSelf*(v: var Vector3, sx, sy, sz: float): var Vector3 {.noinit.} =
-  v.x *= sx
-  v.y *= sy
-  v.z *= sz
-  result = v
-
-proc scaleNew*(v: Vector3, sx, sy, sz: float): Vector3 =
-  result.x = v.x * sx
-  result.y = v.y * sy
-  result.z = v.z * sz
-
-proc scaleSelf*(v: var Vector4, s: float): var Vector4 {.noinit.} =
-  v.x *= s
-  v.y *= s
-  v.z *= s
-  v.w *= s
-  result = v
-
-proc scaleNew*(v: Vector4, s: float): Vector4 =
-  result.x = v.x * s
-  result.y = v.y * s
-  result.z = v.z * s
-  result.w = v.w * s
-
-proc scaleSelf*(v: var Vector4, sx, sy, sz, sw: float): var Vector4 {.noinit.} =
-  v.x *= sx
-  v.y *= sy
-  v.z *= sz
-  v.w *= sw
-  result = v
-
-proc scaleNew*(v: Vector4, sx, sy, sz, sw: float): Vector4 =
-  result.x = v.x * sx
-  result.y = v.y * sy
-  result.z = v.z * sz
-  result.w = v.w * sw
-
-proc scale*(v: var Vector1, s: float): var Vector1 = scaleSelf(v, s)
-proc scale*(v: var Vector2, s: float): var Vector2 = scaleSelf(v, s)
-proc scale*(v: var Vector3, s: float): var Vector3 = scaleSelf(v, s)
-proc scale*(v: var Vector4, s: float): var Vector4 = scaleSelf(v, s)
-
-proc scale*(v: var Vector2, sx, sy: float): var Vector2 = scaleSelf(v, sx, sy)
-proc scale*(v: var Vector3, sx, sy, sz: float): var Vector3 = scaleSelf(v, sx, sy, sz)
-proc scale*(v: var Vector4, sx, sy, sz, sw: float): var Vector4 = scaleSelf(v, sx, sy, sz, sw)
+proc scale*[N: static[int], T](v: var Vector[N, T], s: T): var Vector[N, T] = scaleSelf(v, s)
+proc scale*[N: static[int], T](v: var Vector[N, T], a: openArray[T]): var Vector[N, T] = scaleSelf(v, a)
 
 # Translate
-proc translate*(v1: var Vector1, v2: Vector1): var Vector1 = addSelf(v1, v2)
-proc translate*(v1: var Vector2, v2: Vector2): var Vector2 = addSelf(v1, v2)
-proc translate*(v1: var Vector3, v2: Vector3): var Vector3 = addSelf(v1, v2)
-proc translate*(v1: var Vector4, v2: Vector4): var Vector4 = addSelf(v1, v2)
+proc translate*[N: static[int], T](v1: var Vector[N, T], v2: Vector[N, T]): var Vector[N, T] = addSelf(v1, v2)
+
+# String
+proc `$`[N: static[int], T](v: Vector[N, T]): string =
+  result = "["
+  for i, e in v:
+    if i > 0:
+      result.add(", ")
+    result.add($e)
+  result.add("]")
 
 # Iterators
 # NOTE: Added from design doc
 # NOTE: Using Nim paradigm (items, fields, pairs, etc)
-iterator elements*(v: Vector1): float =
-  yield v.x
-
-iterator elements*(v: Vector2): float =
-  yield v.x
-  yield v.y
-
-iterator elements*(v: Vector3): float =
-  yield v.x
-  yield v.y
-  yield v.z
-
-iterator elements*(v: Vector4): float =
-  yield v.x
-  yield v.y
-  yield v.z
-  yield v.w
+# iterator elements*[N: static[int], T](v: Vector[N, T]): T =
+#   for item in v:
+#     yield item
 
 # NOTE: Added from design doc
 # NOTE: Using Nim paradigm (items, fields, pairs, etc)
-iterator pairs*(v: Vector1): tuple[key: int, value: float] =
-  yield (0, v.x)
-
-iterator pairs*(v: Vector2): tuple[key: int, value: float] =
-  yield (0, v.x)
-  yield (1, v.y)
-
-iterator pairs*(v: Vector3): tuple[key: int, value: float] =
-  yield (0, v.x)
-  yield (1, v.y)
-  yield (2, v.z)
-
-iterator pairs*(v: Vector4): tuple[key: int, value: float] =
-  yield (0, v.x)
-  yield (1, v.y)
-  yield (2, v.z)
-  yield (3, v.w)
+# iterator pairs*[N: static[int], T](v: Vector[N, T]): tuple[key: int, value: T] =
+#   for p in pairs(v):
+#     yield p
 
 # Converters
 # NOTE: Added from design doc
-proc toArray*(v: Vector1): array[1, float] =
-  result = [v.x]
+proc toArray*[N: static[int], T](v: Vector[N, T]): array[N, T] = array(v)
 
-proc toArray*(v: Vector2): array[2, float] =
-  result = [v.x, v.y]
+proc toSeq*[N: static[int], T](v: Vector[N, T]): seq[T] = @[v]
 
-proc toArray*(v: Vector3): array[3, float] =
-  result = [v.x, v.y, v.z]
-
-proc toArray*(v: Vector4): array[4, float] =
-  result = [v.x, v.y, v.z, v.w]
-
-proc toSeq*(v: Vector1): seq[float] =
-  result = @[v.x]
-
-proc toSeq*(v: Vector2): seq[float] =
-  result = @[v.x, v.y]
-
-proc toSeq*(v: Vector3): seq[float] =
-  result = @[v.x, v.y, v.z]
-
-proc toSeq*(v: Vector4): seq[float] =
-  result = @[v.x, v.y, v.z, v.w]
-
-proc calculateFill[Vector](v: var Vector, s: seq[float]): void =
+# From seq (for nurbs)
+proc fillFromSeq*[N: static[int], T](v: var Vector[N, T], s: seq[T]): void  =
   for i, val in pairs(s):
     v[i] = val
 
-# From seq (for nurbs)
-proc fillFromSeq*(v: var Vector1, s: seq[float]): void  =
-  calculateFill(v, s)
-
-proc fillFromSeq*(v: var Vector2, s: seq[float]): void =
-  calculateFill(v, s)
-
-proc fillFromSeq*(v: var Vector3, s: seq[float]): void =
-  calculateFill(v, s)
-
-proc fillFromSeq*(v: var Vector4, s: seq[float]): void =
-  calculateFill(v, s)
-
 # Extend
 # NOTE: Added from design doc
-proc extend*(v: Vector1, y: float): Vector2 =
-  result = vector2(v, y)
-
-proc extend*(v: Vector2, z: float): Vector3 =
-  result = vector3(v, z)
-
-proc extend*(v: Vector3, w: float): Vector4 =
-  result = vector4(v, w)
+proc extend*[N: static[int], T](v: Vector[N, T], y: T): Vector[N + 1, T] =
+  for i, val in pairs(v):
+    result[i] = val
+  result[N + 1] = y
 
 # Shorten
 # NOTE: Added from design doc
-proc shorten*(v: Vector2): Vector1 =
-  result = vector1(v)
+proc shorten*[N: static[int], T](v: Vector[N, T]): Vector[N - 1, T] =
+  for i in 0..<(N - 1):
+    result[i] = v[i]
 
-proc shorten*(v: Vector3): Vector2 =
-  result = vector2(v)
+proc toJsonString*[T](v: Vector[1, T]): string =
+  result = &"{{\"x\":{v[0]}}}"
 
-proc shorten*(v: Vector4): Vector3 =
-  result = vector3(v)
+proc toJsonString*[T](v: Vector[2, T]): string =
+  result = &"{{\"x\":{v[0]},\"y\":{v[1]}}}"
 
-# String
-# NOTE: Changed from design doc
-proc `$`*(v: Vector1): string =
-  result = &"[{v.x}]"
+proc toJsonString*[T](v: Vector[3, T]): string =
+  result = &"{{\"x\":{v[0]},\"y\":{v[1]},\"z\":{v[2]}}}"
 
-proc `$`*(v: Vector2): string =
-  result = &"[{v.x}, {v.y}]"
-
-proc `$`*(v: Vector3): string =
-  result = &"[{v.x}, {v.y}, {v.z}]"
-
-proc `$`*(v: Vector4): string =
-  result = &"[{v.x}, {v.y}, {v.z}, {v.w}]"
-
-proc toJsonString*(v: Vector1): string =
-  result = &"{{\"x\":{v.x}}}"
-
-proc toJsonString*(v: Vector2): string =
-  result = &"{{\"x\":{v.x},\"y\":{v.y}}}"
-
-proc toJsonString*(v: Vector3): string =
-  result = &"{{\"x\":{v.x},\"y\":{v.y},\"z\":{v.z}}}"
-
-proc toJsonString*(v: Vector4): string =
-  result = &"{{\"x\":{v.x},\"y\":{v.y},\"z\":{v.z},\"w\":{v.w}}}"
+proc toJsonString*[T](v: Vector[4, T]): string =
+  result = &"{{\"x\":{v[0]},\"y\":{v[1]},\"z\":{v[2]},\"w\":{v[3]}}}"
 
 # Batch comparisons
-proc min*(a: openArray[Vector]): Vector =
+proc min*[N: static[int], T](a: openArray[Vector[N, T]]): Vector[N, T] =
   result = nil
   for v in a:
     if result == nil or v < result:
       result = v
 
-proc max*(a: openArray[Vector]): Vector =
+proc max*[N: static[int], T](a: openArray[Vector[N, T]]): Vector[N, T] =
   result = nil
   for v in a:
     if result == nil or v > result:
@@ -825,11 +639,11 @@ proc max*(a: openArray[Vector]): Vector =
 # NOTE: This is added from the design doc
 # NOTE: All plane operations should be refactored as some point
 
-proc calculatePlane*(v1, v2, v3: Vector3): Vector4 =
+proc calculatePlane*[T](v1, v2, v3: Vector[3, T]): Vector[4, T] =
   let cp = cross(subtractNew(v3, v1), subtractNew(v2, v1))
-  result = vector4(cp, -1.0 * dot(cp, v3))
+  result = vector4(cp[0], cp[1], cp[2], -1.0 * dot(cp, v3))
 
-proc areCollinear*(v1, v2, v3: Vector3): bool =
+proc areCollinear*[T](v1, v2, v3: Vector[3, T]): bool =
   result = true
   let ms = magnitudeSquared(cross(subtractNew(v3, v1), subtractNew(v2, v1)))
   # if ms > EPSILON:
@@ -838,15 +652,15 @@ proc areCollinear*(v1, v2, v3: Vector3): bool =
 
 # NOTE: Write generaly areCollinear for array
 
-proc arePlanar*(a: openArray[Vector1]): bool =
+proc arePlanar*[T](a: openArray[Vector[1, T]]): bool =
   result = true
 
-proc arePlanar*(a: openArray[Vector2]): bool =
+proc arePlanar*[T](a: openArray[Vector[2, T]]): bool =
   result = true
 
 # This is probably not the most efficient algorithm for coplanarity
 # Finds the first plane, and then each points distance to that plane
-proc arePlanar*(a: openArray[Vector3]): bool =
+proc arePlanar*[T](a: openArray[Vector[3, T]]): bool =
   result = true
   let l = len(a)
   if l > 3:
@@ -869,42 +683,42 @@ proc arePlanar*(a: openArray[Vector3]): bool =
         break
 
 # TODO: Write 4D arePlanar (and areCollinear) algorithms
-proc arePlanar*(a: openArray[Vector4]): bool =
+proc arePlanar*[T](a: openArray[Vector[4, T]]): bool =
   discard
 
 # JSON
-proc vector1FromJsonNode*(jsonNode: JsonNode): Vector1 =
+proc vector1FromJsonNode*[T](jsonNode: JsonNode): Vector[1, T] =
   result = vector1(getFloat(jsonNode["x"]))
 
-proc vector2FromJsonNode*(jsonNode: JsonNode): Vector2 =
+proc vector2FromJsonNode*[T](jsonNode: JsonNode): Vector[2, T] =
   result = vector2(getFloat(jsonNode["x"]), getFloat(jsonNode["y"]))
 
-proc vector3FromJsonNode*(jsonNode: JsonNode): Vector3 =
+proc vector3FromJsonNode*[T](jsonNode: JsonNode): Vector[3, T] =
   result = vector3(getFloat(jsonNode["x"]), getFloat(jsonNode["y"]), getFloat(jsonNode["z"]))
 
-proc vector4FromJsonNode*(jsonNode: JsonNode): Vector4 =
+proc vector4FromJsonNode*[T](jsonNode: JsonNode): Vector[4, T] =
   result = vector4(getFloat(jsonNode["x"]), getFloat(jsonNode["y"]), getFloat(jsonNode["z"]), getFloat(jsonNode["w"]))
 
-proc vector1FromJson*(jsonString: string): Vector1 =
+proc vector1FromJson*[T](jsonString: string): Vector[1, T] =
   result = vector1FromJsonNode(parseJson(jsonString))
 
-proc vector2FromJson*(jsonString: string): Vector2 =
+proc vector2FromJson*[T](jsonString: string): Vector[2, T] =
   result = vector2FromJsonNode(parseJson(jsonString))
 
-proc vector3FromJson*(jsonString: string): Vector3 =
+proc vector3FromJson*[T](jsonString: string): Vector[3, T] =
   result = vector3FromJsonNode(parseJson(jsonString))
 
-proc vector4FromJson*(jsonString: string): Vector4 =
+proc vector4FromJson*[T](jsonString: string): Vector[4, T] =
   result = vector4FromJsonNode(parseJson(jsonString))
 
-proc toJson*(v: Vector1): string =
+proc toJson*[T](v: Vector[1, T]): string =
   result = toJsonString(v)
 
-proc toJson*(v: Vector2): string =
+proc toJson*[T](v: Vector[2, T]): string =
   result = toJsonString(v)
 
-proc toJson*(v: Vector3): string =
+proc toJson*[T](v: Vector[3, T]): string =
   result = toJsonString(v)
 
-proc toJson*(v: Vector4): string =
+proc toJson*[T](v: Vector[4, T]): string =
   result = toJsonString(v)
