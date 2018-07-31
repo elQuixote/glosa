@@ -198,7 +198,7 @@ proc addSelf*[N: static[int], T](v: var Vector[N, T], t: T): var Vector[N, T] {.
   result = v
 
 proc addSelf*[N: static[int], T](v1: var Vector[N, T], v2: Vector[N, T]): var Vector[N, T] {.noinit.} =
-  for i, val in pairs(v1):
+  for i in 0..<len(v1):
     v1[i] += v2[i]
   result = v1
 
@@ -218,7 +218,7 @@ proc `+=`*[N: static[int], T](v1: var Vector[N, T], t: T) = discard addSelf(v1, 
 
 # Subtraction
 proc subtractSelf*[N: static[int], T](v: var Vector[N, T], t: T): var Vector[N, T] {.noinit.} =
-  for i, val in pairs(v):
+  for i in 0..<len(v):
     v[i] -= t
   result = v
 
@@ -243,7 +243,7 @@ proc `-=`*[N: static[int], T](v1: var Vector[N, T], t: T) = discard subtractSelf
 
 # Multiplication
 proc multiplySelf*[N: static[int], T](v: var Vector[N, T], t: T): var Vector[N, T] {.noinit.} =
-  for i, val in pairs(v):
+  for i in 0..<len(v):
     v[i] *= t
   result = v
 
@@ -257,7 +257,7 @@ proc `*=`*[N: static[int], T](v: var Vector[N, T], t: T) = discard multiplySelf(
 
 # Divide
 proc divideSelf*[N: static[int], T](v: var Vector[N, T], t: T): var Vector[N, T] {.noinit.} =
-  for i, val in pairs(v):
+  for i in 0..<len(v):
     v[i] /= t
   result = v
 
@@ -272,7 +272,7 @@ proc `/=`*[N: static[int], T](v: var Vector[N, T], t: T) = discard divideSelf(v,
 # Dot
 proc dot*[N: static[int], T](v1, v2: Vector[N, T]): T =
   for i, val in pairs(v1):
-    result += v1[i] * v2[i]
+    result += val * v2[i]
 
 # Cross
 proc cross*[T](v1, v2: Vector[1, T]): T =
