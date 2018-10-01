@@ -1,5 +1,3 @@
-{.experimental: "dotOperators".}
-
 from ./concepts import
   # Vector,
   Compare,
