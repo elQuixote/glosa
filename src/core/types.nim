@@ -5,7 +5,9 @@ type
   Vector*[N: static[int], T] = array[N, T]
 
   # Matrices
-  Matrix*[N, M: static[int], T] = array[N, array[M, T]]
+  Matrix*[N, M: static[int], T] = Vector[N, Vector[M, T]]
+  Matrix33*[T] = Matrix[3, 3, T]
+  Matrix44*[T] = Matrix[4, 4, T]
 
   # Quaternions
   Quaternion*[T] = Vector[4, T]
