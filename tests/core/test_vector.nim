@@ -6,7 +6,7 @@ from math import pow, sqrt, PI
 from sequtils import zip, toSeq
 
 from ../../src/core/constants import
-  EPSILON
+  TEST_EPSILON
 
 # Vector testing utilities
 proc compareVectorToValue[N: static[int], T](vector: Vector[N, T], value: T): bool =
@@ -30,7 +30,7 @@ proc compareVectorToValues[N: static[int], T](vector: Vector[N, T], values: seq[
     checkpoint("values were " & $values)
 
 proc compareValuesWithinEpsilon[T](a, b: T): bool =
-  if abs(a - b) >= EPSILON:
+  if abs(a - b) >= TEST_EPSILON:
     result = false
     checkpoint("a was " & $a)
     checkpoint("b was " & $b)
@@ -41,7 +41,7 @@ proc compareVectorsWithinEpsilon[N: static[int], T](v1, v2: Vector[N, T]): bool 
   let s = zip(v1.toArray(), v2.toArray())
   result = true
   for v in s:
-    if abs(v[0] - v[1]) >= EPSILON:
+    if abs(v[0] - v[1]) >= TEST_EPSILON:
       result = false
   if not result:
     checkpoint("v1 was " & $v1)
@@ -628,9 +628,9 @@ suite "Calculating the heading of a Vector":
       heading(v1) == PI_OVER_FOUR_RADS
       headingXY(v1) == PI_OVER_FOUR_RADS
       heading(v1) == headingXY(v1)
-      abs(heading(v2) - PI_OVER_SIX_RADS) < EPSILON
-      abs(headingXY(v2) - PI_OVER_SIX_RADS) < EPSILON
-      abs(heading(v2) - headingXY(v2)) < EPSILON
+      abs(heading(v2) - PI_OVER_SIX_RADS) < TEST_EPSILON
+      abs(headingXY(v2) - PI_OVER_SIX_RADS) < TEST_EPSILON
+      abs(heading(v2) - headingXY(v2)) < TEST_EPSILON
   test "Calculating the heading of a Vector3":
     let
       v1 = vector(3, 2.0)
@@ -644,10 +644,10 @@ suite "Calculating the heading of a Vector":
       heading(v1) == headingXY(v1)
       headingXZ(v1) == PI_OVER_FOUR_RADS
       headingYZ(v1) == PI_OVER_FOUR_RADS
-      abs(heading(v2) - PI_OVER_SIX_RADS) < EPSILON
-      abs(headingXY(v2) - PI_OVER_SIX_RADS) < EPSILON
-      abs(heading(v2) - headingXY(v2)) < EPSILON
-      abs(headingXZ(v2) - PI_OVER_SIX_RADS) < EPSILON
+      abs(heading(v2) - PI_OVER_SIX_RADS) < TEST_EPSILON
+      abs(headingXY(v2) - PI_OVER_SIX_RADS) < TEST_EPSILON
+      abs(heading(v2) - headingXY(v2)) < TEST_EPSILON
+      abs(headingXZ(v2) - PI_OVER_SIX_RADS) < TEST_EPSILON
       headingYZ(v2) == PI_OVER_FOUR_RADS
   test "Calculating the heading of a Vector4":
     let
@@ -666,14 +666,14 @@ suite "Calculating the heading of a Vector":
       headingYZ(v1) == PI_OVER_FOUR_RADS
       headingYW(v1) == PI_OVER_FOUR_RADS
       headingZW(v1) == PI_OVER_FOUR_RADS
-      abs(heading(v2) - PI_OVER_SIX_RADS) < EPSILON
-      abs(headingXY(v2) - PI_OVER_SIX_RADS) < EPSILON
-      abs(heading(v2) - headingXY(v2)) < EPSILON
-      abs(headingXZ(v2) - PI_OVER_SIX_RADS) < EPSILON
+      abs(heading(v2) - PI_OVER_SIX_RADS) < TEST_EPSILON
+      abs(headingXY(v2) - PI_OVER_SIX_RADS) < TEST_EPSILON
+      abs(heading(v2) - headingXY(v2)) < TEST_EPSILON
+      abs(headingXZ(v2) - PI_OVER_SIX_RADS) < TEST_EPSILON
       headingXW(v2) == PI_OVER_FOUR_RADS
       headingYZ(v2) == PI_OVER_FOUR_RADS
-      abs(headingYW(v2) - PI_OVER_THREE_RADS) < EPSILON
-      abs(headingZW(v2) - PI_OVER_THREE_RADS) < EPSILON
+      abs(headingYW(v2) - PI_OVER_THREE_RADS) < TEST_EPSILON
+      abs(headingZW(v2) - PI_OVER_THREE_RADS) < TEST_EPSILON
 
 suite "Calculating the magnitude and length of a Vector":
   proc testVectorMagnitudeAndLength[N: static[int], T](v1: Vector[N, T], expected: float) =

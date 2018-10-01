@@ -1,4 +1,4 @@
-from ../../src/core/constants import EPSILON
+from ../../src/core/constants import TEST_EPSILON
 import ../../src/core/linear
 import unittest
 
@@ -6,7 +6,7 @@ proc compareValuesWithinEpsilon(a, b: seq[seq[float]]): bool =
   result = true
   for i in 0..<len(a):
     for j in 0..<len(a):
-      if abs(a[i][j] - b[i][j]) >= EPSILON:
+      if abs(a[i][j] - b[i][j]) >= TEST_EPSILON:
         checkpoint("a[" & $i & "][" & $j & "] was " & $a[i][j])
         checkpoint("b[" & $i & "][" & $j & "] was " & $b[i][j])
         result = false

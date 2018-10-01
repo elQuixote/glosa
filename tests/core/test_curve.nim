@@ -1,18 +1,18 @@
-from ../../src/core/constants import EPSILON
+from ../../src/core/constants import TEST_EPSILON
 import ../../src/core/vector
 import ../../src/core/curve
 import unittest
 
 proc compareValuesWithinEpsilon(a, b: float): bool =
   result = true
-  if abs(a - b) >= EPSILON:
+  if abs(a - b) >= TEST_EPSILON:
     checkpoint("a was " & $a)
     checkpoint("b was " & $b)
     result = false
 proc compareVectorsWithinEpsilon(a, b: Vector): bool =
   result = true
   for i in 0..<dimension(a):
-    if abs(a[i] - b[i]) >= EPSILON:
+    if abs(a[i] - b[i]) >= TEST_EPSILON:
       checkpoint("a[" & $i & "] was " & $a[i])
       checkpoint("b[" & $i & "] was " & $b[i])
       result = false
@@ -26,7 +26,7 @@ proc compareSequenceOfValuesWithinEpsilon(a, b: openarray[float]): bool =
     checkpoint("len of b was " & $bL)
     result = false
   for i in 0..<aL:
-    if abs(a[i] - b[i]) >= EPSILON:
+    if abs(a[i] - b[i]) >= TEST_EPSILON:
       checkpoint("a[" & $i & "] was " & $a[i])
       checkpoint("b[" & $i & "] was " & $b[i])
       result = false
@@ -41,7 +41,7 @@ proc compareSequenceOfVectorsWithinEpsilon(a, b: openarray[Vector]): bool =
     result = false
   for i in 0..<aL:
     for j in 0..<dimension(a[i]):
-      if abs(a[i][j] - b[i][j]) >= EPSILON:
+      if abs(a[i][j] - b[i][j]) >= TEST_EPSILON:
         checkpoint("a[" & $i & "][" & $j & "] was " & $a[i][j])
         checkpoint("b[" & $i & "][" & $j & "] was " & $b[i][j])
         result = false
