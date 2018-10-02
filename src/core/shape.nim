@@ -1,5 +1,4 @@
 from ./concepts import
-  Vector,
   Equals,
   Hash,
   Transform,
@@ -11,14 +10,12 @@ from ./concepts import
   Centroid,
   Shape2,
   Closest,
-  Vertices,
-  Matrix
+  Vertices
+  #Matrix
 
 from ./types import
-  Vector1,
-  Vector2,
-  Vector3,
-  Vector4,
+  Vector,
+  Matrix,
   Circle
 
 export
@@ -50,14 +47,9 @@ from ./vector import
   distanceTo,
   distanceToSquared,
   clear,
-  copy,
+  #copy,
   interpolateTo,
   magnitude,
-  vector1FromJsonNode,
-  vector2FromJsonNode,
-  vector3FromJsonNode,
-  vector4FromJsonNode,
-  toJson,
   transform
 
 # const
@@ -65,146 +57,109 @@ from ./vector import
 #   UNIT_CIRCLE_3D = Circle(center: Vector3(x: 0.0, y: 0.0, z: 0.0), radius: 1.0)
 
 # Constructors
-proc circle*[Vector](v: Vector, r: float): Circle[Vector] =
+proc circle*[N: static[int], T](v: Vector[N, T], r: float): Circle[N, T] =
   result.center = v
   result.radius = r
 
 # From individual coordinates
-proc circle*[Vector](x, y, r: float): Circle[Vector] =
+proc circle*[N: static[int], T](x, y, r: float): Circle[N, T] =
   result.center = vector2(x, y)
   result.radius = r
 
-proc circle*[Vector](x, y, z, r: float): Circle[Vector] =
+proc circle*[N: static[int], T](x, y, z, r: float): Circle[N, T] =
   result.center = vector3(x, y, z)
   result.radius = r
 
 # From 2 Points (interpolated)
-proc circle*[Vector](v1, v2: Vector): Circle[Vector] =
+proc circle*[N: static[int], T](v1, v2: Vector[N, T]): Circle[N, T] =
   let v = interpolateTo(v1, v2, 0.5)
   result.center = v
   result.radius = distanceTo(v, v2)
 
-proc containsPoint*[Vector](c: Circle[Vector], v: Vector): bool =
+proc containsPoint*[N: static[int], T](c: Circle[N, T], v: Vector[N, T]): bool =
   result = distanceToSquared(c.center, v) <= c.radius * c.radius
 
 # Shape2
-proc area*[Vector](c: Circle[Vector]): float =
+proc area*[N: static[int], T](c: Circle[N, T]): float =
   result = PI * (c.radius * c.radius)
 
-proc circumference*[Vector](c: Circle[Vector]): float =
+proc circumference*[N: static[int], T](c: Circle[N, T]): float =
   result = TAU * c.radius
 
-proc perimeter*[Vector](c: Circle[Vector]): float = circumference(c)
+proc perimeter*[N: static[int], T](c: Circle[N, T]): float = circumference(c)
 
 # Centroid
-proc centroid*[Vector](c: Circle[Vector]): Vector =
+proc centroid*[N: static[int], T](c: Circle[N, T]): Vector[N, T] =
   result = c.center
 
 # Average
-proc average*[Vector](c: Circle[Vector]): Vector =
+proc average*[N: static[int], T](c: Circle[N, T]): Vector[N, T] =
   result = centroid(c)
 
 # Closest Point
 # Closest point to circle in 2D
-proc closestPoint*[Vector](c: Circle[Vector], v: Vector): Vector =
+proc closestPoint*[N: static[int], T](c: Circle[N, T], v: Vector[N, T]): Vector[N, T] =
   let
     d = v - c.center
     m = magnitude(d)
   result = c.center + c.radius * d / m
 
 # Equals
-proc `==`*[Vector](c1,c2: Circle[Vector]): bool =
+proc `==`*[N: static[int], T](c1,c2: Circle[N, T]): bool =
   result = (c1.radius == c2.radius) and (c1.center == c2.center)
 
 # Non Equals
-proc `!=`*[Vector](c1, c2: Circle[Vector]): bool =
+proc `!=`*[N: static[int], T](c1, c2: Circle[N, T]): bool =
   result = not (c1 == c2)
 
 # Hash
-proc hash*[Vector](c: Circle[Vector]): hashes.Hash =
+proc hash*[N: static[int], T](c: Circle[N, T]): hashes.Hash =
   result = !$(result !& hash(c.center.x) !& hash(c.center.y) !& hash(c.radius))
 
 # Clear
-proc clear*[Vector2](c: var Circle[Vector2]): var Circle[Vector2] {.noinit.} =
+proc clear*[T](c: var Circle[2, T]): var Circle[2, T] {.noinit.} =
   c.center = vector2(0, 0)
   c.radius = 1
   result = c
 
-proc clear3*[Vector3](c: var Circle[Vector3]): var Circle[Vector3] {.noinit.} =
+proc clear3*[T](c: var Circle[3, T]): var Circle[3, T] {.noinit.} =
   c.center = vector3(0, 0, 0)
   c.radius = 1
   result = c
 
-proc clear4*[Vector4](c: var Circle[Vector4]): var Circle[Vector4] {.noinit.} =
+proc clear4*[T](c: var Circle[4, T]): var Circle[4, T] {.noinit.} =
   c.center = vector4(0, 0, 0, 0)
   c.radius = 1
   result = c
 
 # Dimension
-proc dimension*[Vector](c: Circle[Vector]): int =
+proc dimension*[N: static[int], T](c: Circle[N, T]): int =
   result = dimension(c.center)
 
 # Copy
-proc copy*[Vector](c: Circle[Vector]): Circle[Vector] =
+proc copy*[N: static[int], T](c: Circle[N, T]): Circle[N, T] =
   result = Circle[Vector](center: copy(c.center), radius: c.radius)
 
 # String
-proc `$`*[Vector](c: Circle[Vector]): string =
+proc `$`*[N: static[int], T](c: Circle[N, T]): string =
   result = &"[center: [{$c.center}], radius: {c.radius}]"
 
 # Transforms
 # Rotate
-proc rotate*[Vector](c: var Circle[Vector], theta: float): var Circle[Vector] {.noinit.} =
+proc rotate*[N: static[int], T](c: var Circle[N, T], theta: float): var Circle[N, T] {.noinit.} =
   result = c
 
 # Scale
-proc scale*[Vector](c: var Circle[Vector], s: float): var Circle[Vector] {.noinit.} =
+proc scale*[N: static[int], T](c: var Circle[N, T], s: float): var Circle[N, T] {.noinit.} =
   c.radius *= s
   result = c
 
 # Translate
-proc translate*[Vector](c: var Circle[Vector], t: float): var Circle[Vector] {.noinit.} =
+proc translate*[N: static[int], T](c: var Circle[N, T], t: float): var Circle[N, T] {.noinit.} =
   c.center += t
   result = c
 
 # Transform
-proc transform*[Vector, Matrix](c: var Circle[Vector], m : Matrix): var Circle[Vector] {.noinit.} =
+proc transform*[N, M: static[int], T](c: var Circle[N, T], m : Matrix[N, M, T]): var Circle[N, T] {.noinit.} =
   c.center = transform(c.center, m)
   result = c
-
-# JSON
-proc circle1FromJsonNode*(jsonNode: JsonNode): Circle[Vector1] =
-  result = circle(vector1FromJsonNode(jsonNode["center"]), getFloat(jsonNode["radius"]))
-
-proc circle2FromJsonNode*(jsonNode: JsonNode): Circle[Vector2] =
-  result = circle(vector2FromJsonNode(jsonNode["center"]), getFloat(jsonNode["radius"]))
-
-proc circle3FromJsonNode*(jsonNode: JsonNode): Circle[Vector3] =
-  result = circle(vector3FromJsonNode(jsonNode["center"]), getFloat(jsonNode["radius"]))
-
-proc circle4FromJsonNode*(jsonNode: JsonNode): Circle[Vector4] =
-  result = circle(vector4FromJsonNode(jsonNode["center"]), getFloat(jsonNode["radius"]))
-
-proc circle1FromJson*(jsonString: string): Circle[Vector1] =
-  result = circle1FromJsonNode(parseJson(jsonString))
-
-proc circle2FromJson*(jsonString: string): Circle[Vector2] =
-  result = circle2FromJsonNode(parseJson(jsonString))
-
-proc circle3FromJson*(jsonString: string): Circle[Vector3] =
-  result = circle3FromJsonNode(parseJson(jsonString))
-
-proc circle4FromJson*(jsonString: string): Circle[Vector4] =
-  result = circle4FromJsonNode(parseJson(jsonString))
-
-proc toJson*(c: Circle[Vector1]): string =
-  result = "{\"center\":" & toJson(c.center) & ",\"radius\":" & $c.radius & "}"
-
-proc toJson*(c: Circle[Vector2]): string =
-  result = "{\"center\":" & toJson(c.center) & ",\"radius\":" & $c.radius & "}"
-
-proc toJson*(c: Circle[Vector3]): string =
-  result = "{\"center\":" & toJson(c.center) & ",\"radius\":" & $c.radius & "}"
-
-proc toJson*(c: Circle[Vector4]): string =
-  result = "{\"center\":" & toJson(c.center) & ",\"radius\":" & $c.radius & "}"

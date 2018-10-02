@@ -33,8 +33,8 @@ type
     polyline*: Polyline[N, T]
 
   # Shapes
-  Circle*[Vector] = object
-    center*: Vector
+  Circle*[N: static[int], T] = object
+    center*: Vector[N, T]
     radius*: float
 
   # Mesh
