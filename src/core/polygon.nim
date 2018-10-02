@@ -1,5 +1,4 @@
 from ./concepts import
-  Vector,
   Equals,
   Hash,
   Transform,
@@ -9,14 +8,12 @@ from ./concepts import
   Centroid,
   Shape2,
   Closest,
-  Vertices,
-  Matrix
+  Vertices
+  #Matrix
 
 from ./types import
-  Vector1,
-  Vector2,
-  Vector3,
-  Vector4,
+  Vector,
+  Matrix,
   Polygon,
   Polyline,
   LineSegment
@@ -55,7 +52,7 @@ from ./vector import
   cross,
   dimension,
   clear,
-  copy,
+  #copy,
   distanceTo,
   arePlanar,
   multiplySelf
@@ -70,15 +67,10 @@ from ./path import
   rotate,
   scale,
   translate,
-  transform,
-  polyline1FromJsonNode,
-  polyline2FromJsonNode,
-  polyline3FromJsonNode,
-  polyline4FromJsonNode,
-  toJson
+  transform
 
 # Constuctors
-proc polygon*[Vector](polyline: Polyline[Vector]): Polygon[Vector] =
+proc polygon*[N: static[int], T](polyline: Polyline[N, T]): Polygon[N, T] =
   if not (areClosed(polyline.segments)):
     raise newException(InvalidPolylineError,
       "Polyline is not closed")
@@ -87,7 +79,7 @@ proc polygon*[Vector](polyline: Polyline[Vector]): Polygon[Vector] =
       "Polyline is not planar")
   result.polyline = polyline
 
-proc polygon*[Vector](segments: openArray[LineSegment[Vector]]): Polygon[Vector] =
+proc polygon*[N: static[int], T](segments: openArray[LineSegment[N, T]]): Polygon[N, T] =
   if not areClosed(segments):
     raise newException(InvalidSegmentsError,
       "Segments are not closed")
@@ -96,7 +88,7 @@ proc polygon*[Vector](segments: openArray[LineSegment[Vector]]): Polygon[Vector]
     raise newException(InvalidSegmentsError,
       "Segments are not planar")
 
-proc polygon*[Vector](vertices: openArray[Vector]): Polygon[Vector] =
+proc polygon*[N: static[int], T](vertices: openArray[Vector[N, T]]): Polygon[N, T] =
   if not arePlanar(vertices):
     raise newException(InvalidVerticesError,
       "Vertices are not planar")
@@ -125,42 +117,42 @@ proc polygon*[Vector](vertices: openArray[Vector]): Polygon[Vector] =
 # proc faces*[Vector](p: Polygon[Vector]): seq[LineSegment[Vector]] {.inline.} = p.segments
 
 # Iterators
-iterator vertices*[Vector](p: Polygon[Vector]): Vector =
+iterator vertices*[N: static[int], T](p: Polygon[N, T]): Vector[N, T] =
   for v in p.polyline.vertices:
     yield v
 
-iterator segments*[Vector](p: Polygon[Vector]): LineSegment[Vector] =
+iterator segments*[N: static[int], T](p: Polygon[N, T]): LineSegment[N, T] =
   for s in p.polyline.segments:
     yield s
 
-iterator faces*[Vector](p: Polygon[Vector]): LineSegment[Vector] =
+iterator faces*[N: static[int], T](p: Polygon[N, T]): LineSegment[N, T] =
   for s in p.polyline.segments:
     yield s
 
 # NOTE: This is added from design doc
 # NOTE: Remove returns for all in place operations
-proc reverse*[Vector](p: var Polygon[Vector]): var Polygon[Vector] =
+proc reverse*[N: static[int], T](p: var Polygon[N, T]): var Polygon[N, T] =
   p.polyline = reverse(p.polyline)
   result = p
 
 # NOTE: This is added from design doc
-proc contains*[Vector](p: Polygon[Vector], v: Vector): bool =
+proc contains*[N: static[int], T](p: Polygon[N, T], v: Vector[N, T]): bool =
   result = contains(p.polyline, v)
 
 # NOTE: This is added from design doc
-proc containsPoint*[Vector](p: Polygon[Vector], v: Vector): bool =
+proc containsPoint*[N: static[int], T](p: Polygon[N, T], v: Vector[N, T]): bool =
   result = containsPoint(p.polyline, v)
 
 # Equals (compares points in polygon)
-proc `==`*[Vector](p1, p2: Polygon[Vector]): bool =
+proc `==`*[N: static[int], T](p1, p2: Polygon[N, T]): bool =
   result = p1.polyline == p2.polyline
 
 # Non Equals
-proc `!=`*[Vector](p1, p2: Polygon[Vector]): bool =
+proc `!=`*[N: static[int], T](p1, p2: Polygon[N, T]): bool =
   result = not (p1 == p2)
 
 # Hash
-proc hash*[Vector](p: Polygon[Vector]): hashes.Hash =
+proc hash*[N: static[int], T](p: Polygon[N, T]): hashes.Hash =
   result = hash(p.polyline)
 
 # Clear
@@ -168,19 +160,19 @@ proc hash*[Vector](p: Polygon[Vector]): hashes.Hash =
 #   result = p.polyline.clear()
 
 # Dimension
-proc dimension*[Vector](p: Polygon[Vector]): int =
+proc dimension*[N: static[int], T](p: Polygon[N, T]): int =
   result = dimension(p.polyline)
 
 # Copy
-proc copy*[Vector](p: Polygon[Vector]): Polygon[Vector] =
-  result = Polygon[Vector](polyline: copy(p.polyline))
+proc copy*[N: static[int], T](p: Polygon[N, T]): Polygon[N, T] =
+  result = Polygon[N: static[int], T](polyline: copy(p.polyline))
 
 # String
-proc `$`*[Vector](p: Polygon[Vector]): string =
+proc `$`*[N: static[int], T](p: Polygon[N, T]): string =
   result = $p.polyline
 
 # Area
-proc signedArea[Vector](p: Polygon[Vector]): float =
+proc signedArea[N: static[int], T](p: Polygon[N, T]): float =
   for s in p.polyline.segments:
     let
       a = s.startVertex
@@ -189,15 +181,15 @@ proc signedArea[Vector](p: Polygon[Vector]): float =
     result -= (a.y * b.x)
   result *= 0.5
 
-proc area*[Vector](p: Polygon[Vector]): float = abs(signedArea(p))
+proc area*[N: static[int], T](p: Polygon[N, T]): float = abs(signedArea(p))
 
 # Perimeter (the circumference)
-proc perimeter*[Vector](p: Polygon[Vector]): float =
+proc perimeter*[N: static[int], T](p: Polygon[N, T]): float =
   for s in p.polyline.segments:
     result += distanceTo(s.startVertex, s.endVertex)
 
 # Centroid
-proc centroid*[Vector](p: Polygon[Vector]): Vector =
+proc centroid*[N: static[int], T](p: Polygon[N, T]): Vector[N, T] =
   let l = len(p.polyline.vertices)
   if l > 0:
     var v1 = copy(p.polyline.vertices[0])
@@ -211,116 +203,63 @@ proc centroid*[Vector](p: Polygon[Vector]): Vector =
 
 # Predication Vertices
 # Closest Vertex
-proc closestVertex*[Vector](p: Polygon[Vector], v: Vector): Vector =
+proc closestVertex*[N: static[int], T](p: Polygon[N, T], v: Vector[N, T]): Vector[N, T] =
   result = closestVertex(p.polyline, v)
 
 # To Polygon
-proc toPolygon*[Vector](p: var Polygon[Vector]): var Polygon[Vector] {.noinit.} =
+proc toPolygon*[N: static[int], T](p: var Polygon[N, T]): var Polygon[N, T] {.noinit.} =
   result = p
 
 # To Polyline
-proc toPolyline*[Vector](p: Polygon[Vector]): Polyline[Vector] =
+proc toPolyline*[N: static[int], T](p: Polygon[N, T]): Polyline[N, T] =
   result = p.polyline
 
 # Predicate Closest
 # Closest Point
-proc closestPoint*[Vector](p: Polygon[Vector], v: Vector): Vector =
+proc closestPoint*[N: static[int], T](p: Polygon[N, T], v: Vector[N, T]): Vector[N, T] =
   result = closestPoint(p.polyline, v)
 
 # NOTE: This is added from design doc
-proc isClockwise*[Vector](p: Polygon[Vector]): bool =
+proc isClockwise*[N: static[int], T](p: Polygon[N, T]): bool =
   result = signedArea(p) > 0
 
 # Predicate Transforms
 # Rotate
-proc rotate*[Vector2](p: var Polygon[Vector2], theta: float): var Polygon[Vector2] {.noinit.} =
+proc rotate*[T](p: var Polygon[2, T], theta: float): var Polygon[2, T] {.noinit.} =
   p.polyline = rotate(p.polyline, theta)
   result = p
 
-proc rotate*[Vector3](p: var Polygon[Vector3], axis: Vector3, theta: float): var Polygon[Vector3] {.noinit.} =
+proc rotate*[T](p: var Polygon[3, T], axis: Vector[3, T], theta: float): var Polygon[3, T] {.noinit.} =
   p.polyline = rotate(p.polyline, axis, theta)
   result = p
 
-proc rotate*[Vector4](p: var Polygon[Vector4], b1, b2: Vector4, theta: float, b3, b4: Vector4, phi: float): var Polygon[Vector4] {.noinit.} =
+proc rotate*[T](p: var Polygon[4, T], b1, b2: Vector[4, T], theta: float, b3, b4: Vector[4, T], phi: float): var Polygon[4, T] {.noinit.} =
   p.polyline = rotate(p.polyline, b1, b2, theta, b3, b4, phi)
   result = p
 
 # Scale
-proc scale*[Vector](p: var Polygon[Vector], s: float): var Polygon[Vector] {.noinit.} =
+proc scale*[N: static[int], T](p: var Polygon[N, T], s: float): var Polygon[N, T] {.noinit.} =
   p.polyline = scale(p.polyline, s)
   result = p
 
-proc scale*[Vector2](p: var Polygon[Vector2], sx, sy: float): var Polygon[Vector2] {.noinit.} =
+proc scale*[T](p: var Polygon[2, T], sx, sy: float): var Polygon[2, T] {.noinit.} =
   p.polyline = scale(p.polyline, sx, sy)
   result = p
 
-proc scale*[Vector3](p: var Polygon[Vector3], sx, sy, sz: float): var Polygon[Vector3] {.noinit.} =
+proc scale*[T](p: var Polygon[3, T], sx, sy, sz: float): var Polygon[3, T] {.noinit.} =
   p.polyline = scale(p.polyline, sx, sy, sz)
   result = p
 
-proc scale*[Vector4](p: var Polygon[Vector4], sx, sy, sz, sw: float): var Polygon[Vector4] {.noinit.} =
+proc scale*[T](p: var Polygon[4, T], sx, sy, sz, sw: float): var Polygon[4, T] {.noinit.} =
   p.polyline = scale(p.polyline, sx, sy, sz, sw)
   result = p
 
 # Translate
-proc translate*[Vector](p: var Polygon[Vector], v: Vector): var Polygon[Vector] {.noinit.} =
+proc translate*[N: static[int], T](p: var Polygon[N, T], v: Vector[N, T]): var Polygon[N, T] {.noinit.} =
   p.polyline = translate(p.polyline, v)
   result = p
 
 # Transform
-proc transform*[Vector, Matrix](p: var Polygon[Vector], m : Matrix): var Polygon[Vector] {.noinit.} =
+proc transform*[N, M: static[int], T](p: var Polygon[N, T], m : Matrix[N, M, T]): var Polygon[N, T] {.noinit.} =
   p.polyline = transform(p.polyline, m)
   result = p
-
-# JSON
-proc polygon1FromJsonNode*(jsonNode: JsonNode): Polygon[Vector1] =
-  try:
-    result = polygon(polyline1FromJsonNode(jsonNode["polyline"]))
-  except:
-    raise newException(InvalidJsonError,
-      "JSON is formatted incorrectly")
-
-proc polygon2FromJsonNode*(jsonNode: JsonNode): Polygon[Vector2] =
-  try:
-    result = polygon(polyline2FromJsonNode(jsonNode["polyline"]))
-  except:
-    raise newException(InvalidJsonError,
-      "JSON is formatted incorrectly")
-
-proc polygon3FromJsonNode*(jsonNode: JsonNode): Polygon[Vector3] =
-  try:
-    result = polygon(polyline3FromJsonNode(jsonNode["polyline"]))
-  except:
-    raise newException(InvalidJsonError,
-      "JSON is formatted incorrectly")
-
-proc polygon4FromJsonNode*(jsonNode: JsonNode): Polygon[Vector4] =
-  try:
-    result = polygon(polyline4FromJsonNode(jsonNode["polyline"]))
-  except:
-    raise newException(InvalidJsonError,
-      "JSON is formatted incorrectly")
-
-proc polygon1FromJson*(jsonString: string): Polygon[Vector1] =
-  result = polygon1FromJsonNode(parseJson(jsonString))
-
-proc polygon2FromJson*(jsonString: string): Polygon[Vector2] =
-  result = polygon2FromJsonNode(parseJson(jsonString))
-
-proc polygon3FromJson*(jsonString: string): Polygon[Vector3] =
-  result = polygon3FromJsonNode(parseJson(jsonString))
-
-proc polygon4FromJson*(jsonString: string): Polygon[Vector4] =
-  result = polygon4FromJsonNode(parseJson(jsonString))
-
-proc toJson*(p: Polygon[Vector1]): string =
-  result = "{\"polyline\":" & toJson(p.polyline) & "}"
-
-proc toJson*(p: Polygon[Vector2]): string =
-  result = "{\"polyline\":" & toJson(p.polyline) & "}"
-
-proc toJson*(p: Polygon[Vector3]): string =
-  result = "{\"polyline\":" & toJson(p.polyline) & "}"
-
-proc toJson*(p: Polygon[Vector4]): string =
-  result = "{\"polyline\":" & toJson(p.polyline) & "}"
