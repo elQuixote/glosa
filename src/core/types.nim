@@ -13,13 +13,13 @@ type
   Quaternion*[T] = Vector[4, T]
 
   # Paths
-  LineSegment*[Vector] = object
-    startVertex*: Vector
-    endVertex*: Vector
+  LineSegment*[N: static[int], T] = object
+    startVertex*: Vector[N, T]
+    endVertex*: Vector[N, T]
 
-  Polyline*[Vector] = object
-    vertices*: seq[Vector]
-    segments*: seq[LineSegment[Vector]]
+  Polyline*[N: static[int], T] = object
+    vertices*: seq[Vector[N, T]]
+    segments*: seq[LineSegment[N, T]]
 
   # Curves
   NurbsCurve*[Vector] = object
@@ -29,8 +29,8 @@ type
     knots*: seq[float]
 
   # Polygon
-  Polygon*[Vector] = object
-    polyline*: Polyline[Vector]
+  Polygon*[N: static[int], T] = object
+    polyline*: Polyline[N, T]
 
   # Shapes
   Circle*[Vector] = object
