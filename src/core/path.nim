@@ -371,7 +371,7 @@ proc translate*[N: static[int], T](p: var Polyline[N, T], v: Vector[N, T]): var 
   result = p
 
 # Transform(Matrix)
-proc transform*[N, M: static[int], T](p: var Polyline[N, T], m: Matrix[N,M,T]): var Polyline[N, T] {.noinit.} =
+proc transform*[N, M: static[int], T](p: var Polyline[N, T], m: Matrix[N, M, T]): var Polyline[N, T] {.noinit.} =
   for i in 0..<len(p.vertices):
     p.vertices[i] = transform(p.vertices[i], m)
   for i in 0..<len(p.segments):
