@@ -563,7 +563,7 @@ proc scale*[N: static[int], T](v: var Vector[N, T], a: openArray[T]): var Vector
 proc translate*[N: static[int], T](v1: var Vector[N, T], v2: Vector[N, T]): var Vector[N, T] = addSelf(v1, v2)
 
 # String
-proc `$`[N: static[int], T](v: Vector[N, T]): string =
+proc `$`*[N: static[int], T](v: Vector[N, T]): string =
   result = "["
   for i, e in v:
     if i > 0:

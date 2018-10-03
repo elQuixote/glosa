@@ -38,24 +38,24 @@ type
     radius*: float
 
   # Mesh
-  MeshVertex*[Vector] = ref object
+  MeshVertex*[T] = ref object
     oid*: Oid
-    position*: Vector
-    edge*: HalfEdge[Vector]
+    position*: T
+    edge*: HalfEdge[T]
 
-  MeshFace*[Vector] = ref object
+  MeshFace*[T] = ref object
     oid*: Oid
-    edge*: HalfEdge[Vector]
+    edge*: HalfEdge[T]
 
-  HalfEdge*[Vector] = ref object
+  HalfEdge*[T] = ref object
     oid*: Oid
-    vertex*: MeshVertex[Vector]
-    face*: MeshFace[Vector]
-    pair*: HalfEdge[Vector]
-    next*: HalfEdge[Vector]
-    previous*: HalfEdge[Vector]
+    vertex*: MeshVertex[T]
+    face*: MeshFace[T]
+    pair*: HalfEdge[T]
+    next*: HalfEdge[T]
+    previous*: HalfEdge[T]
 
-  HalfEdgeMesh*[Vector] = object
-    vertices*: seq[MeshVertex[Vector]]
-    faces*: seq[MeshFace[Vector]]
-    edges*: seq[HalfEdge[Vector]]
+  HalfEdgeMesh*[T] = object
+    vertices*: seq[MeshVertex[T]]
+    faces*: seq[MeshFace[T]]
+    edges*: seq[HalfEdge[T]]
