@@ -19,7 +19,7 @@ Currently we have created the first building blocks of the core geometry library
 * Half-Edge Meshes [for representing mesh data with topological information]
 
 ### Interfaces ###
-* .NET Interface [for using glosa types in .NET C#]
+* .NET Interface [for using glosa types in .NET C# or IronPython]
 * Rhino [for using glosa in Rhino & Grasshopper]
 
 --------------------------------------------------------------
@@ -33,7 +33,7 @@ We asked ourselves a few fundamental questions, one of which was how can we conn
 
 ### PERFORMANCE ###
 Our initial test consisted of 3 operations
-* Creating 1 million vector
+* Creating 1 million vectors
 * Calculate the dot product with another vector
 * Perform a matrix transformation on each vector
 
@@ -52,6 +52,7 @@ proc transformSetOfVector*() {.cdecl, exportc, dynlib.} =
 * Glosa Implementation [70 ms]
 
 #### Dynamo Benchmarks ####
+* IronPython [3769.21 ms]
 * Glosa Implementation [70 ms]
 
 #### Grasshopper C# Benchmarks ####
